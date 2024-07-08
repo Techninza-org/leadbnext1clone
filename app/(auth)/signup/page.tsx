@@ -8,11 +8,11 @@ import {
 } from "@/components/ui/card"
 
 
-export default function Home() {
+export default function SignupPage() {
   return (
-    <Card className="bg-inherit">
+    <Card className="bg-inherit max-w-screen-lg">
       <CardHeader>
-        <CardTitle>Signup</CardTitle>
+        <CardTitle className="font-bold">Signup</CardTitle>
         <CardDescription>Welcome to our Lead Managment App!</CardDescription>
       </CardHeader>
       <CardContent>

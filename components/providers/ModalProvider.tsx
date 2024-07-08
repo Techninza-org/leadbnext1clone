@@ -1,7 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react";
-import { PaymentModal } from "../modals/payment-modal";
+import { CreateLeadModal } from "../modals/create-lead-modal";
+import { AssignLeadModal } from "../modals/assign-lead-modal";
+import { SubmitLeadModal } from "../modals/submit-lead-modal";
 
 
 export const ModalProvider = () => {
@@ -16,7 +18,9 @@ export const ModalProvider = () => {
 
   return (
     <>
-      <PaymentModal />
+      <CreateLeadModal/>
+      <AssignLeadModal/>
+      <SubmitLeadModal/>
 
     </>
   );

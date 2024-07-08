@@ -1,8 +1,16 @@
+import { z } from "zod";
 import { atom } from "jotai";
+import { createLeadSchema } from "@/types/lead";
+import { CompanyDeptFieldSchema} from "@/types/company";
 
-export type ModalType = "paymentGateway" | ""
+export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead"
 export interface ModalData {
     customerId?: string;
+
+    lead?: z.infer<typeof createLeadSchema>,
+    leads?: z.infer<typeof createLeadSchema>[],
+    fields?: z.infer<typeof CompanyDeptFieldSchema>
+
     apiUrl?: string;
     query?: Record<string, any>;
 }

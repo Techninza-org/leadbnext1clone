@@ -7,7 +7,6 @@ import { signupFormSchema } from "@/types/auth"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
@@ -15,9 +14,10 @@ import {
 } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useModal } from "@/hooks/use-modal-store"
 
 export const SignupForm = () => {
+    
+
     const form = useForm<z.infer<typeof signupFormSchema>>({
         resolver: zodResolver(signupFormSchema),
         defaultValues: {
