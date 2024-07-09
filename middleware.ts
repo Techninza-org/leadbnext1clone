@@ -34,35 +34,35 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Exclude favicon.ico from authentication checks
-  if (pathname === '/favicon.ico') {
-    return NextResponse.next();
-  }
+  // if (pathname === '/favicon.ico') {
+  //   return NextResponse.next();
+  // }
 
-  // Allow access to public routes without authentication
-  if (unauthenticatedPaths.some(path => pathname.startsWith(path))) {
-    return NextResponse.next();
-  }
+  // // Allow access to public routes without authentication
+  // if (unauthenticatedPaths.some(path => pathname.startsWith(path))) {
+  //   return NextResponse.next();
+  // }
 
-  // Redirect unauthenticated users to login page
-  if (!isAuthenticated) {
-    return NextResponse.redirect(new URL('/login', request.url));
-  }
+  // // Redirect unauthenticated users to login page
+  // if (!isAuthenticated) {
+  //   return NextResponse.redirect(new URL('/login', request.url));
+  // }
 
-  // Role-based access control
-  if (userRole === 'admin') {
-    if (!adminPaths.some(path => pathname.startsWith(path))) {
-      return NextResponse.redirect(new URL('/access-denied', request.url));
-    }
-  } else if (userRole?.toLowerCase() !== 'manager'){
-      return NextResponse.redirect(new URL('/not-found', request.url));
-  } else if (userRole === 'root' || userRole === 'manager') {
-    if (!rootManagerPaths.some(path => pathname.startsWith(path))) {
-      return NextResponse.redirect(new URL('/access-denied', request.url));
-    }
-  } else {
-    // For other roles, allow access to all paths
-    return NextResponse.next();
-  }
+  // // Role-based access control
+  // if (userRole === 'admin') {
+  //   if (!adminPaths.some(path => pathname.startsWith(path))) {
+  //     return NextResponse.redirect(new URL('/access-denied', request.url));
+  //   }
+  // } else if (userRole?.toLowerCase() !== 'manager'){
+  //     return NextResponse.redirect(new URL('/nof-', request.url));
+  // } else if (userRole === 'root' || userRole === 'manager') {
+  //   if (!rootManagerPaths.some(path => pathname.startsWith(path))) {
+  //     return NextResponse.redirect(new URL('/access-denied', request.url));
+  //   }
+  // } else {
+  //   // For other roles, allow access to all paths
+  //   return NextResponse.next();
+  // }
 
   // Handle other scenarios by default (e.g., allow access to specific paths)
   return NextResponse.next();
