@@ -13,7 +13,8 @@ function GraphqlProvider({ children }: { children: React.ReactNode }) {
         cache: memCache(),
         fetchOptions: { 
             method: 'POST',
-        }
+        },
+        useGETForQueries: false,
     })
 
 
