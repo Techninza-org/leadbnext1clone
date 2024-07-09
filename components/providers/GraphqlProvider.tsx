@@ -9,7 +9,7 @@ const graphqlUrl = process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localh
 function GraphqlProvider({ children }: { children: React.ReactNode }) {
 
     const client = new GraphQLClient({
-        url: `${graphqlUrl}/graphql`,
+        url: `${graphqlUrl}/api`,
         cache: memCache(),
         fetchOptions: { 
             method: 'POST',
