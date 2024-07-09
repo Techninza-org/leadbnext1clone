@@ -11,6 +11,9 @@ function GraphqlProvider({ children }: { children: React.ReactNode }) {
     const client = new GraphQLClient({
         url: `${graphqlUrl}/graphql`,
         cache: memCache(),
+        fetchOptions: { 
+            method: 'POST',
+        }
     })
 
 
