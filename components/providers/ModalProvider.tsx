@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { CreateLeadModal } from "../modals/create-lead-modal";
 import { AssignLeadModal } from "../modals/assign-lead-modal";
 import { SubmitLeadModal } from "../modals/submit-lead-modal";
+import { BidFormModal } from "../modals/bid-form-modal";
 
 
 export const ModalProvider = () => {
@@ -21,6 +22,7 @@ export const ModalProvider = () => {
       <CreateLeadModal/>
       <AssignLeadModal/>
       <SubmitLeadModal/>
+      <BidFormModal/>
 
     </>
   );

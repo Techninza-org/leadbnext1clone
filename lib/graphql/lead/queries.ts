@@ -55,7 +55,21 @@ query getAssignedLeads($userId: String!) {
   }
 `;
 
+const GET_LEAD_BIDS_QUERY = `
+  query GetLeadBids($leadId: String!) {
+    getLeadBids(leadId: $leadId) {
+      bidAmount
+      Member {
+        id
+        name
+      }
+    }
+  }
+`;
+
+
 export const leadQueries = {
   GET_COMPANY_LEADS,
-  GET_ASSIGNED_LEADS
+  GET_ASSIGNED_LEADS,
+  GET_LEAD_BIDS_QUERY
 }

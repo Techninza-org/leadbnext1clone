@@ -55,11 +55,18 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+          user?.role.name.toLowerCase().split(" ").join("") !== "exchangemanager" && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
             <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
               {field.name}
             </DropdownMenuItem>
           ))
+        }
+        {
+          user?.role.name.toLowerCase().split(" ").join("") === "exchangemanager" && (
+            <DropdownMenuItem onClick={() => onOpen("bidForm", { lead })}>
+              Enter Bid
+            </DropdownMenuItem>
+          )
         }
         {/* <DropdownMenuSeparator /> */}
         {/* <DropdownMenuSub>

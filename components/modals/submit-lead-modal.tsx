@@ -75,33 +75,83 @@ export const SubmitLeadModal = () => {
     const { formState: { errors } } = form
 
     const onSubmit = async (data: any) => {
-        const feedback = formatFormData(fields?.subDeptFields ?? [], data)
+        let url = "";
+        try {
+            if (files?.length) {
+                const formData = new FormData();
+                files.forEach((file: File) => {
+                    formData.append('files', file);
+                });
 
-        const { data: resData, loading, error } = await submitFeedback({
-            variables: {
-                deptId: user?.deptId,
-                leadId: lead?.id || "",
-                callStatus: "SUCCESS",
-                paymentStatus: "PENDING",
-                feedback
-            },
-        })
+                const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-        if (error) {
-            const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ")
+                const urls = await uploadRes.json();
+
+                const { data: resData, loading, error } = await submitFeedback({
+                    variables: {
+                        deptId: user?.deptId,
+                        leadId: lead?.id || "",
+                        callStatus: "SUCCESS",
+                        paymentStatus: "PENDING",
+                        feedback: formatFormData(fields?.subDeptFields ?? [], data), // Pass URL if needed in feedback
+                        urls,
+                    },
+                });
+
+                if (error) {
+                    const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
+                    toast({
+                        title: 'Error',
+                        description: message || "Something went wrong",
+                        variant: "destructive"
+                    });
+                    return;
+                }
+
+                toast({
+                    variant: "default",
+                    title: "Lead Submitted Successfully!",
+                });
+                handleClose();
+            } else {
+                // No files to upload, directly proceed with GraphQL mutation
+                const { data: resData, loading, error } = await submitFeedback({
+                    variables: {
+                        deptId: user?.deptId,
+                        leadId: lead?.id || "",
+                        callStatus: "SUCCESS",
+                        paymentStatus: "PENDING",
+                        feedback: formatFormData(fields?.subDeptFields ?? [], data),
+                    },
+                });
+
+                if (error) {
+                    const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
+                    toast({
+                        title: 'Error',
+                        description: message || "Something went wrong",
+                        variant: "destructive"
+                    });
+                    return;
+                }
+
+                toast({
+                    variant: "default",
+                    title: "Lead Submitted Successfully!",
+                });
+                handleClose();
+            }
+        } catch (error) {
+            console.error("Error during submission:", error);
             toast({
                 title: 'Error',
-                description: message || "Something went wrong",
+                description: "Failed to submit lead feedback.",
                 variant: "destructive"
-            })
-            return;
+            });
         }
-
-        toast({
-            variant: "default",
-            title: "Lead Submitted Successfully!",
-        })
-        handleClose()
     }
 
     const handleClose = () => {

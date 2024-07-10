@@ -37,8 +37,6 @@ export const AssignMember = () => {
     const user = useAtomValue(userAtom)
     const [createUser, { loading, error, data }] = useMutation(CREATE_USER);
 
-    console.log(user, "user")
-
     const { loading: deptLoading, error: deptError, data: deptData } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
         variables: { companyId: user?.companyId },
     });

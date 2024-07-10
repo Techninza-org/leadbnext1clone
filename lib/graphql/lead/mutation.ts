@@ -73,6 +73,7 @@ const SUBMIT_LEAD = `
     $callStatus: String!,
     $paymentStatus: String!,
     $feedback: [FeedbackInput!]!
+    $urls: [String]
   ) {
     submitFeedback(
       deptId: $deptId,
@@ -80,16 +81,37 @@ const SUBMIT_LEAD = `
       callStatus: $callStatus,
       paymentStatus: $paymentStatus,
       feedback: $feedback
+      urls: $urls
     ) {
       message
     }
   }
 `;
 
+const SUBMIT_BID_MUTATION = `
+  mutation SubmitBid(
+    $deptId: String!,
+    $leadId: String!,
+    $companyId: String!,
+    $bidAmount: String!,
+    $description: String!
+  ) {
+    submitBid(
+      deptId: $deptId,
+      leadId: $leadId,
+      companyId: $companyId,
+      bidAmount: $bidAmount,
+      description: $description
+    ) {
+      id
+      bidAmount
+    }
+  }`
 
 
 export const leadMutation = {
   CREATE_LEAD,
   LEAD_ASSIGN_TO,
-  SUBMIT_LEAD
+  SUBMIT_LEAD,
+  SUBMIT_BID_MUTATION
 } 

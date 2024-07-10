@@ -85,7 +85,6 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                     <span>{row.getValue("city")}</span>
                 </div>
             )
-
         }
     },
     {

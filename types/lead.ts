@@ -58,3 +58,19 @@ export const SubmitFeedbackVariablesSchema = z.object({
     paymentStatus: z.enum(['PENDING', 'PAID', 'FAILED']),
     feedback: z.array(FeedbackInputSchema),
 });
+
+export const leadBidSchema = z.object({
+    bidAmount: z.string().min(1, "Bid amount must be greater than 0.").refine((value: any) => {
+        return /^\d+$/.test(value);
+    }, {
+        message: "Bid amount must be a number."
+    }),
+    description: z.string().optional(),
+});
+
+export const leadBidsSchema = z.object({
+    id: z.string(),
+    description: z.string().optional(),
+    bidAmount: z.number(),
+    Member: z.array(loggedUserSchema),
+});

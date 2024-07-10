@@ -27,17 +27,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { toast } = useToast()
   const client = useGraphql()
 
-  const [authToken,setToken] = useAtom(userAuthToken)
+  const [authToken, setToken] = useAtom(userAuthToken)
   const setUser = useSetAtom(userAtom)
   const router = useRouter()
 
   useEffect(() => {
-    const userC = getCookie('x-lead-token');
-    if (userC) {
-      const userData = JSON.parse(userC);
+    const userT = getCookie('x-lead-token');
+    const userC = getCookie('x-lead-user');
+    if (userT && userC) {
+      const userData = JSON?.parse(userC);
       setUser(userData);
-      setToken(userData.token);
-      client.setHeader('Authorization', `x-lead-token ${userData.token || authToken}`)
+      setToken(userT || authToken);
+      client.setHeader('Authorization', `x-lead-token ${userT || authToken}`)
     } else {
       router.push('/login')
       setUser(null);
@@ -63,7 +64,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     const expiresDate = new Date();
     expiresDate.setDate(expiresDate.getDate() + 1);
-    setCookie('x-lead-token', user, { expires: expiresDate });
+    setCookie('x-lead-user', user, { expires: expiresDate });
+    setCookie('x-lead-token', user.token, { expires: expiresDate });
 
     // Redirection fix for role based eventualy
     const role = user.role.name.toLowerCase()

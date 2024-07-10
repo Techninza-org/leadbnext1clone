@@ -36,55 +36,57 @@ import { useMutation, useQuery } from "graphql-hooks"
 import { userQueries } from "@/lib/graphql/user/queries"
 import { useAtom, useAtomValue } from "jotai"
 import { companyDeptMembersAtom, userAtom } from "@/lib/atom/userAtom"
-import { createLeadSchema, leadAssignToSchema } from "@/types/lead"
+import { leadBidSchema, leadBidsSchema } from "@/types/lead"
 import { Badge } from "../ui/badge"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
+import { leadQueries } from "@/lib/graphql/lead/queries"
+import { Input } from "../ui/input"
 
-export const AssignLeadModal = () => {
+export const BidFormModal = () => {
 
     const userInfo = useAtomValue(userAtom)
     const [, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom)
 
     const { isOpen, onClose, type, data: modalData } = useModal();
-    const { leads } = modalData;
-    const leadIds = leads?.map((lead: z.infer<typeof createLeadSchema>) => lead?.id)
+    const { lead } = modalData;
 
-    const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
+    console.log(lead, "lead")
 
-    const { loading, data } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
+    const isModalOpen = isOpen && type === "bidForm";
+
+    const { data, loading, error } = useQuery(leadQueries.GET_LEAD_BIDS_QUERY, {
         variables: {
-            skip: ((userInfo?.role.name.toLowerCase() !== "root" )|| (userInfo?.role.name.toLowerCase() !== "manager")) ? true : false,
-            deptId: userInfo?.deptId,
-            companyId: userInfo?.companyId,
-        },
-        refetchAfterMutations: leadAssignTo
-    });
-
-
-    setCompanyDeptMembers(data?.getCompanyDeptMembers)
-
-    const isModalOpen = isOpen && type === "assignLead";
-
-    const { toast } = useToast()
-
-    const form = useForm<z.infer<typeof leadAssignToSchema>>({
-        resolver: zodResolver(leadAssignToSchema),
-        defaultValues: {
-            userId: "",
-            deptId: userInfo?.deptId,
-            companyId: userInfo?.companyId,
-            leadIds: leadIds || [],
+            leadId: lead?.id
         }
     })
 
-    const isLoading = assignLoading || loading;
 
-    const onSubmit = async (data: z.infer<typeof leadAssignToSchema>) => {
+    const [submitBid, { loading: submitLoading, error: submitError }] = useMutation(leadMutation.SUBMIT_BID_MUTATION);
 
-        const { data: assignResData, error } = await leadAssignTo({
+
+    const { toast } = useToast()
+
+    const form = useForm<z.infer<typeof leadBidSchema>>({
+        resolver: zodResolver(leadBidSchema),
+        defaultValues: {
+            bidAmount: "",
+            description: "",
+        }
+    })
+
+    const isLoading = form.formState.isSubmitting
+
+    console.log(form.formState.errors)
+
+    const onSubmit = async (data: z.infer<typeof leadBidSchema>) => {
+
+        const { error } = await submitBid({
             variables: {
                 ...data,
-                leadIds: leadIds
+                leadId: lead?.id,
+                memberId: userInfo?.id,
+                deptId: userInfo?.deptId,
+                companyId: userInfo?.companyId,
             }
         })
 
@@ -115,17 +117,17 @@ export const AssignLeadModal = () => {
             <DialogContent className="text-black max-w-screen-sm">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Assign Lead
+                        Lead Bid
                     </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="h-48 w-full rounded-md border">
                     <div className="p-4">
-                        <h4 className="mb-4 text-sm font-medium leading-none">Selected Leads</h4>
-                        {leads && leads.map((lead) => (
+                        <h4 className="mb-4 text-sm font-medium leading-none">All Bids</h4>
+                        {data?.getLeadBids && data?.getLeadBids.map((bid: z.infer<typeof leadBidsSchema>) => (
                             <>
-                                <div key={lead.id} className="text-sm grid-cols-2 grid">
-                                    <span>{lead.name}</span>
-                                    <span>{lead.email}</span>
+                                <div key={bid.id} className="text-sm grid-cols-2 grid">
+                                    <span>{bid.Member[0].name}</span>
+                                    <span>{bid.bidAmount}</span>
                                 </div>
                                 <Separator className="my-2" />
                             </>
@@ -136,39 +138,47 @@ export const AssignLeadModal = () => {
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <FormField
                             control={form.control}
-                            name="userId"
+                            name="bidAmount"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Department Members</FormLabel>
+                                    <FormLabel>Bid Amount</FormLabel>
                                     <Select
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                         disabled={isLoading}
                                     >
                                         <FormControl>
-                                            <SelectTrigger
-                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 capitalize dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-
-                                            >
-                                                <SelectValue placeholder="Select Member" className="capitalize" />
-                                            </SelectTrigger>
+                                            <Input
+                                                className="bg-zinc-100 placeholder:capitalize border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                placeholder="Bid Amount"
+                                                disabled={isLoading}
+                                                {...field} />
                                         </FormControl>
-                                        <SelectContent
-                                            className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
 
-                                        >
-                                            {
-                                                data?.getCompanyDeptMembers?.map((member: z.infer<typeof createCompanyMemberSchema>) => (
-                                                    <SelectItem
-                                                        key={member?.id}
-                                                        value={member?.id || ""}
-                                                        className="capitalize"
-                                                    >
-                                                        {member?.name} <Badge variant={'secondary'}>{member.role?.name}</Badge>
-                                                    </SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Description</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                        disabled={isLoading}
+                                    >
+                                        <FormControl>
+                                            <Input
+                                                className="bg-zinc-100 placeholder:capitalize border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                placeholder="Description"
+                                                disabled={isLoading}
+                                                {...field} />
+                                        </FormControl>
+
                                     </Select>
                                     <FormMessage />
                                 </FormItem>
@@ -178,7 +188,7 @@ export const AssignLeadModal = () => {
                             type="submit"
                             className="mt-6"
                             disabled={isLoading}
-                        >Assign</Button>
+                        >Submit</Button>
                     </form>
                 </Form>
             </DialogContent>
