@@ -92,7 +92,7 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: '',
         cell: ({ row }) => {
             const rowData = row?.original;
-            const assigneeName = rowData?.LeadStatus[rowData?.LeadStatus?.length - 1].assignedTo?.name
+            const assigneeName = rowData?.LeadStatus[rowData?.LeadStatus?.length - 1]?.assignedTo?.name
             return (
                 <div className="flex items-center">
                     <span><Badge variant={'secondary'} className="capitalize font-bold">{assigneeName?.split(" ")[0] ||  "Awaited"}</Badge></span>
