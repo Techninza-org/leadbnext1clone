@@ -52,8 +52,8 @@ export const AssignLeadModal = () => {
     const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
 
     const { loading, data } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
+        skip: ((userInfo?.role.name.toLowerCase() !== "root") || (userInfo?.role.name.toLowerCase() !== "manager")) ? true : false,
         variables: {
-            skip: ((userInfo?.role.name.toLowerCase() !== "root" )|| (userInfo?.role.name.toLowerCase() !== "manager")) ? true : false,
             deptId: userInfo?.deptId,
             companyId: userInfo?.companyId,
         },

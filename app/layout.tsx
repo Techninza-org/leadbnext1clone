@@ -10,6 +10,7 @@ import GraphqlProvider from "@/components/providers/GraphqlProvider";
 import { ModalProvider } from "@/components/providers/ModalProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 import { LeadProvider } from "@/components/providers/LeadProvider";
+import LoadingProviders from "@/components/providers/LoadingbarProivder";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -31,7 +32,7 @@ export default function RootLayout({
       <head />
       <body
         className={cn(
-          "min-h-screen bg-background antialiased bg-zinc-50",
+          "min-h-screen bg-background antialiased",
           fontSans.variable
         )}
       >
@@ -41,7 +42,9 @@ export default function RootLayout({
             <AuthProvider>
               <LeadProvider>
                 <ModalProvider />
-                {children}
+                <LoadingProviders>
+                  {children}
+                </LoadingProviders>
                 <Toaster />
               </LeadProvider>
             </AuthProvider>

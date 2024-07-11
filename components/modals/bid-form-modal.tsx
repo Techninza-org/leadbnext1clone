@@ -55,6 +55,7 @@ export const BidFormModal = () => {
     const isModalOpen = isOpen && type === "bidForm";
 
     const { data, loading, error } = useQuery(leadQueries.GET_LEAD_BIDS_QUERY, {
+        skip: !lead?.id,
         variables: {
             leadId: lead?.id
         }

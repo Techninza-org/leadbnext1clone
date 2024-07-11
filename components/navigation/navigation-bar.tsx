@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { useAtom } from "jotai";
 import { userAtom } from "@/lib/atom/userAtom";
 import { MANAGER, ROOT } from "@/lib/role-constant";
+import { MANAGER_NAV_LINKS, ROOT_NAV_LINKS } from "@/lib/navigation-route";
 
 
 export function NavigationBar({ children }: { children: React.ReactNode }) {
@@ -23,36 +24,6 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAdmin = pathname.startsWith("/admin");
 
-    const MANAGER_NAV_LINKS = [
-        {
-            title: "Home",
-            icon: Home,
-            href: "/dashboard",
-        },
-        {
-            title: "Leads",
-            icon: FileTextIcon,
-            href: "/leads",
-        },
-        // {
-        //     title: "Assign Lead",
-        //     icon: ShoppingCart,
-        //     subLinks: [
-        //         {
-        //             title: "Forward Orders",
-        //             href: "/orders",
-        //         },
-        //         {
-        //             title: "Reverse Orders",
-        //             href: "/orders/reverse",
-        //         },
-        //         {
-        //             title: "B2B Orders",
-        //             href: "/orders/b2b",
-        //         },
-        //     ],
-        // },
-    ];
 
     const EMP_NAV_LINKS = [
         {
@@ -62,7 +33,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
         },
     ];
 
-    const navLinks = [MANAGER, ROOT].includes(role) ? MANAGER_NAV_LINKS : EMP_NAV_LINKS;
+    const navLinks = [ROOT].includes(role) ? ROOT_NAV_LINKS : [MANAGER].includes(role) ? MANAGER_NAV_LINKS : EMP_NAV_LINKS;
 
     useEffect(() => {
         const handleResize = () => {

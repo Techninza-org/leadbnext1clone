@@ -30,6 +30,8 @@ import { DataTableToolbar } from "./table-toolbar"
 import { Button } from "./button"
 import { PlusCircle } from "lucide-react"
 import { useModal } from "@/hooks/use-modal-store"
+import { useAtomValue } from "jotai"
+import { userAtom } from "@/lib/atom/userAtom"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -80,19 +82,24 @@ export function DataTable<TData, TValue>({
 
   const { onOpen } = useModal()
 
+  const userRole = useAtomValue(userAtom)?.role?.name?.toLowerCase()
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
         <DataTableToolbar table={table} setFilter={setFilter} />
         <div className="flex gap-2 items-center">
-          <Button
-            onClick={() => onOpen("assignLead", { leads: selectedRows })}
-            variant={'default'}
-            size={"sm"}
-            disabled={!selectedRows.length}
-            className="items-center gap-1">
-            <span>Assign Leads</span>
-          </Button>
+          {
+            userRole === "manager" && (
+              <Button
+                onClick={() => onOpen("assignLead")}
+                variant={'default'}
+                size={"sm"}
+                className="items-center gap-1">
+                Assign Lead
+              </Button>
+            )
+          }
           <Button
             onClick={() => onOpen("addLead")}
             variant={'default'}

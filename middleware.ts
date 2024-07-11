@@ -4,22 +4,27 @@ import { loggedUserSchema } from './types/auth';
 
 export async function middleware(request: NextRequest) {
   const currentUserToken = request.cookies.get('x-lead-token')?.value;
+  const currentUser = request.cookies.get('x-lead-user')?.value;
   let user: z.infer<typeof loggedUserSchema> | null = null;
 
-  if (currentUserToken) {
+  if (currentUserToken && currentUser) {
     try {
-      user = JSON.parse(currentUserToken) as z.infer<typeof loggedUserSchema>;
-      console.log(user, "user")
+      user = JSON.parse(currentUser) as z.infer<typeof loggedUserSchema>;
     } catch (error) {
-      console.error('Invalid token:', error);
+      console.error('Invalid token: [MIDDLEWARE]', error);
     }
   }
 
-  const isAuthenticated = user !== null;
-  const userRole = user?.role.name;
+  const isAuthenticated = !!currentUserToken;
+  const userRole = user?.role?.name?.split(" ").join("").toLowerCase();
 
-  const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login'];
-
+  const unauthenticatedPaths = [
+    '/login',
+    '/signup',
+    '/forgot-password',
+    '/reset-password',
+    '/admin/login',
+  ];
 
   const adminPaths = [
     '/admin',
@@ -27,141 +32,75 @@ export async function middleware(request: NextRequest) {
   ];
 
   const rootManagerPaths = [
-    `/${userRole}/dashboard`,
+    '/dashboard',
+    '/leads',
+    // Add more paths for root and manager
+  ];
+
+  const managerPaths = [
+    '/leads',
     // Add more paths for root and manager
   ];
 
   const { pathname } = request.nextUrl;
 
   // Exclude favicon.ico from authentication checks
-  // if (pathname === '/favicon.ico') {
-  //   return NextResponse.next();
-  // }
+  if (pathname === '/favicon.ico') {
+    return NextResponse.next();
+  }
 
-  // // Allow access to public routes without authentication
-  // if (unauthenticatedPaths.some(path => pathname.startsWith(path))) {
-  //   return NextResponse.next();
-  // }
+  // Allow access to public routes without authentication
+  if (unauthenticatedPaths.some(path => pathname.startsWith(path))) {
+    // Redirect authenticated users away from unauthenticated paths
+    if (isAuthenticated) {
+      return redirectToDashboard(userRole, request);
+    }
+    return NextResponse.next();
+  }
 
-  // // Redirect unauthenticated users to login page
-  // if (!isAuthenticated) {
-  //   return NextResponse.redirect(new URL('/login', request.url));
-  // }
+  // Redirect unauthenticated users to login page
+  if (!isAuthenticated) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
 
-  // // Role-based access control
-  // if (userRole === 'admin') {
-  //   if (!adminPaths.some(path => pathname.startsWith(path))) {
-  //     return NextResponse.redirect(new URL('/access-denied', request.url));
-  //   }
-  // } else if (userRole?.toLowerCase() !== 'manager'){
-  //     return NextResponse.redirect(new URL('/nof-', request.url));
-  // } else if (userRole === 'root' || userRole === 'manager') {
-  //   if (!rootManagerPaths.some(path => pathname.startsWith(path))) {
-  //     return NextResponse.redirect(new URL('/access-denied', request.url));
-  //   }
-  // } else {
-  //   // For other roles, allow access to all paths
-  //   return NextResponse.next();
-  // }
+  // Role-based access control
+  if (userRole === 'admin') {
+    if (!adminPaths.some(path => pathname.startsWith(path))) {
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    }
+  } else if (userRole === 'root') {
+    if (!rootManagerPaths.some(path => pathname.startsWith(path))) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    }
+  } else if (userRole === 'manager') {
+    if (!managerPaths.some(path => pathname.startsWith(path))) {
+      return NextResponse.redirect(new URL('/leads', request.url));
+    }
+  } else if (userRole) {
+    if (!pathname.startsWith(`/${userRole}/leads`)) {
+      return NextResponse.redirect(new URL(`/${userRole}/leads`, request.url));
+    }
+  } else {
+    // For other roles or unrecognized roles, redirect to a generic access-denied page
+    return NextResponse.redirect(new URL('/access-denied', request.url));
+  }
 
-  // Handle other scenarios by default (e.g., allow access to specific paths)
+  // Allow access to paths matching the role-specific conditions
   return NextResponse.next();
+}
+
+function redirectToDashboard(userRole: string | undefined, request: NextRequest) {
+  switch (userRole) {
+    case 'admin':
+      return NextResponse.redirect(new URL('/admin/dashboard', request.url));
+    case 'root':
+    case 'manager':
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    default:
+      return NextResponse.redirect(new URL(`/${userRole}/leads`, request.url));
+  }
 }
 
 export const config = {
   matcher: ['/((?!api|_next/static|_next/image|\\.png$).*)'],
 };
-
-
-// import { NextRequest, NextResponse } from 'next/server';
-// import { z } from 'zod';
-// import { loggedUserSchema } from './types/auth';
-
-// export async function middleware(request: NextRequest) {
-//   const currentUserToken = request.cookies.get('x-lead-token')?.value;
-//   let user: z.infer<typeof loggedUserSchema> | null = null;
-  
-//   if (currentUserToken) {
-//     try {
-//       user = JSON.parse(currentUserToken) as z.infer<typeof loggedUserSchema>;
-//       console.log(user, "user")
-//     } catch (error) {
-//       console.error('Invalid token:', error);
-//     }
-//   }
-//   let isAuthenticated = user !== null;
-//   let userRole = user?.role.name;
-
-//   const unauthenticatedPaths = ['/login', '/signup', '/forgot-password', '/reset-password', '/admin/login'];
-//   const membersPath = [
-//     '/dashboard',
-//     '/leads',
-
-//     // public files
-//     // '/filename.csv',
-//   ];
-
-//   const root_manager_path = [
-//     '/dashboard',
-//     '/leads',
-
-//     // public files
-//     // '/filename.csv',
-//   ];
-
-//   const adminRoutes = [
-//     '/admin',
-//   ];
-
-//   // const publicRoutes = [
-//   //   '',
-//   // ];
-
-//   const { pathname } = request.nextUrl;
-
-//   // Exclude favicon.ico from authentication checks
-//   if (pathname === '/favicon.ico') {
-//     return NextResponse.next();
-//   }
-
-//   // Allow access to public routes without authentication
-//   // if (publicRoutes.some(route => pathname.startsWith(route))) {
-//   //   return NextResponse.next();
-//   // }
-
-//   // Redirect unauthenticated users to login page
-//   // if (!isAuthenticated && !unauthenticatedPaths.some(path => pathname.startsWith(path))) {
-//   //   return NextResponse.redirect(new URL('/login', request.url));
-//   // }
-
-//   // if (isAuthenticated) {
-//   //   // Role-based access control
-//   //   if (userRole === 'seller') {
-//   //     if (adminRoutes.some(route => pathname.startsWith(route))) {
-//   //       return NextResponse.redirect(new URL('/access-denied', request.url));
-//   //     }
-//   //     if (pathname.includes('/login')) {
-//   //       return NextResponse.redirect(new URL('/dashboard', request.url));
-//   //     }
-//   //   } else if (userRole === 'root' || userRole === 'admin') {
-//   //     if (pathname.includes('/login')) {
-//   //       return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
-//   //     }
-//   //   }
-
-//   //   // Redirect authenticated users to the appropriate dashboard if they try to access unauthenticated paths
-//   //   if (!authenticatedRoutes.some(route => pathname.startsWith(route)) && !adminRoutes.some(route => pathname.startsWith(route))) {
-//   //     if (userRole === 'seller') {
-//   //       return NextResponse.redirect(new URL('/dashboard', request.url));
-//   //     } else if (userRole === 'admin') {
-//   //       return NextResponse.redirect(new URL('/admin/shipment-listing', request.url));
-//   //     }
-//   //   }
-//   // }
-
-//   return NextResponse.next();
-// }
-
-// export const config = {
-//   matcher: ['/((?!api|_next/static|_next/image|\\.png$).*)'],
-// };

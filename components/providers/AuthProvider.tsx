@@ -36,11 +36,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const userC = getCookie('x-lead-user');
     if (userT && userC) {
       const userData = JSON?.parse(userC);
+      const userToken = JSON.parse(userT);
+
       setUser(userData);
-      setToken(userT || authToken);
-      client.setHeader('Authorization', `x-lead-token ${userT || authToken}`)
+      setToken(userToken || authToken);
+      
+      client.setHeader('Authorization', `x-lead-token ${userToken || authToken}`)
     } else {
-      router.push('/login')
       setUser(null);
       setToken("");
     }
@@ -65,16 +67,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const expiresDate = new Date();
     expiresDate.setDate(expiresDate.getDate() + 1);
     setCookie('x-lead-user', user, { expires: expiresDate });
-    setCookie('x-lead-token', user.token, { expires: expiresDate });
+    setCookie('x-lead-token', JSON.stringify(user.token), { expires: expiresDate });
 
     // Redirection fix for role based eventualy
-    const role = user.role.name.toLowerCase()
+    const role = user?.role?.name?.toLowerCase()?.split(" ").join("");
 
-    router.push([MANAGER, ROOT].includes(role) ? '/dashboard' : `/${role}/leads`)
+    router.push([ROOT].includes(role) ? '/dashboard' : '/leads' )
   };
   const logout = () => {
     setUser(null)
     setToken(null)
+    deleteCookie('x-lead-user')
     deleteCookie('x-lead-token')
     client.cache?.clear()
     router.push('/login')

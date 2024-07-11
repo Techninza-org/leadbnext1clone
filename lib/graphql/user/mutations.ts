@@ -44,3 +44,31 @@ mutation CreateUser(
   }
 }
 `;
+
+export const CREATE_ROOT_USER_MUTATION = `
+  mutation CreateUser(
+    $name: String!,
+    $email: String!,
+    $phone: String!,
+    $password: String!,
+    $companyName: String!,
+    $companyAddress: String!,
+    $companyEmail: String!,
+    $companyPhone: String!
+  ) {
+    createUser(
+      name: $name,
+      email: $email,
+      phone: $phone,
+      password: $password,
+      companyName: $companyName,
+      companyAddress: $companyAddress,
+      companyEmail: $companyEmail,
+      companyPhone: $companyPhone
+    ) {
+      user {
+        email
+      }
+    }
+  }
+`;
