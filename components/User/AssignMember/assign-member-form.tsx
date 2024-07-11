@@ -41,7 +41,9 @@ export const AssignMember = () => {
         variables: { companyId: user?.companyId },
     });
 
-    const { loading: roleLoading, error: roleError, data: rolesData } = useQuery(companyQueries.GET_ALL_ROLES);
+    const { loading: roleLoading, error: roleError, data: rolesData } = useQuery(companyQueries.GET_ALL_ROLES, {
+        skip: !user?.companyId
+    });
 
     const form = useForm<z.infer<typeof createCompanyMemberSchema>>({
         resolver: zodResolver(createCompanyMemberSchema),
