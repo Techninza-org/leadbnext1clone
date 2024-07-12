@@ -5,6 +5,8 @@ import { CreateLeadModal } from "../modals/create-lead-modal";
 import { AssignLeadModal } from "../modals/assign-lead-modal";
 import { SubmitLeadModal } from "../modals/submit-lead-modal";
 import { BidFormModal } from "../modals/bid-form-modal";
+import { FinancerBidApprovalModal } from "../modals/financer-bid-approval-modal";
+import { ViewLeadInfoModal } from "../modals/view-lead-info-modal";
 
 
 export const ModalProvider = () => {
@@ -23,6 +25,8 @@ export const ModalProvider = () => {
       <AssignLeadModal/>
       <SubmitLeadModal/>
       <BidFormModal/>
+      <FinancerBidApprovalModal/>
+      <ViewLeadInfoModal/>
 
     </>
   );

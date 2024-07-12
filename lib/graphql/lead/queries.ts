@@ -23,6 +23,23 @@ query GetCompanyLeads($companyId: String!) {
             name
         }
       }
+      LeadFeedback {
+        id
+        memberId
+        member {
+            name
+            role {
+                name
+            }
+        }
+        imageUrls
+        feedback {
+            id
+            name
+            fieldType
+            value
+        }
+      }
     }
   }
 `;

@@ -104,13 +104,28 @@ const SUBMIT_BID_MUTATION = `
     ) {
       id
       bidAmount
-    }
+    } 
   }`
 
+const UPDATE_LEAD_FINANCE_STATUS = `
+  mutation UpdateLeadFinanceStatus(
+    $leadId: String!,
+    $financeStatus: Boolean!
+  ) {
+    updateLeadFinanceStatus(
+      leadId: $leadId,
+      financeStatus: $financeStatus
+    ) {
+      id
+      name
+    }
+  }
+`;
 
 export const leadMutation = {
   CREATE_LEAD,
   LEAD_ASSIGN_TO,
   SUBMIT_LEAD,
-  SUBMIT_BID_MUTATION
+  SUBMIT_BID_MUTATION,
+  UPDATE_LEAD_FINANCE_STATUS
 } 

@@ -55,7 +55,7 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          user?.role.name.toLowerCase().split(" ").join("") !== "exchangemanager" && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+          !["exchangemanager","financer"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
             <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
               {field.name}
             </DropdownMenuItem>
@@ -65,6 +65,13 @@ export function AssignedLeadTableRowActions<TData>({
           user?.role.name.toLowerCase().split(" ").join("") === "exchangemanager" && (
             <DropdownMenuItem onClick={() => onOpen("bidForm", { lead })}>
               Enter Bid
+            </DropdownMenuItem>
+          )
+        }
+        {
+          user?.role.name.toLowerCase()?.split(" ").join("") === "financer" && (
+            <DropdownMenuItem onClick={() => onOpen("finacerBidApproval", { lead })}>
+              View/Approved Bid
             </DropdownMenuItem>
           )
         }

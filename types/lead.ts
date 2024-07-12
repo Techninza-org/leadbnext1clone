@@ -28,13 +28,22 @@ export const leadSchema = createLeadSchema.extend({
     companyId: z.string(),
     deptId: z.string(),
     description: z.string(),
-    LeadStatus: z.array(z.object({
-        callStatus: z.string(),
-        paymentStatus: z.string(),
-        description: z.string(),
-    })),
+    callStatus: z.string(),
+    paymentStatus: z.string(),
     LeadMember: z.array(z.object({
         Member: loggedUserSchema,
+    })),
+    LeadFeedback: z.array(z.object({
+        id: z.string(),
+        memberId: z.string(),
+        member: loggedUserSchema,
+        imageUrls: z.array(z.string().optional()),
+        feedback: z.array(z.object({
+            id: z.string(),
+            name: z.string(),
+            fieldType: z.string(),
+            value: z.string(),
+        })),
     })),
 });
 
@@ -75,4 +84,9 @@ export const leadBidsSchema = z.object({
     description: z.string().optional(),
     bidAmount: z.number(),
     Member: loggedUserSchema,
+});
+
+export const financerBidApprovalSchema = z.object({
+    leadId: z.string(),
+    leadFinanceStatus: z.string().optional(),
 });

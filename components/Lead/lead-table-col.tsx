@@ -3,10 +3,10 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { leadSchema } from "@/types/lead";
-import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import ActionTooltip from "../action-tooltip";
 import { MANAGER } from "@/lib/role-constant";
+import { useModal } from "@/hooks/use-modal-store";
 
 export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -36,11 +36,8 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: 'name',
         cell: ({ row }) => {
             return (
-                <div className="flex items-center">
-                    <span>{row.getValue("name")}</span>
-                </div>
+                <ViewLeadInfo lead={row.original} />
             )
-
         }
     },
     {
@@ -111,5 +108,16 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             );
         }
     }
-
 ];
+
+const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+  const { onOpen } = useModal()
+
+    return (
+        <div className="flex items-center">
+            <span
+            className="text-blue-900 cursor-pointer hover:underline" 
+            onClick={() => onOpen("viewLeadInfo", { lead })}>{lead.name}</span>
+        </div>
+    )
+}

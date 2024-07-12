@@ -14,8 +14,8 @@ export default function SignupPage() {
   return (
     <Card className="max-w-screen-lg mx-auto bg-inherit ">
       <CardHeader>
-        <CardTitle className="font-bold">Login</CardTitle>
-        <CardDescription>Welcome Back!</CardDescription>
+        <CardTitle className="font-bold">Signup</CardTitle>
+        <CardDescription>Welcome!</CardDescription>
       </CardHeader>
       <CardContent>
         <SignupForm />
