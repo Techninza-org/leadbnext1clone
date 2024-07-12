@@ -34,9 +34,7 @@ export const CreateLeadModal = () => {
     const { handleCreateLead } = useLead()
     const [userInfo] = useAtom(userAtom)
     const { isOpen, onClose, type } = useModal();
-    const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD, {
-        operationName: 'createLead',
-    });
+    const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
 
     const isModalOpen = isOpen && type === "addLead";
 

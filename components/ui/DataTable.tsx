@@ -92,10 +92,12 @@ export function DataTable<TData, TValue>({
           {
             userRole === "manager" && (
               <Button
-                onClick={() => onOpen("assignLead")}
+                onClick={() => onOpen("assignLead", { leads: selectedRows })}
                 variant={'default'}
                 size={"sm"}
-                className="items-center gap-1">
+                className="items-center gap-1"
+                disabled={!selectedRows.length}
+                >
                 Assign Lead
               </Button>
             )

@@ -41,6 +41,7 @@ import { Badge } from "../ui/badge"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
 import { leadQueries } from "@/lib/graphql/lead/queries"
 import { Input } from "../ui/input"
+import { formatCurrencyForIndia } from "@/lib/utils"
 
 export const BidFormModal = () => {
 
@@ -49,8 +50,6 @@ export const BidFormModal = () => {
 
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { lead } = modalData;
-
-    console.log(lead, "lead")
 
     const isModalOpen = isOpen && type === "bidForm";
 
@@ -76,8 +75,6 @@ export const BidFormModal = () => {
     })
 
     const isLoading = form.formState.isSubmitting
-
-    console.log(form.formState.errors)
 
     const onSubmit = async (data: z.infer<typeof leadBidSchema>) => {
 
@@ -124,15 +121,15 @@ export const BidFormModal = () => {
                 <ScrollArea className="h-48 w-full rounded-md border">
                     <div className="p-4">
                         <h4 className="mb-4 text-sm font-medium leading-none">All Bids</h4>
-                        {data?.getLeadBids && data?.getLeadBids.map((bid: z.infer<typeof leadBidsSchema>) => (
+                        {!!data?.getLeadBids ? data?.getLeadBids.map((bid: z.infer<typeof leadBidsSchema>) => (
                             <>
-                                <div key={bid.id} className="text-sm grid-cols-2 grid">
-                                    <span>{bid.Member[0].name}</span>
-                                    <span>{bid.bidAmount}</span>
+                                <div key={bid?.id} className="text-sm grid-cols-2 grid">
+                                    <span>{bid?.Member?.name}</span>
+                                    <span>{formatCurrencyForIndia(bid?.bidAmount || 0)}</span>
                                 </div>
                                 <Separator className="my-2" />
                             </>
-                        ))}
+                        )): <p className="text-gray-600 col-span-2 text-center">No Bids, Till Now!</p>}
                     </div>
                 </ScrollArea>
                 <Form {...form}>

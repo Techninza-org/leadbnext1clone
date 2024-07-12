@@ -32,14 +32,16 @@ export const leadSchema = createLeadSchema.extend({
         callStatus: z.string(),
         paymentStatus: z.string(),
         description: z.string(),
-        assignedTo: loggedUserSchema.optional(),
+    })),
+    LeadMember: z.array(z.object({
+        Member: loggedUserSchema,
     })),
 });
 
 export const leadAssignToSchema = z.object({
-    companyId: z.string().min(3, "Company ID must be at least 3 characters long."),
-    userId: z.string().min(3, "User ID must be at least 3 characters long."),
-    deptId: z.string().min(3, "Department ID must be at least 3 characters long."),
+    companyId: z.string().optional(),
+    userIds: z.array(z.string().min(3, "User ID must be at least 3 characters long.")),
+    deptId: z.string().optional(),
 
     leadIds: z.array(z.string()),
     description: z.string().optional(),
@@ -72,5 +74,5 @@ export const leadBidsSchema = z.object({
     id: z.string(),
     description: z.string().optional(),
     bidAmount: z.number(),
-    Member: z.array(loggedUserSchema),
+    Member: loggedUserSchema,
 });

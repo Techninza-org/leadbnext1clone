@@ -43,24 +43,23 @@ mutation createLead(
 const LEAD_ASSIGN_TO = `
   mutation leadAssignTo(
     $leadIds: [String!]!
-    $userId: String!
+    $userIds: [String!]!
     $deptId: String!
     $companyId: String!
     $description: String
   ) {
     leadAssignTo(
       leadIds: $leadIds
-      userId: $userId
+      userIds: $userIds
       deptId: $deptId
       companyId: $companyId
       description: $description
     ) {
-       name
-       LeadStatus { 
-        name
-        assignedTo { 
-          name
-        }
+      name
+      LeadMember { 
+          Member { 
+              name
+          }
       }
     }
   }

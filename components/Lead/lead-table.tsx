@@ -22,6 +22,9 @@ export const LeadTable = () => {
         refetchAfterMutations: [
             {
                 mutation: leadMutation.LEAD_ASSIGN_TO,
+            },
+            {
+                mutation: leadMutation.CREATE_LEAD,
             }
         ]
     });

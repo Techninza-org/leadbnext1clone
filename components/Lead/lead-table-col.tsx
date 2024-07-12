@@ -4,6 +4,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { leadSchema } from "@/types/lead";
 import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import ActionTooltip from "../action-tooltip";
+import { MANAGER } from "@/lib/role-constant";
 
 export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -92,13 +95,21 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: '',
         cell: ({ row }) => {
             const rowData = row?.original;
-            const assigneeName = rowData?.LeadStatus[rowData?.LeadStatus?.length - 1]?.assignedTo?.name
-            return (
-                <div className="flex items-center">
-                    <span><Badge variant={'secondary'} className="capitalize font-bold">{assigneeName?.split(" ")[0] ||  "Awaited"}</Badge></span>
-                </div>
-            )
+            const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
+            const isAssigned = [MANAGER, "company"].includes(assigneeName?.toLowerCase());
 
+            return (
+                <ActionTooltip label={assigneeName || "Awaited"} align="center" side="top" key={"assignedMembers"}>
+                    <Button
+                        size={'sm'}
+                        variant={isAssigned ? "destructive" : "secondary"}
+                        className="text-xs p-2  capitalize"
+                    >
+                        {isAssigned ? "Not Assigned" : "Assigned"}
+                    </Button>
+                </ActionTooltip>
+            );
         }
-    },
+    }
+
 ];

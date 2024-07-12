@@ -12,9 +12,17 @@ const GET_COMPANY_DEPT_FIELDS = `
     getCompanyDeptFields(deptId: $deptId) {
       id
       name
-      subDeptFields {
+      subDeptFields { 
         name
         fieldType
+        options {
+            label
+            value
+        }
+        isDisabled
+        isRequired
+        imgLimit
+        order
       }
     }
   }

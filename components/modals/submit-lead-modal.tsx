@@ -31,6 +31,13 @@ import {
     FileUploaderItem,
     FileInput,
 } from "@/components/file-uploader";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+
 
 import { useToast } from "@/components/ui/use-toast"
 import { useMutation } from "graphql-hooks"
@@ -38,11 +45,13 @@ import { useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
-import { formatFormData } from "@/lib/utils"
+import { cn, formatFormData } from "@/lib/utils"
 import { useModal } from "@/hooks/use-modal-store"
 import { DropzoneOptions } from "react-dropzone"
 import { useState } from "react"
 import Image from "next/image"
+import { CalendarDaysIcon } from "lucide-react"
+import { format } from "date-fns"
 
 export const SubmitLeadModal = () => {
 
@@ -171,7 +180,7 @@ export const SubmitLeadModal = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
                         {fields?.subDeptFields.map((cfield: any) => {
-                            if (cfield.fieldType === 'INPUT') {
+                            if (cfield.fieldType === 'INPUT' || cfield.fieldType === 'TEXTAREA') {
                                 return (
                                     <FormField
                                         key={cfield.id}
@@ -200,60 +209,58 @@ export const SubmitLeadModal = () => {
                                         name={cfield.name}
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Email</FormLabel>
+                                                <FormLabel>{cfield.name}</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
-                                                            <SelectValue className="placeholder:capitalize" placeholder="Call Status" />
+                                                            <SelectValue className="placeholder:capitalize" placeholder={cfield.name} />
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="pending">pending</SelectItem>
-                                                        <SelectItem value="busy">busy</SelectItem>
-                                                        <SelectItem value="success">success</SelectItem>
+                                                        {cfield.options.map((option: any) => (
+                                                            <SelectItem key={option.value} value={option.value}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))}
                                                     </SelectContent>
                                                 </Select>
                                             </FormItem>
                                         )}
                                     />
-                                )
+                                );
                             }
                             if (cfield.fieldType === 'RADIO') {
-                                return (<FormField
-                                    key={cfield.id}
-                                    control={form.control}
-                                    name={cfield.name}
-                                    render={({ field }) => (
-                                        <FormItem className="space-y-3">
-                                            <FormLabel>{cfield.name}</FormLabel>
-                                            <FormControl>
-                                                <RadioGroup
-                                                    onValueChange={field.onChange}
-                                                    defaultValue={cfield.value || "Yes"}
-                                                    className="flex flex-col space-y-1"
-                                                >
-                                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem value="Yes" />
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">
-                                                            Yes
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                    <FormItem className="flex items-center space-x-3 space-y-0">
-                                                        <FormControl>
-                                                            <RadioGroupItem value="No" />
-                                                        </FormControl>
-                                                        <FormLabel className="font-normal">
-                                                            No
-                                                        </FormLabel>
-                                                    </FormItem>
-                                                </RadioGroup>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />)
+                                return (
+                                    <FormField
+                                        key={cfield.id}
+                                        control={form.control}
+                                        name={cfield.name}
+                                        render={({ field }) => (
+                                            <FormItem className="space-y-3">
+                                                <FormLabel>{cfield.name}</FormLabel>
+                                                <FormControl>
+                                                    <RadioGroup
+                                                        onValueChange={field.onChange}
+                                                        defaultValue={cfield.value}
+                                                        className="flex flex-col space-y-1"
+                                                    >
+                                                        {cfield.options.map((option: any) => (
+                                                            <FormItem key={option.value} className="flex items-center space-x-3 space-y-0">
+                                                                <FormControl>
+                                                                    <RadioGroupItem value={option.value} />
+                                                                </FormControl>
+                                                                <FormLabel className="font-normal">
+                                                                    {option.label}
+                                                                </FormLabel>
+                                                            </FormItem>
+                                                        ))}
+                                                    </RadioGroup>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                );
                             }
                             if (cfield.fieldType === "IMAGE") {
                                 return (
@@ -289,7 +296,55 @@ export const SubmitLeadModal = () => {
                                     </FileUploader>
                                 )
                             }
+                            if (cfield.fieldType === "DATE") {
+                                return (
+                                    <FormField
+                                        key={cfield.id}
+                                        control={form.control}
+                                        name={cfield.name}
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-col">
+                                                <FormLabel>{cfield.name}</FormLabel>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant={"outline"}
+                                                                className={cn(
+                                                                    "pl-3 text-left font-normal",
+                                                                    !field.value && "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {field.value ? (
+                                                                    format(field.value, "PPP")
+                                                                ) : (
+                                                                    <span>Pick a date</span>
+                                                                )}
+                                                                <CalendarDaysIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={field.value}
+                                                            onSelect={field.onChange}
+                                                            disabled={(date) =>
+                                                                date > new Date() || date < new Date("1900-01-01")
+                                                            }
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )
+                            }
                         })}
+
+
                         <Button type="submit" className="mt-6">Submit Lead</Button>
                     </form>
                 </Form>

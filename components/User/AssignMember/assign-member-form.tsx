@@ -56,7 +56,6 @@ export const AssignMember = () => {
     })
 
     const onSubmit = async (data: z.infer<typeof createCompanyMemberSchema>) => {
-        console.log(data)
         const { error, data: newResData } = await createUser({
             variables: {
                 name: data.name,

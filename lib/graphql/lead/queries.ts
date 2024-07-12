@@ -17,9 +17,9 @@ query GetCompanyLeads($companyId: String!) {
       callStatus
       paymentStatus
 
-      LeadStatus {
-        description
-        assignedTo {
+      LeadMember {
+          id
+        Member {
             name
         }
       }
@@ -44,10 +44,9 @@ query getAssignedLeads($userId: String!) {
       vehicleModel
       callStatus
       paymentStatus
-      
-      LeadStatus {
-        description
-        assignedTo {
+
+      LeadMember {
+        Member { 
             name
         }
       }

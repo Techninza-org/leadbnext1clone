@@ -23,6 +23,9 @@ export const AssignedLeadTable = () => {
         refetchAfterMutations: [
             {
                 mutation: leadMutation.SUBMIT_LEAD
+            },
+            {
+                mutation: leadMutation.SUBMIT_BID_MUTATION
             }
         ]
     });
