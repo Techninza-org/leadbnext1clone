@@ -112,7 +112,6 @@ export const SubmitLeadModal = () => {
                     return field;
                 });
 
-                console.log(formatFormData((formDataWithUrls as CallData[]), data))
                 // Proceed with GraphQL mutation
                 const { data: resData, loading, error } = await submitFeedback({
                     variables: {
@@ -165,7 +164,7 @@ export const SubmitLeadModal = () => {
                     variant: "default",
                     title: "Lead Submitted Successfully!",
                 });
-                // handleClose();
+                handleClose();
             }
         } catch (error) {
             console.error("Error during submission:", error);
