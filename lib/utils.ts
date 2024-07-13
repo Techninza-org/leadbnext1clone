@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-interface CallData {
+export interface CallData {
   [key: string]: string;
 }
 
@@ -16,6 +16,14 @@ export const formatFormData = (backendData: CallData[], formData: CallData) => {
     // Adjust value or fieldType based on field type
     if (field.fieldType === "RADIO") {
       value = value === "yes" ? "Yes" : "No"; // Assuming "yes" or "no" values
+    }
+
+    if (field.fieldType === "IMAGE") {
+      return {
+        name: field.name,
+        fieldType: field.fieldType,
+        value: field.value
+      };
     }
 
     return {

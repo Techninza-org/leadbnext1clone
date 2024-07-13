@@ -8,6 +8,10 @@ const nextConfig = {
                 hostname: 'localhost',
                 port: '8080',
             },
+            {
+                protocol: 'http',
+                hostname: '103.189.173.0',
+            },
         ],
     },
 };

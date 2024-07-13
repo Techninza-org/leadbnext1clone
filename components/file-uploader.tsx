@@ -52,6 +52,7 @@ type FileUploaderProps = {
     onValueChange: (value: File[] | null) => void;
     dropzoneOptions: DropzoneOptions;
     orientation?: "horizontal" | "vertical";
+    fieldName: string;
 };
 
 export const FileUploader = forwardRef<
@@ -68,6 +69,7 @@ export const FileUploader = forwardRef<
             orientation = "vertical",
             children,
             dir,
+            fieldName,
             ...props
         },
         ref
@@ -175,7 +177,8 @@ export const FileUploader = forwardRef<
 
                 files.forEach((file) => {
                     if (newValues.length < maxFiles) {
-                        newValues.push(file);
+                        const renamedFile = new File([file], `${fieldName}`, { type: file.type });
+                        newValues.push(renamedFile);
                     }
                 });
 

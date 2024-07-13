@@ -45,7 +45,7 @@ import { useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
-import { cn, formatFormData } from "@/lib/utils"
+import { CallData, cn, formatFormData } from "@/lib/utils"
 import { useModal } from "@/hooks/use-modal-store"
 import { DropzoneOptions } from "react-dropzone"
 import { useState } from "react"
@@ -84,12 +84,13 @@ export const SubmitLeadModal = () => {
     const { formState: { errors } } = form
 
     const onSubmit = async (data: any) => {
-        let url = "";
         try {
+            let uploadedFiles: any[] = [];
+
             if (files?.length) {
                 const formData = new FormData();
                 files.forEach((file: File) => {
-                    formData.append('files', file);
+                    formData.append(file.name, file); // Use the field name
                 });
 
                 const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/upload`, {
@@ -97,16 +98,29 @@ export const SubmitLeadModal = () => {
                     body: formData
                 });
 
-                const urls = await uploadRes.json();
+                const uploadData = await uploadRes.json();
+                uploadedFiles = uploadData.files; // Assuming the response contains an array of file objects with fieldname and url
 
+                // Map the uploaded files to the form data
+                const formDataWithUrls = fields?.subDeptFields.map((field: any) => {
+                    if (field.fieldType === 'IMAGE') {
+                        const uploadedFile = uploadedFiles?.find((file: any) => file.fieldname === field.name);
+                        if (uploadedFile) {
+                            return { ...field, value: uploadedFile.url };
+                        }
+                    }
+                    return field;
+                });
+
+                console.log(formatFormData((formDataWithUrls as CallData[]), data))
+                // Proceed with GraphQL mutation
                 const { data: resData, loading, error } = await submitFeedback({
                     variables: {
                         deptId: user?.deptId,
                         leadId: lead?.id || "",
                         callStatus: "SUCCESS",
                         paymentStatus: "PENDING",
-                        feedback: formatFormData(fields?.subDeptFields ?? [], data), // Pass URL if needed in feedback
-                        urls,
+                        feedback: formatFormData((formDataWithUrls as CallData[]), data),
                     },
                 });
 
@@ -151,7 +165,7 @@ export const SubmitLeadModal = () => {
                     variant: "default",
                     title: "Lead Submitted Successfully!",
                 });
-                handleClose();
+                // handleClose();
             }
         } catch (error) {
             console.error("Error during submission:", error);
@@ -161,7 +175,7 @@ export const SubmitLeadModal = () => {
                 variant: "destructive"
             });
         }
-    }
+    };
 
     const handleClose = () => {
         form.reset();
@@ -267,6 +281,7 @@ export const SubmitLeadModal = () => {
                                     <FileUploader
                                         key={cfield.id}
                                         value={files}
+                                        fieldName={cfield.name}
                                         onValueChange={setFiles}
                                         dropzoneOptions={dropzone}
                                     >

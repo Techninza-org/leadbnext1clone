@@ -72,3 +72,30 @@ export const CREATE_ROOT_USER_MUTATION = `
     }
   }
 `;
+
+export const CREATE_OR_UPDATE_MANAGER = `
+  mutation CreateOrUpdateManager(
+    $name: String!,
+    $email: String!,
+    $phone: String!,
+    $password: String!,
+    $memberType: String!,
+    $deptId: ID!,
+    $companyId: ID!
+  ) {
+    createOrUpdateManager(
+      name: $name,
+      email: $email,
+      phone: $phone,
+      password: $password,
+      memberType: $memberType,
+      deptId: $deptId,
+      companyId: $companyId
+    ) {
+      user {
+        id
+        name
+      }
+    }
+  }
+`;

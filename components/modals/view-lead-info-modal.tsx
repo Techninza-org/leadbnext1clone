@@ -68,16 +68,17 @@ export const ViewLeadInfoModal = () => {
                                             <Link
                                                 key={i}
                                                 target="_blank"
-                                                href={`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || "http://localhost:8080"}${url}`}
+                                                href={process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API ? `${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API}/assets${url}` : `http://localhost:8080${url}`}
+
                                             >
                                                 <Image
                                                     key={i}
-                                                    src={`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || "http://localhost:8080"}${url}`}
+                                                    src={process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API ? `${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API}/assets${url}` : `http://localhost:8080${url}`}
                                                     alt="Feedback Image"
                                                     loading="lazy"
                                                     height={100}
                                                     width={100}
-                                                    className="rounded-md text-xs w-56 h-56"
+                                                    className="rounded-md text-xs w-56 h-56 object-cover"
                                                 />
                                             </Link>
                                         ))
