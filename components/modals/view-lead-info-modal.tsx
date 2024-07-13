@@ -12,6 +12,7 @@ import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
+import { ImageOffIcon } from "lucide-react";
 
 
 export const ViewLeadInfoModal = () => {
@@ -68,18 +69,20 @@ export const ViewLeadInfoModal = () => {
                                             <Link
                                                 key={i}
                                                 target="_blank"
-                                                href={process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API ? `${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API}/assets${url}` : `http://localhost:8080${url}`}
+                                                href={url || "#"}
 
                                             >
-                                                <Image
+                                               {url ?  <Image
                                                     key={i}
-                                                    src={process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API ? `${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API}/assets${url}` : `http://localhost:8080${url}`}
+                                                    src={url}
                                                     alt="Feedback Image"
                                                     loading="lazy"
                                                     height={100}
                                                     width={100}
                                                     className="rounded-md text-xs w-56 h-56 object-cover"
-                                                />
+                                                />: 
+                                                <ImageOffIcon className="w-10 h-10" />
+                                            }
                                             </Link>
                                         ))
                                     }
