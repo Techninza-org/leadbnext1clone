@@ -53,14 +53,31 @@ export const ViewLeadInfoModal = () => {
                                 </div>}
 
                                 {
-                                    feedback?.map((item) => (
-                                        <div key={item.id} className="flex justify-between items-center">
-                                            <div className="flex items-center">
-                                                <span className="text-sm font-semibold">{item.name}</span>
+                                    feedback?.map((item) => {
+                                        const isValidUrl = (url: string) => {
+                                            const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+                                                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name and extension
+                                                '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+                                                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                                                '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+                                                '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+                                            return !!pattern.test(url);
+                                        };
+                                        return (
+                                            <div key={item.id} className="flex justify-between items-center">
+                                                <div className="flex items-center">
+                                                    <span className="text-sm font-semibold">{item.name}</span>
+                                                </div>
+                                                {isValidUrl(item.value) ? (
+                                                    <Link href={item.value} target="_blank">
+                                                        <Image src={item.value} alt={item.name} height={100} width={100} className="h-16 w-16 object-cover" />
+                                                    </Link>
+                                                ) : (
+                                                    <span className="text-sm font-semibold capitalize">{item.value}</span>
+                                                )}
                                             </div>
-                                            <span className="text-sm font-semibold capitalize">{item.value}</span>
-                                        </div>
-                                    ))
+                                        )
+                                    })
                                 }
 
                                 <div className="grid grid-cols-3 mt-3 justify-between gap-3 ">
@@ -72,7 +89,7 @@ export const ViewLeadInfoModal = () => {
                                                 href={url || "#"}
 
                                             >
-                                               {url ?  <Image
+                                                {url ? <Image
                                                     key={i}
                                                     src={url}
                                                     alt="Feedback Image"
@@ -80,9 +97,9 @@ export const ViewLeadInfoModal = () => {
                                                     height={100}
                                                     width={100}
                                                     className="rounded-md text-xs w-56 h-56 object-cover"
-                                                />: 
-                                                <ImageOffIcon className="w-10 h-10" />
-                                            }
+                                                /> :
+                                                    <ImageOffIcon className="w-10 h-10" />
+                                                }
                                             </Link>
                                         ))
                                     }
