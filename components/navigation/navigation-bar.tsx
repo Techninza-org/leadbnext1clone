@@ -71,7 +71,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
                 </div>
                 <div
                     className={cn(
-                        "transition-all fixed w-full duration-300 ease-in-out pt-16 md:px-4",
+                        "transition-all w-full duration-300 ease-in-out pt-16 md:px-4",
                         {
                             'ml-64 md:ml-0 md:pl-[17rem]': !isNavCollapsed,
                         }
