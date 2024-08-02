@@ -11,18 +11,17 @@ export interface CallData {
 
 export const formatFormData = (backendData: CallData[], formData: CallData) => {
   return backendData.map(field => {
-    let value = formData[field.name]; // Get the value from formData based on field name
+    let value = formData[field.name];
 
-    // Adjust value or fieldType based on field type
     if (field.fieldType === "RADIO") {
-      value = value === "yes" ? "Yes" : "No"; // Assuming "yes" or "no" values
+      value = value === "yes" ? "Yes" : "No";
     }
 
     if (field.fieldType === "IMAGE") {
       return {
         name: field.name,
         fieldType: field.fieldType,
-        value: field.value
+        value: Array.isArray(field.value) ? field.value : [field.value]
       };
     }
 
@@ -33,6 +32,7 @@ export const formatFormData = (backendData: CallData[], formData: CallData) => {
     };
   });
 };
+
 
 export const downloadFile = (blobData: Blob, fileName: string) => {
   const url = window.URL.createObjectURL(blobData);

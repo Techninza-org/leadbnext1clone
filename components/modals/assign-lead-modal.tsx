@@ -40,6 +40,7 @@ import {
     MultiSelectorList,
     MultiSelectorTrigger,
 } from "@/components/multiselect-input";
+import { useCompany } from "../providers/CompanyProvider"
 
 
 export const AssignLeadModal = () => {
@@ -53,23 +54,12 @@ export const AssignLeadModal = () => {
 
     const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
 
-    const { loading, data: deptMembers } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
-        skip: [ROOT, MANAGER].includes(userInfo?.role?.name || ""),
-        variables: {
-            deptId: userInfo?.deptId,
-            companyId: userInfo?.companyId,
-        },
-        refetchAfterMutations: leadAssignTo,
-        onSuccess: (data) => {
-            setCompanyDeptMembers(deptMembers?.getCompanyDeptMembers)
-
-        }
-    });
-
+    const { companyDeptMembers: deptMembers } = useCompany()
+    
     const isModalOpen = isOpen && type === "assignLead";
-
+    
     const { toast } = useToast()
-
+    
     const form = useForm<z.infer<typeof leadAssignToSchema>>({
         resolver: zodResolver(leadAssignToSchema),
         defaultValues: {
@@ -77,12 +67,13 @@ export const AssignLeadModal = () => {
             leadIds: leadIds || [],
         }
     })
-
-    const isLoading = assignLoading || loading;
-
+    
+    const isLoading = assignLoading;
+    
+    if (!deptMembers) return null;
     const onSubmit = async (data: z.infer<typeof leadAssignToSchema>) => {
 
-        const isSomeTelecallerSalesPerson = deptMembers?.getCompanyDeptMembers?.filter((member: z.infer<typeof createCompanyMemberSchema>) => member?.role?.name.toLowerCase() === "telecaller" || member?.role?.name.toLowerCase().split(" ").join("") === "salesperson")
+        const isSomeTelecallerSalesPerson = deptMembers?.filter((member: z.infer<typeof createCompanyMemberSchema>) => member?.role?.name.toLowerCase() === "telecaller" || member?.role?.name.toLowerCase().split(" ").join("") === "salesperson")
 
         const isExist = isSomeTelecallerSalesPerson.filter((member: z.infer<typeof createCompanyMemberSchema>) => data.userIds.includes(member?.id || ""))
 
@@ -167,7 +158,7 @@ export const AssignLeadModal = () => {
                                         <MultiSelectorContent>
                                             <MultiSelectorList className="h-32 scrollbar-hide  overscroll-y-auto">
                                                 {
-                                                    deptMembers?.getCompanyDeptMembers?.map((member: z.infer<typeof createCompanyMemberSchema>) => (
+                                                    deptMembers?.map((member: z.infer<typeof createCompanyMemberSchema>) => (
                                                         <MultiSelectorItem
                                                             key={member?.id}
                                                             value={member?.id || ""}

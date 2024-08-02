@@ -53,6 +53,7 @@ type FileUploaderProps = {
     dropzoneOptions: DropzoneOptions;
     orientation?: "horizontal" | "vertical";
     fieldName: string;
+    imgLimit?: number;
 };
 
 export const FileUploader = forwardRef<
@@ -70,6 +71,7 @@ export const FileUploader = forwardRef<
             children,
             dir,
             fieldName,
+            imgLimit,
             ...props
         },
         ref
@@ -83,9 +85,9 @@ export const FileUploader = forwardRef<
             accept = {
                 "image/*": [".jpg", ".jpeg", ".png", ".gif"],
             },
-            maxFiles = 1,
+            maxFiles = imgLimit || 1,
             maxSize = 4 * 1024 * 1024,
-            multiple = true,
+            multiple = true, // Ensure multiple is set to true
         } = dropzoneOptions;
 
         const reSelectAll = maxFiles === 1 ? true : reSelect;
@@ -162,7 +164,7 @@ export const FileUploader = forwardRef<
                 if (!files) {
                     toast({
                         title: "Error",
-                        description: "file error , probably too big",
+                        description: "file error, probably too big",
                         variant: "destructive",
                         duration: 5000,
                     });
@@ -248,7 +250,7 @@ export const FileUploader = forwardRef<
                     tabIndex={0}
                     onKeyDownCapture={handleKeyDown}
                     className={cn(
-                        "grid w-full focus:outline-none overflow-hidden ",
+                        "grid w-full focus:outline-none overflow-hidden",
                         className,
                         {
                             "gap-2": value && value.length > 0,

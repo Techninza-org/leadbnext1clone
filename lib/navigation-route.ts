@@ -1,4 +1,4 @@
-import { FileTextIcon, Home } from "lucide-react";
+import { FileTextIcon, Home, UsersRoundIcon } from "lucide-react";
 
 export const ROOT_NAV_LINKS = [
     {
@@ -10,6 +10,11 @@ export const ROOT_NAV_LINKS = [
         title: "Leads",
         icon: FileTextIcon,
         href: "/leads",
+    },
+    {
+        title: "Members",
+        icon: UsersRoundIcon,
+        href: "/members",
     },
     // {
     //     title: "Assign Lead",

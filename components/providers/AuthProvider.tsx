@@ -73,6 +73,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const role = user?.role?.name?.toLowerCase()?.split(" ").join("");
 
     router.refresh();
+
     router.push([ROOT].includes(role) ? '/dashboard' : '/leads' )
   };
   const logout = () => {

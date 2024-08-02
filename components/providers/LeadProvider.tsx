@@ -4,13 +4,16 @@ import { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { APIError, useQuery } from 'graphql-hooks';
-import { useSetAtom } from 'jotai';
+import { useAtomValue, useSetAtom } from 'jotai';
 import { z } from 'zod';
 
 import { useToast } from '@/components/ui/use-toast';
 
 import { leadSchema } from '@/types/lead';
 import { leads } from '@/lib/atom/leadAtom';
+import { leadQueries } from '@/lib/graphql/lead/queries';
+import { userAtom } from '@/lib/atom/userAtom';
+import { leadMutation } from '@/lib/graphql/lead/mutation';
 
 interface LeadProviderType {
     handleCreateLead: ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => void;
@@ -19,8 +22,26 @@ interface LeadProviderType {
 const LeadContext = createContext<LeadProviderType | undefined>(undefined);
 
 export const LeadProvider = ({ children }: { children: ReactNode }) => {
+    const userInfo = useAtomValue(userAtom)
+
     const { toast } = useToast()
     const setLeads = useSetAtom(leads)
+
+    const { loading } = useQuery(leadQueries.GET_COMPANY_LEADS, {
+        variables: { companyId: userInfo?.companyId },
+        useCache: true,
+        onSuccess: ({ data }) => {
+            setLeads(data.getCompanyLeads)
+        },
+        refetchAfterMutations: [
+            {
+                mutation: leadMutation.LEAD_ASSIGN_TO,
+            },
+            {
+                mutation: leadMutation.CREATE_LEAD,
+            }
+        ]
+    });
 
     const handleCreateLead = async ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => {
 
@@ -33,11 +54,6 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             })
             return;
         }
-
-        // setLeads((prev) => {
-        //     if (!prev) return [lead]
-        //     return [...prev, lead]
-        // })
 
         setLeads([lead])
 

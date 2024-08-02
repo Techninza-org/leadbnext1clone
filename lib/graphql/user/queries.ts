@@ -4,6 +4,8 @@ const GET_COMPANY_DEPT_MEMBERS = `
     getCompanyDeptMembers(deptId: $deptId, companyId: $companyId) {
       id
       name
+      email
+      phone
       role { 
           name
       }

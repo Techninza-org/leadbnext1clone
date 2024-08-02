@@ -33,9 +33,8 @@ import { Separator } from "@/components/ui/separator"
 import { useToast } from "@/components/ui/use-toast"
 import { useModal } from "@/hooks/use-modal-store"
 import { useMutation, useQuery } from "graphql-hooks"
-import { userQueries } from "@/lib/graphql/user/queries"
-import { useAtom, useAtomValue } from "jotai"
-import { companyDeptMembersAtom, userAtom } from "@/lib/atom/userAtom"
+import { useAtomValue } from "jotai"
+import { userAtom } from "@/lib/atom/userAtom"
 import { leadBidSchema, leadBidsSchema } from "@/types/lead"
 import { Badge } from "../ui/badge"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
@@ -46,7 +45,6 @@ import { formatCurrencyForIndia } from "@/lib/utils"
 export const BidFormModal = () => {
 
     const userInfo = useAtomValue(userAtom)
-    const [, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom)
 
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { lead } = modalData;

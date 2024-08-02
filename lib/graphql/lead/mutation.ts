@@ -73,6 +73,7 @@ const SUBMIT_LEAD = `
     $paymentStatus: String!,
     $feedback: [FeedbackInput!]!
     $urls: [String]
+    $submitType: String
   ) {
     submitFeedback(
       deptId: $deptId,
@@ -81,6 +82,7 @@ const SUBMIT_LEAD = `
       paymentStatus: $paymentStatus,
       feedback: $feedback
       urls: $urls
+      submitType: $submitType
     ) {
       message
     }

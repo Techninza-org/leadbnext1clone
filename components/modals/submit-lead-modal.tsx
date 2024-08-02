@@ -59,6 +59,9 @@ export const SubmitLeadModal = () => {
     const { toast } = useToast()
 
     const [files, setFiles] = useState<File[] | null>([]);
+    const [fileStates, setFileStates] = useState<{ [key: string]: File[] | null }>({});
+
+    console.log(fileStates, "fileStates")
 
     const dropzone = {
         accept: {
@@ -77,9 +80,21 @@ export const SubmitLeadModal = () => {
 
     const [submitFeedback, { loading: feedBackLoading }] = useMutation(leadMutation.SUBMIT_LEAD);
 
-    const form = useForm<any>({
-        // resolver: zodResolver(submitFeedbackSchema),
-    })
+    const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
+        if (field.isRequired) {
+            acc[field.name] = { required: "Required" };
+        }
+        return acc;
+    }, {});
+
+    const form = useForm({
+        defaultValues: fields?.subDeptFields.reduce((acc: any, field: any) => {
+            acc[field.name] = "";
+            return acc;
+        }, {}),
+        mode: "onSubmit",
+        criteriaMode: "all",
+    });
 
     const { formState: { errors } } = form
 
@@ -87,11 +102,15 @@ export const SubmitLeadModal = () => {
         try {
             let uploadedFiles: any[] = [];
 
-            if (files?.length) {
+            if (Object.keys(fileStates)?.length) {
                 const formData = new FormData();
-                files.forEach((file: File) => {
-                    formData.append(file.name, file); // Use the field name
+
+                Object.entries(fileStates).forEach(([fieldName, files]) => {
+                    files?.forEach((file: File) => {
+                        formData.append(fieldName, file);
+                    });
                 });
+
 
                 const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/upload`, {
                     method: 'POST',
@@ -99,20 +118,19 @@ export const SubmitLeadModal = () => {
                 });
 
                 const uploadData = await uploadRes.json();
-                uploadedFiles = uploadData.files; // Assuming the response contains an array of file objects with fieldname and url
+                uploadedFiles = uploadData.files;
 
-                // Map the uploaded files to the form data
                 const formDataWithUrls = fields?.subDeptFields.map((field: any) => {
                     if (field.fieldType === 'IMAGE') {
-                        const uploadedFile = uploadedFiles?.find((file: any) => file.fieldname === field.name);
-                        if (uploadedFile) {
-                            return { ...field, value: uploadedFile.url };
+                        const uploadedFilesForField = uploadedFiles?.filter((file: any) => file.fieldname === field.name);
+                        if (uploadedFilesForField && uploadedFilesForField.length > 0) {
+                            const urls = uploadedFilesForField.map((file: any) => file.url);
+                            return { ...field, value: urls }; // Always return an array of URLs
                         }
                     }
                     return field;
                 });
 
-                // Proceed with GraphQL mutation
                 const { data: resData, loading, error } = await submitFeedback({
                     variables: {
                         deptId: user?.deptId,
@@ -120,6 +138,7 @@ export const SubmitLeadModal = () => {
                         callStatus: "SUCCESS",
                         paymentStatus: "PENDING",
                         feedback: formatFormData((formDataWithUrls as CallData[]), data),
+                        submitType: "updateLead",
                     },
                 });
 
@@ -180,6 +199,15 @@ export const SubmitLeadModal = () => {
         form.reset();
         onClose();
     }
+    const handleFileChange = (fieldName: string, files: File[] | null) => {
+        setFileStates((prevState) => ({
+            ...prevState,
+            [fieldName]: files,
+        }));
+    };
+
+    const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
+
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -192,20 +220,26 @@ export const SubmitLeadModal = () => {
 
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-                        {fields?.subDeptFields.map((cfield: any) => {
+                        {sortedFields?.map((cfield: any) => {
+                            //  const isRequired = cfield.isRequired;
+                            const isDisabled = cfield.isDisabled;
+                            const validationRules = validationSchema?.[cfield.name] || {};
+
                             if (cfield.fieldType === 'INPUT' || cfield.fieldType === 'TEXTAREA') {
                                 return (
                                     <FormField
                                         key={cfield.id}
                                         control={form.control}
                                         name={cfield.name}
+                                        rules={validationRules}
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel className=" font-semibold dark:text-secondary/70">{cfield.name}</FormLabel>
+                                                <FormLabel className="font-semibold text-primary dark:text-secondary/70">{cfield.name}</FormLabel>
                                                 <FormControl>
                                                     <Input
                                                         className="bg-zinc-100/50 placeholder:capitalize border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
                                                         placeholder={cfield.name}
+                                                        disabled={isDisabled}
                                                         {...field} />
                                                 </FormControl>
                                                 <FormMessage />
@@ -220,9 +254,10 @@ export const SubmitLeadModal = () => {
                                         key={cfield.id}
                                         control={form.control}
                                         name={cfield.name}
+                                        rules={validationRules}
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>{cfield.name}</FormLabel>
+                                                <FormLabel className="text-primary">{cfield.name}</FormLabel>
                                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
@@ -237,6 +272,7 @@ export const SubmitLeadModal = () => {
                                                         ))}
                                                     </SelectContent>
                                                 </Select>
+                                                <FormMessage />
                                             </FormItem>
                                         )}
                                     />
@@ -248,6 +284,7 @@ export const SubmitLeadModal = () => {
                                         key={cfield.id}
                                         control={form.control}
                                         name={cfield.name}
+                                        rules={validationRules}
                                         render={({ field }) => (
                                             <FormItem className="space-y-3">
                                                 <FormLabel>{cfield.name}</FormLabel>
@@ -276,46 +313,60 @@ export const SubmitLeadModal = () => {
                                 );
                             }
                             if (cfield.fieldType === "IMAGE") {
+                                const files = fileStates?.[cfield.name] || [];
                                 return (
-                                    <FileUploader
+                                    <FormField
                                         key={cfield.id}
-                                        value={files}
-                                        fieldName={cfield.name}
-                                        onValueChange={setFiles}
-                                        dropzoneOptions={dropzone}
-                                    >
-                                        <FileInput>
-                                            <div className="flex items-center justify-center h-32 border bg-background rounded-md">
-                                                <p className="text-gray-400">Drop files here</p>
-                                            </div>
-                                        </FileInput>
-                                        <FileUploaderContent className="flex items-center flex-row gap-2">
-                                            {files?.map((file, i) => (
-                                                <FileUploaderItem
-                                                    key={i}
-                                                    index={i}
-                                                    className="size-20 p-0 rounded-md overflow-hidden"
-                                                    aria-roledescription={`file ${i + 1} containing ${file.name}`}
+                                        control={form.control}
+                                        name={cfield.name}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>{field.name}</FormLabel>
+                                                <FileUploader
+                                                    key={cfield.id}
+                                                    value={files}
+                                                    fieldName={field.name}
+                                                    onValueChange={(files) => handleFileChange(field.name, files)}
+                                                    dropzoneOptions={dropzone}
+                                                    imgLimit={cfield?.imgLimit}
                                                 >
-                                                    <Image
-                                                        src={URL.createObjectURL(file)}
-                                                        alt={file.name}
-                                                        height={80}
-                                                        width={80}
-                                                        className="size-20 p-0"
-                                                    />
-                                                </FileUploaderItem>
-                                            ))}
-                                        </FileUploaderContent>
-                                    </FileUploader>
+                                                    <FileInput>
+                                                        <div className="flex items-center justify-center h-32 border bg-background rounded-md">
+                                                            <p className="text-gray-400">Drop files here</p>
+                                                        </div>
+                                                    </FileInput>
+                                                    <FileUploaderContent className="flex items-center flex-row gap-2">
+                                                        {files?.map((file, i) => (
+                                                            <FileUploaderItem
+                                                                key={i}
+                                                                index={i}
+                                                                className="size-20 p-0 rounded-md overflow-hidden"
+                                                                aria-roledescription={`file ${i + 1} containing ${file.name}`}
+                                                            >
+                                                                <Image
+                                                                    src={URL.createObjectURL(file)}
+                                                                    alt={file.name}
+                                                                    height={80}
+                                                                    width={80}
+                                                                    className="size-20 p-0"
+                                                                />
+                                                            </FileUploaderItem>
+                                                        ))}
+                                                    </FileUploaderContent>
+                                                </FileUploader>
+                                            </FormItem>
+                                        )}
+                                    />
                                 )
                             }
+
                             if (cfield.fieldType === "DATE") {
                                 return (
                                     <FormField
                                         key={cfield.id}
                                         control={form.control}
                                         name={cfield.name}
+                                        rules={validationRules}
                                         render={({ field }) => (
                                             <FormItem className="flex flex-col">
                                                 <FormLabel>{cfield.name}</FormLabel>
@@ -359,7 +410,7 @@ export const SubmitLeadModal = () => {
                         })}
 
 
-                        <Button type="submit" className="mt-6">Submit Lead</Button>
+                        <Button type="submit" className="mt-6">Submit</Button>
                     </form>
                 </Form>
             </DialogContent>

@@ -20,8 +20,6 @@ export const ViewLeadInfoModal = () => {
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { lead } = modalData;
 
-    console.log(lead)
-
     const isModalOpen = isOpen && type === "viewLeadInfo";
 
     const handleClose = () => {
@@ -55,28 +53,31 @@ export const ViewLeadInfoModal = () => {
                                 {
                                     feedback?.map((item) => {
                                         const isValidUrl = (url: string) => {
-                                            const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+                                            const pattern = new RegExp('^(https?:\\/\\/)' + // protocol
                                                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name and extension
+                                                'localhost|' + // localhost
                                                 '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-                                                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+                                                '(\\:\\d+)?' + // port
+                                                '(\\/[-a-z\\d%_.~+\\s]*)*' + // path
                                                 '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
                                                 '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
                                             return !!pattern.test(url);
                                         };
+
                                         return (
                                             <div key={item.id} className="flex justify-between items-center">
                                                 <div className="flex items-center">
                                                     <span className="text-sm font-semibold">{item.name}</span>
                                                 </div>
                                                 {isValidUrl(item.value) ? (
-                                                    <Link href={item.value} target="_blank">
-                                                        <Image src={item.value} alt={item.name} height={100} width={100} className="h-16 w-16 object-cover" />
+                                                    <Link href={item.value} target="_blank" className="my-1">
+                                                        <Image src={item.value} alt={item.name} height={250} width={250} className="rounded-sm h-24 w-24 object-cover" />
                                                     </Link>
                                                 ) : (
                                                     <span className="text-sm font-semibold capitalize">{item.value}</span>
                                                 )}
                                             </div>
-                                        )
+                                        );
                                     })
                                 }
 
