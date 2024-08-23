@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useToast } from '@/components/ui/use-toast';
 
 import { leadSchema } from '@/types/lead';
-import { leads } from '@/lib/atom/leadAtom';
+import { leads, lastMonthLeads } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
 import { userAtom } from '@/lib/atom/userAtom';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
@@ -44,6 +44,14 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
         ]
     });
 
+    // const lastMonthLeads = useQuery(leadQueries.GET_LAST_MONTH_ALL_LEADS, {
+    //     variables: { companyId: userInfo?.companyId },
+    //     useCache: true,
+    //     onSuccess: ({ data }) => {
+    //         console.log('Last month leads:', data.getLastMonthLeads)
+    //         setLastMonthLeads(data.getLastMonthLeads)
+    //     }
+    // });
     const handleCreateLead = async ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => {
 
         if (error) {

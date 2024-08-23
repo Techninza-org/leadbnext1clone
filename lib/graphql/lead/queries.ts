@@ -83,9 +83,37 @@ const GET_LEAD_BIDS_QUERY = `
   }
 `;
 
+const GET_LAST_MONTH_ALL_LEADS = `
+query GetLastMonthAllLeads {
+    getLastMonthAllLeads {
+      id
+      name
+      email
+      phone
+      alternatePhone
+      address
+      city
+      state
+      zip
+      vehicleDate
+      vehicleName
+      vehicleModel
+      callStatus
+      paymentStatus
+
+      LeadMember {
+        Member { 
+            name
+        }
+      }
+    }
+  }
+`;
+
 
 export const leadQueries = {
   GET_COMPANY_LEADS,
   GET_ASSIGNED_LEADS,
-  GET_LEAD_BIDS_QUERY
+  GET_LEAD_BIDS_QUERY,
+  GET_LAST_MONTH_ALL_LEADS
 }
