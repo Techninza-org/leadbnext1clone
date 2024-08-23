@@ -18,7 +18,7 @@ export const createLeadSchema = z.object({
     zip: z.string().min(6, "Zip code must be at least 6 characters long."),
     rating: z.number().int().optional(),
 
-    vehicleDate: z.string(),
+    vehicleDate: z.date(),
     vehicleName: z.string(),
     vehicleModel: z.string(),
 

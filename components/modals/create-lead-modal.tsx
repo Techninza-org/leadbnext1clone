@@ -29,6 +29,12 @@ import { createLeadSchema } from '@/types/lead';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
 
 import { useLead } from '@/components/providers/LeadProvider';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { CalendarDaysIcon } from 'lucide-react';
+import { Calendar } from '../ui/calendar';
+import { useEffect } from 'react';
 
 export const CreateLeadModal = () => {
     const { handleCreateLead } = useLead()
@@ -46,7 +52,6 @@ export const CreateLeadModal = () => {
 
     const onSubmit = async (values: z.infer<typeof createLeadSchema>) => {
         try {
-
             const { data, error } = await createLead({
                 variables: {
                     companyId: userInfo?.companyId || "",
@@ -58,11 +63,12 @@ export const CreateLeadModal = () => {
                     city: values.city,
                     state: values.state,
                     zip: values.zip,
-                    vehicleDate: values.vehicleDate,
+                    vehicleDate: format(values.vehicleDate, 'dd-MM-yyyy'),
                     vehicleName: values.vehicleName,
                     vehicleModel: values.vehicleModel,
                 }
             });
+            
 
             handleCreateLead({ lead: data?.createLead, error });
 
@@ -78,7 +84,6 @@ export const CreateLeadModal = () => {
         form.reset();
         onClose();
     }
-
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -261,7 +266,7 @@ export const CreateLeadModal = () => {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
+                            {/* <FormField
                                 control={form.control}
                                 name="vehicleDate"
                                 render={({ field }) => (
@@ -277,7 +282,48 @@ export const CreateLeadModal = () => {
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            />
+                            /> */}
+                            <FormField
+                                        control={form.control}
+                                        name="vehicleDate"
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-col">
+                                                <FormLabel className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Issue Date</FormLabel>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant={"outline"}
+                                                                className={cn(
+                                                                    "pl-3 text-left font-normal",
+                                                                    !field.value && "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {field.value ? (
+                                                                    format(field.value, "PPP")
+                                                                ) : (
+                                                                    <span>Pick a date</span>
+                                                                )}
+                                                                <CalendarDaysIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={field.value as any}
+                                                            onSelect={field.onChange}
+                                                            disabled={(date) =>
+                                                                date < new Date("1900-01-01")
+                                                            }
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                         </div>
                         <Button type="submit" className="mt-6 w-full">Create</Button>
                     </form>
