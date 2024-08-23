@@ -124,10 +124,24 @@ const UPDATE_LEAD_FINANCE_STATUS = `
   }
 `;
 
+const APPROVED_LEAD_MUTATION = `
+  mutation appvedLead($leadId: ID!, $status: Boolean!) {
+    appvedLead(
+      leadId: $leadId
+      status: $status
+    ) {
+      id
+      name
+      isLeadApproved
+    }
+  }
+`;
+
 export const leadMutation = {
   CREATE_LEAD,
   LEAD_ASSIGN_TO,
   SUBMIT_LEAD,
   SUBMIT_BID_MUTATION,
-  UPDATE_LEAD_FINANCE_STATUS
+  UPDATE_LEAD_FINANCE_STATUS,
+  APPROVED_LEAD_MUTATION
 } 

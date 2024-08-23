@@ -3,7 +3,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { APIError, useQuery } from 'graphql-hooks';
+import { APIError, useMutation, useQuery } from 'graphql-hooks';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { z } from 'zod';
 
@@ -54,8 +54,6 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             })
             return;
         }
-
-        setLeads([lead])
 
         toast({
             title: 'Success',
