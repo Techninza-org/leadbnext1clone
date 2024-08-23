@@ -93,19 +93,20 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         cell: ({ row }) => {
             const rowData = row?.original;
             const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
+            const assigneeRole = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.role?.name).join(", ");
             const notAssigned = assigneeName === 'rounak' ? true : false
             // const isAssigned = [MANAGER, "company"].includes(assigneeName?.toLowerCase());
             
             return (
-                <ActionTooltip label={assigneeName || "Awaited"} align="center" side="top" key={"assignedMembers"}>
+                // <ActionTooltip label={assigneeName === 'rounak' ? 'Awaited' : assigneeName} align="center" side="top" key={"assignedMembers"}>
                     <Button
                         size={'sm'}
                         variant={notAssigned ? "destructive" : "secondary"}
                         className="text-xs p-2  capitalize"
                     >
-                        {notAssigned ? "Not Assigned" : "Assigned"}
+                        {notAssigned ? "Not Assigned" : assigneeName}
                     </Button>
-                </ActionTooltip>
+                // </ActionTooltip>
                 // <span>{assigneeName}</span>
             );
         }
