@@ -7,6 +7,9 @@ import { Button } from "../ui/button";
 import ActionTooltip from "../action-tooltip";
 import { MANAGER } from "@/lib/role-constant";
 import { useModal } from "@/hooks/use-modal-store";
+import { Switch } from "../ui/switch";
+import { useMutation } from "graphql-hooks";
+import { leadMutation } from "@/lib/graphql/lead/mutation";
 
 export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -107,17 +110,41 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                 </ActionTooltip>
             );
         }
+    },
+    {
+        header: 'Approved',
+        accessorKey: '',
+        cell: ({ row }) => {
+            const rowData = row?.original;
+
+            return (
+                <LeadApprovedAction lead={rowData} />
+            );
+        }
     }
 ];
 
 const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
-  const { onOpen } = useModal()
+    const { onOpen } = useModal()
 
     return (
         <div className="flex items-center">
             <span
-            className="text-blue-900 cursor-pointer hover:underline" 
-            onClick={() => onOpen("viewLeadInfo", { lead })}>{lead.name}</span>
+                className="text-blue-900 cursor-pointer hover:underline"
+                onClick={() => onOpen("viewLeadInfo", { lead })}>{lead.name}</span>
         </div>
+    )
+}
+
+const LeadApprovedAction = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+    const [appvedLead, { loading }] = useMutation(leadMutation.APPROVED_LEAD_MUTATION)
+
+    return (
+        <Switch id="isLeadApproved" checked={lead.isLeadApproved} onCheckedChange={async (value) => await appvedLead({
+            variables: {
+                leadId: lead.id,
+                status: value
+            }
+        })} />
     )
 }
