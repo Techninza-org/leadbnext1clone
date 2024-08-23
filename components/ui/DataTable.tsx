@@ -31,10 +31,13 @@ import { DataTableToolbar } from "./table-toolbar"
 import { Button } from "./button"
 import { PlusCircle, UploadIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-modal-store"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
 import csvtojson from 'csvtojson';
 import { useLead } from "../providers/LeadProvider"
+import { useMutation } from "graphql-hooks"
+import { leadMutation } from "@/lib/graphql/lead/mutation"
+import { format, parse } from "date-fns"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -57,7 +60,10 @@ export function DataTable<TData, TValue>({
   // Custom global filter
   const [filter, setFilter] = React.useState<string>("")
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { handleCreateLead } = useLead()
+  const { handleCreateLead, handleCreateBulkLead } = useLead()
+  const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
+  const [userInfo] = useAtom(userAtom)
+
 
   const table = useReactTable({
     data,
@@ -97,8 +103,27 @@ export function DataTable<TData, TValue>({
             const jsonData = await csvtojson().fromString(fileContent);
             console.log('Parsed JSON Data:', jsonData);
             const results = await Promise.all(jsonData.map(async (lead) => {
-                const res = handleCreateLead(lead);
-                return res;
+              const vehicleDate = parse(lead.vehicleDate, 'dd-MM-yyyy', new Date());
+              const formattedVehicleDate = format(vehicleDate, 'dd-MM-yyyy');
+              const { data, error } = await createLead({
+                variables: {
+                    companyId: userInfo?.companyId || "",
+                    name: lead.name,
+                    email: lead.email,
+                    phone: lead.phone,
+                    // alternatePhone: lead.alternatePhone,
+                    address: lead.address,
+                    city: lead.city,
+                    state: lead.state,
+                    zip: lead.zip,
+                    vehicleDate: formattedVehicleDate,
+                    vehicleName: lead.vehicleName,
+                    vehicleModel: lead.vehicleModel,
+                }
+            });
+            
+            handleCreateBulkLead({ lead: data?.createLead, error });
+
             }));
 
             console.log('All responses:', results);

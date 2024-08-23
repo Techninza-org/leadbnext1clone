@@ -17,6 +17,7 @@ import { leadMutation } from '@/lib/graphql/lead/mutation';
 
 interface LeadProviderType {
     handleCreateLead: ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => void;
+    handleCreateBulkLead: ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => void;
 }
 
 const LeadContext = createContext<LeadProviderType | undefined>(undefined);
@@ -63,9 +64,23 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             variant: "default",
         })
     }
+    const handleCreateBulkLead = async ({ lead, error }: { lead: any, error?: APIError<object> | undefined }) => {
+
+        if (error) {
+            const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ")
+            toast({
+                title: 'Error',
+                description: message || "Something went wrong",
+                variant: "destructive",
+            })
+            return;
+        }
+
+        console.log('Lead created:', lead);
+    }
 
     return (
-        <LeadContext.Provider value={{ handleCreateLead }}>
+        <LeadContext.Provider value={{ handleCreateLead, handleCreateBulkLead }}>
             {children}
         </LeadContext.Provider>
     );
