@@ -11,14 +11,14 @@ import {
 export default function AssignMemberPage() {
   return (
     <div className="space-y-4">
-      <Card className="bg-inherit mx-auto">
+      {/* <Card className="bg-inherit mx-auto">
         <CardHeader>
           <CardTitle className="font-bold">Assign Member!</CardTitle>
         </CardHeader>
         <CardContent>
           <AssignMember />
         </CardContent>
-      </Card>
+      </Card> */}
       <Card className="bg-inherit mx-auto">
         <CardHeader>
           <CardTitle className="font-bold">Update Manager!</CardTitle>

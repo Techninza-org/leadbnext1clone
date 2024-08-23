@@ -32,6 +32,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "cookies-next": "^4.2.1",
+    "csvtojson": "^2.0.10",
     "date-fns": "^3.6.0",
     "graphql-hooks": "^8.0.1",
     "graphql-hooks-memcache": "^3.2.0",
@@ -48,6 +49,7 @@
     "recharts": "^2.12.7",
     "tailwind-merge": "^2.3.0",
     "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {

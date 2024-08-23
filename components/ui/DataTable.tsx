@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import XLSX from "xlsx"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -28,10 +29,15 @@ import {
 import { DataTablePagination } from "./table-pagination"
 import { DataTableToolbar } from "./table-toolbar"
 import { Button } from "./button"
-import { PlusCircle } from "lucide-react"
+import { PlusCircle, UploadIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-modal-store"
-import { useAtomValue } from "jotai"
+import { useAtom, useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
+import csvtojson from 'csvtojson';
+import { useLead } from "../providers/LeadProvider"
+import { useMutation } from "graphql-hooks"
+import { leadMutation } from "@/lib/graphql/lead/mutation"
+import { format, parse } from "date-fns"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -53,6 +59,11 @@ export function DataTable<TData, TValue>({
 
   // Custom global filter
   const [filter, setFilter] = React.useState<string>("")
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const { handleCreateLead, handleCreateBulkLead } = useLead()
+  const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
+  const [userInfo] = useAtom(userAtom)
+
 
   const table = useReactTable({
     data,
@@ -84,6 +95,48 @@ export function DataTable<TData, TValue>({
 
   const userRole = useAtomValue(userAtom)?.role?.name?.toLowerCase()
 
+  const handleFileChange = async (event: { target: { files: any[] } }) => {
+    const file = event.target.files[0];
+    if (file) {
+      try {
+        const fileContent = await file.text();
+            const jsonData = await csvtojson().fromString(fileContent);
+            console.log('Parsed JSON Data:', jsonData);
+            const results = await Promise.all(jsonData.map(async (lead) => {
+              const vehicleDate = parse(lead.vehicleDate, 'dd-MM-yyyy', new Date());
+              const formattedVehicleDate = format(vehicleDate, 'dd-MM-yyyy');
+              const { data, error } = await createLead({
+                variables: {
+                    companyId: userInfo?.companyId || "",
+                    name: lead.name,
+                    email: lead.email,
+                    phone: lead.phone,
+                    // alternatePhone: lead.alternatePhone,
+                    address: lead.address,
+                    city: lead.city,
+                    state: lead.state,
+                    zip: lead.zip,
+                    vehicleDate: formattedVehicleDate,
+                    vehicleName: lead.vehicleName,
+                    vehicleModel: lead.vehicleModel,
+                }
+            });
+            
+            handleCreateBulkLead({ lead: data?.createLead, error });
+
+            }));
+
+            console.log('All responses:', results);
+      } catch (error) {
+        console.error('Error parsing CSV:', error);
+      }
+    }
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
@@ -97,11 +150,33 @@ export function DataTable<TData, TValue>({
                 size={"sm"}
                 className="items-center gap-1"
                 disabled={!selectedRows.length}
-                >
+              >
                 Assign Lead
               </Button>
             )
           }
+          <div>
+            <input
+              type="file"
+              accept=".csv"
+              className="hidden"
+              ref={fileInputRef}
+              id="csv-upload"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileChange({ target: { files: Array.from(event.target.files || []) } })}
+            />
+            <label htmlFor="csv-upload">
+              <Button
+                variant="default"
+                color="primary"
+                size={"sm"}
+                className="items-center gap-1"
+                onClick={handleButtonClick}
+              >
+                <UploadIcon size={15} /> <span>Upload Leads</span>
+              </Button>
+            </label>
+
+          </div>
           <Button
             onClick={() => onOpen("addLead")}
             variant={'default'}

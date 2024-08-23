@@ -51,6 +51,20 @@ export const MemberColDefs: ColumnDef<z.infer<typeof createCompanyMemberSchema>>
         }
     },
     {
+        header: 'Role',
+        accessorKey: 'role',
+        cell: ({ row }) => {
+            const role = row.getValue("role") as { name: string };
+            const roleName = role ? role.name : '';
+            return (
+                <div className="flex items-center">
+                    <span>{roleName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
         header: 'Phone',
         accessorKey: 'phone',
         cell: ({ row }) => {

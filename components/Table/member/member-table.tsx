@@ -30,6 +30,7 @@ import { DataTableToolbar } from "@/components/ui/table-toolbar"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
+import { useModal } from "@/hooks/use-modal-store"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -51,6 +52,7 @@ export function MemberDataTable<TData, TValue>({
 
     // Custom global filter
     const [filter, setFilter] = React.useState<string>("")
+    const { onOpen } = useModal()
 
     const table = useReactTable({
         data,
@@ -90,14 +92,15 @@ export function MemberDataTable<TData, TValue>({
                             <span>Manage Member</span>
                         </Button>
                     </Link>
-                    <Link href="/dashboard">
+                    {/* <Link> */}
                         <Button
+                            onClick={() => onOpen("addMember")}
                             variant={'default'}
                             size={"sm"}
                             className="items-center gap-1">
                             <PlusCircle size={15} /> <span>Add New Member</span>
                         </Button>
-                    </Link>
+                    {/* </Link> */}
                 </div>
             </div>
             <div className="rounded-md border">
