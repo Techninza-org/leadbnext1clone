@@ -39,7 +39,7 @@ export const EnquiryDetailsModal = () => {
             nextFollowUpDate: "2022-10-10"
         }
     });
-    console.log("data", data);
+    // console.log("data", data);
     
 
     return (

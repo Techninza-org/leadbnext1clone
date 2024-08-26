@@ -44,14 +44,6 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
         ]
     });
 
-    // const lastMonthLeads = useQuery(leadQueries.GET_LAST_MONTH_ALL_LEADS, {
-    //     variables: { companyId: userInfo?.companyId },
-    //     useCache: true,
-    //     onSuccess: ({ data }) => {
-    //         console.log('Last month leads:', data.getLastMonthLeads)
-    //         setLastMonthLeads(data.getLastMonthLeads)
-    //     }
-    // });
     const handleCreateLead = async ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => {
 
         if (error) {

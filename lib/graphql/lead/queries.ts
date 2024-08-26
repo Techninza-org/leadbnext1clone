@@ -121,6 +121,16 @@ const UPDATE_LEAD_FOLLOW_UP_DATE = `
   }
 `;
 
+const GET_LEADS_BY_DATE_RANGE = `
+  query GetLeadsByDateRange($companyId: ID!, $startDate: String!, $endDate: String!) {
+    getLeadsByDateRange(companyId: $companyId, startDate: $startDate, endDate: $endDate) {
+      callCount
+      totalPayCollectedCount
+      groupedCallPerday
+    }
+  }
+`;
+
 
 export const leadQueries = {
   GET_COMPANY_LEADS,
@@ -128,4 +138,5 @@ export const leadQueries = {
   GET_LEAD_BIDS_QUERY,
   GET_LAST_MONTH_ALL_LEADS,
   UPDATE_LEAD_FOLLOW_UP_DATE,
+  GET_LEADS_BY_DATE_RANGE
 }
