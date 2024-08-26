@@ -17,8 +17,6 @@ export default function DashboardPage() {
       <CardContent className="space-y-4" >
         <div className="lg:grid grid-cols-3 gap-3">
           <AnalysisCard />
-          <AnalysisCard />
-          <AnalysisCard />
         </div>
         <div className="lg:grid grid-cols-5 gap-3">
           <BarGraph className="col-span-3" />

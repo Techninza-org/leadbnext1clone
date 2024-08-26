@@ -39,7 +39,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 
-export function UserLeadTable<TData, TValue>({
+export function TelecallerLeadTable<TData, TValue>({
     columns,
     data,
 }: DataTableProps<TData, TValue>) {
@@ -78,23 +78,10 @@ export function UserLeadTable<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
-    const handleSortContacted = () => {
-        const currentSorting = table.getState().sorting;
-        const contactedSort = currentSorting.find(sort => sort.id === 'callStatus');
-
-        const newSorting: SortingState = contactedSort
-            ? [{ id: 'callStatus', desc: !contactedSort.desc }]
-            : [{ id: 'callStatus', desc: false }]; 
-        setSorting(newSorting);
-    }
-
     return (
         <div className="space-y-4">
             <div className="flex justify-between">
                 <DataTableToolbar table={table} setFilter={setFilter} />
-                <Button onClick={handleSortContacted}>
-                    Sort by Contacted
-                </Button>
             </div>
             <div className="rounded-md border">
                 <Table>

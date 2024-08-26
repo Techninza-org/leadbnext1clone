@@ -7,6 +7,8 @@ import { Badge, BadgeProps } from "@/components/ui/badge";
 import { TableColHeader } from "@/components/ui/table-header";
 import { statuses } from "@/lib/table/table-utils";
 import { AssignedLeadTableRowActions } from "./assigned-lead-row-action";
+import { useModal } from "@/hooks/use-modal-store";
+
 
 export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -32,7 +34,16 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         enableHiding: false,
     },
     {
-        header: 'Name',
+        header: 'Enquiry ID',
+        accessorKey: 'id',
+        cell: ({ row }) => {
+            return (
+                <EnquiryDetails lead={row.original} />
+            )
+        }
+    },
+    {
+        header: 'Customer Name',
         accessorKey: 'name',
         cell: ({ row }) => {
             return (
@@ -43,20 +54,20 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
 
         }
     },
-    {
-        header: 'Email',
-        accessorKey: 'email',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("email")}</span>
-                </div>
-            )
+    // {
+    //     header: 'Email',
+    //     accessorKey: 'email',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span>{row.getValue("email")}</span>
+    //             </div>
+    //         )
 
-        }
-    },
+    //     }
+    // },
     {
-        header: 'Phone',
+        header: 'Customer No.',
         accessorKey: 'phone',
         cell: ({ row }) => {
             return (
@@ -67,33 +78,34 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
 
         }
     },
-    {
-        header: 'Address',
-        accessorKey: 'address',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("address")}</span>
-                </div>
-            )
+    // {
+    //     header: 'Address',
+    //     accessorKey: 'address',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span>{row.getValue("address")}</span>
+    //             </div>
+    //         )
 
-        }
-    },
-    {
-        header: 'City',
-        accessorKey: 'city',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("city")}</span>
-                </div>
-            )
+    //     }
+    // },
+    // {
+    //     header: 'City',
+    //     accessorKey: 'city',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span>{row.getValue("city")}</span>
+    //             </div>
+    //         )
 
-        }
-    },
+    //     }
+    // },
     {
         header: "Call Status",
         accessorKey: 'callStatus',
+        enableSorting: true,
         cell: ({ row }) => {
 
             return (
@@ -109,7 +121,30 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         },
     },
     {
+        header: "Next Followup",
+        accessorKey: 'followUpDate',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("followUpDate")}</span>
+                </div>
+            )
+        },
+    },
+    {
         id: "actions",
         cell: ({ row }) => <AssignedLeadTableRowActions lead={row.original} />,
     },
 ];
+
+
+const EnquiryDetails = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+    const { onOpen } = useModal()
+      return (
+          <div className="flex items-center">
+              <span
+              className="text-blue-900 cursor-pointer hover:underline" 
+              onClick={() => onOpen("enquiryDetails", { lead })}>{lead.id}</span>
+          </div>
+      )
+  }

@@ -8,6 +8,7 @@ import { BidFormModal } from "../modals/bid-form-modal";
 import { FinancerBidApprovalModal } from "../modals/financer-bid-approval-modal";
 import { ViewLeadInfoModal } from "../modals/view-lead-info-modal";
 import { AssignMemberModal } from "../modals/assign-member-modal";
+import { EnquiryDetailsModal } from "../modals/enquiry-details-modal";
 
 
 export const ModalProvider = () => {
@@ -29,6 +30,7 @@ export const ModalProvider = () => {
       <BidFormModal/>
       <FinancerBidApprovalModal/>
       <ViewLeadInfoModal/>
+      <EnquiryDetailsModal />
 
     </>
   );
