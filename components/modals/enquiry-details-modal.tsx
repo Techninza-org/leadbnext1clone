@@ -13,19 +13,34 @@ import Image from "next/image";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import { ImageOffIcon } from "lucide-react";
+import { Calendar } from "../ui/calendar";
+import { useQuery } from "graphql-hooks";
+import { leadQueries } from "@/lib/graphql/lead/queries";
 
 
-export const ViewLeadInfoModal = () => {
+export const EnquiryDetailsModal = () => {
 
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { lead } = modalData;
-    
 
-    const isModalOpen = isOpen && type === "viewLeadInfo";
+    const isModalOpen = isOpen && type === "enquiryDetails";
 
     const handleClose = () => {
         onClose();
     }
+
+    function handleFollowUpDate(date: Date) {
+        console.log("date", date);
+    }
+
+    const { data } = useQuery(leadQueries.UPDATE_LEAD_FOLLOW_UP_DATE, {
+        variables: {
+            leadId: lead?.id,
+            nextFollowUpDate: "2022-10-10"
+        }
+    });
+    console.log("data", data);
+    
 
     return (
 
@@ -33,7 +48,7 @@ export const ViewLeadInfoModal = () => {
             <DialogContent className="text-black max-w-screen-md max-h-[80%]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Lead Details
+                        Enquiry Details
                     </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="max-h-full w-full rounded-md border">
@@ -107,8 +122,23 @@ export const ViewLeadInfoModal = () => {
                                     }
                                 </div>
                                 <Separator className="my-2" />
+                                <p>Enquiry Id: {lead.id}</p>
                             </>
                         ))}
+                    </div>
+                    <div>
+                        <h4 className="font-bold">ID: <span className="font-normal">{lead?.id}</span></h4>
+                        <h4 className="font-bold">Customer Name: <span className="font-normal">{lead?.name}</span></h4>
+                        <h4 className="font-bold">Customer Address: <span className="font-normal">{lead?.address}</span></h4>
+                        
+                        <Calendar
+                            mode="single"
+                            onSelect={(date) => date && handleFollowUpDate(date)}
+                            disabled={(date) =>
+                                date < new Date()
+                            }
+                            initialFocus
+                        />
                     </div>
                 </ScrollArea>
             </DialogContent>

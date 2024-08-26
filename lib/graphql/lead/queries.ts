@@ -61,12 +61,14 @@ query getAssignedLeads($userId: String!) {
       vehicleModel
       callStatus
       paymentStatus
+      
 
       LeadMember {
         Member { 
             name
         }
       }
+      nextFollowUpDate
     }
   }
 `;
@@ -110,10 +112,20 @@ query GetLastMonthAllLeads {
   }
 `;
 
+const UPDATE_LEAD_FOLLOW_UP_DATE = `
+  query UpdateLeadFollowUpDate($leadId: String!, $nextFollowUpDate: String!) {
+    updateLeadFollowUpDate(leadId: $leadId, nextFollowUpDate: $nextFollowUpDate) {
+      id
+      nextFollowUpDate
+    }
+  }
+`;
+
 
 export const leadQueries = {
   GET_COMPANY_LEADS,
   GET_ASSIGNED_LEADS,
   GET_LEAD_BIDS_QUERY,
-  GET_LAST_MONTH_ALL_LEADS
+  GET_LAST_MONTH_ALL_LEADS,
+  UPDATE_LEAD_FOLLOW_UP_DATE,
 }
