@@ -8,18 +8,14 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress";
-import { leadQueries } from "@/lib/graphql/lead/queries";
-import { useQuery } from "graphql-hooks";
 
-export const AnalysisCard = () => {
-    const { data } = useQuery(leadQueries.GET_LAST_MONTH_ALL_LEADS);
-    const count = data?.getLastMonthAllLeads.length || 0;
-    
+export const AnalysisCard = ({title, data}: {title: string, data: any}) => {
+
     return (
         <Card x-chunk="dashboard-05-chunk-2">
             <CardHeader className="pb-2">
-                <CardDescription>Last Month Leads</CardDescription>
-                <CardTitle className="text-4xl">{count}</CardTitle>
+                <CardDescription>{title}</CardDescription>
+                <CardTitle className="text-4xl">{data}</CardTitle>
             </CardHeader>
             <CardContent>
                 {/* <div className="text-xs text-muted-foreground">
@@ -27,7 +23,7 @@ export const AnalysisCard = () => {
                 </div> */}
             </CardContent>
             <CardFooter>
-                <Progress value={12} aria-label="12% increase" />
+                <Progress value={data} aria-label="12% increase" />
             </CardFooter>
         </Card>
     )
