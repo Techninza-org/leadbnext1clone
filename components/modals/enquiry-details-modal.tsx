@@ -12,10 +12,18 @@ import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
-import { ImageOffIcon } from "lucide-react";
+import { CalendarDaysIcon, ImageOffIcon } from "lucide-react";
 import { Calendar } from "../ui/calendar";
 import { useQuery } from "graphql-hooks";
 import { leadQueries } from "@/lib/graphql/lead/queries";
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { cn } from "@/lib/utils";
+import { Button } from "../ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { format } from "date-fns";
 
 
 export const EnquiryDetailsModal = () => {
@@ -25,22 +33,25 @@ export const EnquiryDetailsModal = () => {
 
     const isModalOpen = isOpen && type === "enquiryDetails";
 
+    const FollowUpSchema = z.object({
+        followUpDate: z.date().optional()
+    })
+
+    const form = useForm<z.infer<typeof FollowUpSchema>>({
+        resolver: zodResolver(FollowUpSchema),
+    });
+
+    const onSubmit = async (values: z.infer<typeof FollowUpSchema>) => {
+        const val = form.getValues();
+        console.log(val, 'val');
+        
+        console.log(values, 'values');
+    }
+
     const handleClose = () => {
+        form.reset();
         onClose();
     }
-
-    function handleFollowUpDate(date: Date) {
-        console.log("date", date);
-    }
-
-    const { data } = useQuery(leadQueries.UPDATE_LEAD_FOLLOW_UP_DATE, {
-        variables: {
-            leadId: lead?.id,
-            nextFollowUpDate: "2022-10-10"
-        }
-    });
-    // console.log("data", data);
-    
 
     return (
 
@@ -126,19 +137,59 @@ export const EnquiryDetailsModal = () => {
                             </>
                         ))}
                     </div>
-                    <div>
+                    <div className="p-4 leading-10">
                         <h4 className="font-bold">ID: <span className="font-normal">{lead?.id}</span></h4>
                         <h4 className="font-bold">Customer Name: <span className="font-normal">{lead?.name}</span></h4>
                         <h4 className="font-bold">Customer Address: <span className="font-normal">{lead?.address}</span></h4>
-                        
-                        <Calendar
-                            mode="single"
-                            onSelect={(date) => date && handleFollowUpDate(date)}
-                            disabled={(date) =>
-                                date < new Date()
-                            }
-                            initialFocus
-                        />
+                        {lead?.followUpDate && <h4 className="font-bold">Next Follow Up Date: <span className="font-normal">{String(lead?.followUpDate)}</span></h4>}
+                        <div className="mt-4 w-1/3">
+                            <Form {...form}>
+                                <form onSubmit={form.handleSubmit(onSubmit)}>
+                                    <FormField
+                                        control={form.control}
+                                        name="followUpDate"
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-col">
+                                                <FormLabel className="capitalize  font-bold text-zinc-500 dark:text-secondary/70">Select Follow Up Date</FormLabel>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant={"outline"}
+                                                                className={cn(
+                                                                    "pl-3 text-left font-normal",
+                                                                    !field.value && "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {field.value ? (
+                                                                    format(field.value, "PPP")
+                                                                ) : (
+                                                                    <span>Pick Follow Up Date</span>
+                                                                )}
+                                                                <CalendarDaysIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={field.value as any}
+                                                            onSelect={field.onChange}
+                                                            disabled={(date) =>
+                                                                date < new Date()
+                                                            }
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                <Button type="submit" className="mt-6 w-full">Submit</Button>
+                                </form>
+                            </Form>
+                        </div>
                     </div>
                 </ScrollArea>
             </DialogContent>

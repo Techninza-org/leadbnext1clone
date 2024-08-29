@@ -29,7 +29,9 @@ export const leadSchema = createLeadSchema.extend({
     deptId: z.string(),
     description: z.string(),
     callStatus: z.string(),
+    followUpDate: z.date(),
     paymentStatus: z.string(),
+    createdAt: z.any(),
     LeadMember: z.array(z.object({
         Member: loggedUserSchema,
     })),

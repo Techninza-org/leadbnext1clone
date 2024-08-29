@@ -28,6 +28,7 @@ export async function middleware(request: NextRequest) {
 
   const adminPaths = [
     '/admin',
+    '/admin/dashboard',
     // Add more admin paths as needed
   ];
 
@@ -39,6 +40,7 @@ export async function middleware(request: NextRequest) {
   ];
 
   const managerPaths = [
+    '/dashboard',
     '/leads',
     // Add more paths for root and manager
   ];
@@ -75,7 +77,7 @@ export async function middleware(request: NextRequest) {
     }
   } else if (userRole === 'manager') {
     if (!managerPaths.some(path => pathname.startsWith(path))) {
-      return NextResponse.redirect(new URL('/leads', request.url));
+      return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   } else if (userRole) {
     if (!pathname.startsWith(`/${userRole}/leads`)) {

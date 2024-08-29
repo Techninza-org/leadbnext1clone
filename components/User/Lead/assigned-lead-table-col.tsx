@@ -8,6 +8,7 @@ import { TableColHeader } from "@/components/ui/table-header";
 import { statuses } from "@/lib/table/table-utils";
 import { AssignedLeadTableRowActions } from "./assigned-lead-row-action";
 import { useModal } from "@/hooks/use-modal-store";
+import { format } from "date-fns";
 
 
 export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
@@ -121,12 +122,12 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         },
     },
     {
-        header: "Next Followup",
-        accessorKey: 'followUpDate',
+        header: "Next Follow Up",
+        accessorKey: 'nextFollowUpDate',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("followUpDate")}</span>
+                    <span>{row.getValue("nextFollowUpDate")}</span>
                 </div>
             )
         },

@@ -69,6 +69,7 @@ query getAssignedLeads($userId: String!) {
         }
       }
       nextFollowUpDate
+      createdAt
     }
   }
 `;
@@ -126,6 +127,7 @@ const GET_LEADS_BY_DATE_RANGE = `
     getLeadsByDateRange(companyId: $companyId, startDate: $startDate, endDate: $endDate) {
       callCount
       totalPayCollectedCount
+      numberOfLeads
       groupedCallPerday
     }
   }
