@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useToast } from '@/components/ui/use-toast';
 
 import { leadSchema } from '@/types/lead';
-import { leads, lastMonthLeads } from '@/lib/atom/leadAtom';
+import { leads } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
 import { userAtom } from '@/lib/atom/userAtom';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
