@@ -1,7 +1,7 @@
-
 const GET_COMPANY_LEADS = `
 query GetCompanyLeads($companyId: String!) {
     getCompanyLeads(companyId: $companyId) {
+      lead {
       id
       name
       email
@@ -40,6 +40,15 @@ query GetCompanyLeads($companyId: String!) {
             value
         }
       }
+      }
+    groupedLeads{
+      formName
+      feedback{
+          name
+          fieldType
+          value
+      }
+  }
     }
   }
 `;
@@ -61,7 +70,23 @@ query getAssignedLeads($userId: String!) {
       vehicleModel
       callStatus
       paymentStatus
-      
+      LeadFeedback {
+        id
+        memberId
+        member {
+            name
+            role {
+                name
+            }
+        }
+        imageUrls
+        feedback {
+            id
+            name
+            fieldType
+            value
+        }
+      }
 
       LeadMember {
         Member { 
@@ -129,10 +154,35 @@ const GET_LEADS_BY_DATE_RANGE = `
       totalPayCollectedCount
       numberOfLeads
       groupedCallPerday
+      leadsWithFeedbackByRole
     }
   }
 `;
 
+const GET_TRANSFERED_LEADS = `
+  query GetTransferedLeads($userId: String!) {
+    getTransferedLeads(userId: $userId) {
+      id
+      name   
+      LeadTransferTo {
+           transferBy {
+              id
+              name
+              role{
+                  name
+              }
+           }
+           transferTo {
+              id
+              name
+              role{
+                  name
+              }
+           }
+        }
+    }
+  }
+`;
 
 export const leadQueries = {
   GET_COMPANY_LEADS,
@@ -140,5 +190,6 @@ export const leadQueries = {
   GET_LEAD_BIDS_QUERY,
   GET_LAST_MONTH_ALL_LEADS,
   UPDATE_LEAD_FOLLOW_UP_DATE,
-  GET_LEADS_BY_DATE_RANGE
-}
+  GET_LEADS_BY_DATE_RANGE,
+  GET_TRANSFERED_LEADS,
+};

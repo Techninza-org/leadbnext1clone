@@ -29,7 +29,7 @@ export const leadSchema = createLeadSchema.extend({
     deptId: z.string(),
     description: z.string(),
     callStatus: z.string(),
-    followUpDate: z.date(),
+    nextFollowUpDate: z.date(),
     paymentStatus: z.string(),
     createdAt: z.any(),
     LeadMember: z.array(z.object({
@@ -65,6 +65,7 @@ const FeedbackInputSchema = z.object({
 });
 
 export const SubmitFeedbackVariablesSchema = z.object({
+    nextFollowUpDate: z.date().optional(),
     deptId: z.string(),
     leadId: z.string(),
     callStatus: z.enum(['BUSY', 'PENDING', 'SUCCESS']),

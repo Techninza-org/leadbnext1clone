@@ -3,7 +3,7 @@ import { atom } from "jotai";
 import { createLeadSchema, leadSchema } from "@/types/lead";
 import { CompanyDeptFieldSchema} from "@/types/company";
 
-export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead" | "bidForm"  | "finacerBidApproval" | 'viewLeadInfo' | "addMember" | "enquiryDetails"
+export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead" | "bidForm"  | "finacerBidApproval" | 'viewLeadInfo' | "addMember" | "enquiryDetails" | "createDepartment";
 export interface ModalData {
     customerId?: string;
 

@@ -9,32 +9,22 @@ import { leadQueries } from "@/lib/graphql/lead/queries";
 import { AssignedLeadColDefs } from "./assigned-lead-table-col";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
 import { UserLeadTable } from "./user-lead-table";
+import { TransferedLeadColDefs } from "./transfered-leads-table-cols";
 
 export const TransferedLeadsTable = () => {
     const [userInfo] = useAtom(userAtom);
-    const [leadInfo, setAssigneLeads] = useAtom(assignedLeadsAtom)
-    const { loading } = useQuery(leadQueries.GET_ASSIGNED_LEADS, { //////////have to change to call api for transfered leads
-        variables: { userId: userInfo?.id },
-        useCache: true,
-        skip: !userInfo?.id,
-        onSuccess: ({ data }) => {
-            setAssigneLeads(data.getAssignedLeads)
-        },
-        refetchAfterMutations: [
-            {
-                mutation: leadMutation.SUBMIT_LEAD
-            },
-            {
-                mutation: leadMutation.SUBMIT_BID_MUTATION
-            }
-        ]
+    
+    const { data, loading} = useQuery(leadQueries.GET_TRANSFERED_LEADS, { 
+        variables: { userId: userInfo?.id }
     });
 
+    console.log(data?.getTransferedLeads[0]?.LeadTransferTo[0]?.transferBy?.name, "data transfered leads");
+    
     if (loading) return (
         <div>Loading...</div>
     )
 
     return (
-        <UserLeadTable columns={AssignedLeadColDefs} data={leadInfo || []} />
+        <UserLeadTable columns={TransferedLeadColDefs} data={data?.getTransferedLeads || []} />
     )
 }

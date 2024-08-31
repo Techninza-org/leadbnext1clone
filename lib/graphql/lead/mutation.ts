@@ -67,6 +67,7 @@ const LEAD_ASSIGN_TO = `
 
 const SUBMIT_LEAD = `
   mutation SubmitFeedback(
+    $nextFollowUpDate: String,
     $deptId: String!,
     $leadId: String!,
     $callStatus: String!,
@@ -76,6 +77,7 @@ const SUBMIT_LEAD = `
     $submitType: String
   ) {
     submitFeedback(
+      nextFollowUpDate: $nextFollowUpDate,
       deptId: $deptId,
       leadId: $leadId,
       callStatus: $callStatus,
@@ -124,10 +126,27 @@ const UPDATE_LEAD_FINANCE_STATUS = `
   }
 `;
 
+const TRANSFER_LEAD  = `
+mutation TransferLead(
+  $leadId: ID!,
+  $transferToId: ID!
+) {
+  leadTransferTo(
+      leadId: $leadId,
+      transferToId: $transferToId,
+  ) {
+      id
+      email
+      name
+  }
+}
+`
+
 export const leadMutation = {
   CREATE_LEAD,
   LEAD_ASSIGN_TO,
   SUBMIT_LEAD,
   SUBMIT_BID_MUTATION,
-  UPDATE_LEAD_FINANCE_STATUS
+  UPDATE_LEAD_FINANCE_STATUS,
+  TRANSFER_LEAD
 } 
