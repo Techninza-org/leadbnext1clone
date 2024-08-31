@@ -16,41 +16,57 @@ query GetCompanyLeads($companyId: String!) {
       vehicleModel
       callStatus
       paymentStatus
+  getCompanyLeads(companyId: $companyId) {
+            lead { 
+                 id
+            name
+            email
+            phone
+            alternatePhone
+            address
+            city
+            state
+            zip
+            vehicleDate
+            vehicleName
+            vehicleModel
+            callStatus
+            paymentStatus
+            isLeadApproved
 
-      LeadMember {
-          id
-        Member {
-            name
-        }
-      }
-      LeadFeedback {
-        id
-        memberId
-        member {
-            name
-            role {
-                name
+            LeadMember {
+                id
+                Member {
+                    name
+                }
             }
-        }
-        imageUrls
-        feedback {
-            id
-            name
-            fieldType
-            value
-        }
-      }
-      }
-    groupedLeads{
-      formName
-      feedback{
-          name
-          fieldType
-          value
-      }
-  }
+            LeadFeedback {
+                id
+                memberId
+                member {
+                    name
+                    role {
+                        name
+                    }
+                }
+                imageUrls
+                feedback {
+                    id
+                    name
+                    fieldType
+                    value
+                }
+            }
+	}
+            groupedLeads {
+                formName
+                feedback {
+                    name
+                    value
+                }
+            }
     }
-  }
+}
 `;
 
 const GET_ASSIGNED_LEADS = `

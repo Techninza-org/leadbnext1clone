@@ -32,6 +32,7 @@ export const leadSchema = createLeadSchema.extend({
     nextFollowUpDate: z.date(),
     paymentStatus: z.string(),
     createdAt: z.any(),
+    isLeadApproved: z.boolean(),
     LeadMember: z.array(z.object({
         Member: loggedUserSchema,
     })),
@@ -47,6 +48,19 @@ export const leadSchema = createLeadSchema.extend({
             value: z.string(),
         })),
     })),
+});
+
+export const groupedLeadSchema = z.object({
+    formName: z.string(),
+    feedback: z.array(z.object({
+        name: z.string(),
+        value: z.string(),
+    })),
+});
+
+export const companyLeadSchema = z.object({
+    lead: z.array(leadSchema),
+    groupedLeads: z.array(groupedLeadSchema),
 });
 
 export const leadAssignToSchema = z.object({

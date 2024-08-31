@@ -126,6 +126,19 @@ const UPDATE_LEAD_FINANCE_STATUS = `
   }
 `;
 
+const APPROVED_LEAD_MUTATION = `
+  mutation appvedLead($leadId: ID!, $status: Boolean!) {
+    appvedLead(
+      leadId: $leadId
+      status: $status
+    ) {
+      id
+      name
+      isLeadApproved
+    }
+  }
+`;
+
 const TRANSFER_LEAD  = `
 mutation TransferLead(
   $leadId: ID!,
@@ -148,5 +161,6 @@ export const leadMutation = {
   SUBMIT_LEAD,
   SUBMIT_BID_MUTATION,
   UPDATE_LEAD_FINANCE_STATUS,
+  APPROVED_LEAD_MUTATION,
   TRANSFER_LEAD
 } 

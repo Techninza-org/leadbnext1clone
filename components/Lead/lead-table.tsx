@@ -23,11 +23,15 @@ export const LeadTable = () => {
         console.log(leadInfo, 'infoo'); 
     }, [leadInfo])
 
-    const filteredLeads = selectedRole && selectedRole !== 'all'
-        ? leadInfo?.filter(lead =>
-            lead.LeadFeedback.some(feedback => feedback.member.role.name === selectedRole)
-        )
-        : leadInfo;
+    const groupedByFormName = leadInfo?.groupedLeads?.reduce((acc, current) => {
+        if (!acc[current.formName]) {
+            acc[current.formName] = [];
+        }
+        acc[current.formName].push(...current.feedback);
+        return acc;
+    }, {} as Record<string, { name: string; value: string }[]>);
+
+    const data2Display = selectedRole && selectedRole !== 'all' ? groupedByFormName?.[selectedRole] : leadInfo?.lead;
 
     return (
         <>
@@ -39,15 +43,19 @@ export const LeadTable = () => {
                     <SelectContent>
                         <SelectGroup>
                             <SelectItem value="all">All</SelectItem>
-                            <SelectItem value="Telecaller">Telecaller</SelectItem>
-                            <SelectItem value="Sales Person">Sales Person</SelectItem>
-                            <SelectItem value="Exchange Manager">Exchange Manager</SelectItem>
-                            <SelectItem value="Financer">Financer</SelectItem>
+                            {
+                                Object.keys(groupedByFormName || {}).map((formName) => (
+                                    <SelectItem key={formName} value={formName}>
+                                        {formName}
+                                    </SelectItem>
+                                ))
+                            }
                         </SelectGroup>
                     </SelectContent>
                 </Select>
             </div>
-            <DataTable columns={LeadColDefs} data={filteredLeads || []} />
+            {/* @ts-ignore */}
+            <DataTable columns={LeadColDefs} data={data2Display || []} />
         </>
     )
 }
