@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 
 import { DataTable } from "@/components/ui/DataTable"
@@ -19,6 +19,9 @@ import {
 export const LeadTable = () => {
     const [leadInfo] = useAtom(leads)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
+    useEffect(() => {
+        console.log(leadInfo, 'infoo'); 
+    }, [leadInfo])
 
     const groupedByFormName = leadInfo?.groupedLeads?.reduce((acc, current) => {
         if (!acc[current.formName]) {

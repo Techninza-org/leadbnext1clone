@@ -13,15 +13,15 @@ const DashboardCards = () => {
     const { data, loading, error } = useQuery(leadQueries.GET_LEADS_BY_DATE_RANGE, {
         variables: {
             companyId: companyId,
-            startDate: "05/08/2024",
-            endDate: "25/08/2024"
+            startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toLocaleDateString('en-GB'),
+            endDate: new Date().toLocaleDateString('en-GB')
           }
     })
   return (
     <div className="lg:grid grid-cols-3 gap-3">
-        <AnalysisCard title='Calls Made In Last Month' data={data?.getLeadsByDateRange.callCount} />
-        <AnalysisCard title='Total Payment Collected' data={data?.getLeadsByDateRange.totalPayCollectedCount} />
-        <AnalysisCard title='Calls Made In Last Month' data={data?.getLeadsByDateRange.callCount} />
+        <AnalysisCard title='Total Leads In Last 30 Days' data={data?.getLeadsByDateRange.numberOfLeads} />
+        <AnalysisCard title='Total Payment Collected In Last 30 Days' data={data?.getLeadsByDateRange.totalPayCollectedCount} />
+        <AnalysisCard title='Calls Made In Last 30 Days' data={data?.getLeadsByDateRange.callCount} />
     </div>
   )
 }

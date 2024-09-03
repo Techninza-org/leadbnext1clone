@@ -11,7 +11,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import { format } from "date-fns";
 
 
-export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
+export const TransferedLeadColDefs: ColumnDef<z.infer<any>>[] = [
     {
         id: "id",
         header: ({ table }) => (
@@ -39,7 +39,7 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: 'id',
         cell: ({ row }) => {
             return (
-                <EnquiryDetails lead={row.original} />
+                <span>{row.getValue("id")}</span>
             )
         }
     },
@@ -56,60 +56,25 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         }
     },
     {
-        header: 'Customer No.',
-        accessorKey: 'phone',
+        header: 'Transferred By',
+        accessorKey: 'transferBy',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("phone")}</span>
+                    <span>{row.original.LeadTransferTo[0].transferBy.name} - {row.original.LeadTransferTo[0].transferBy.role?.name}</span>
                 </div>
             )
-
         }
     },
     {
-        header: "Call Status",
-        accessorKey: 'callStatus',
-        enableSorting: true,
-        cell: ({ row }) => {
-
-            return (
-                <div className="flex text-xs items-center">
-                    <Badge
-                        // variant={callStatus.toLowerCase() as any}
-                        className="capitalize"
-                    >
-                        {row.getValue("callStatus")}
-                    </Badge>
-                </div>
-            )
-        },
-    },
-    {
-        header: "Next Follow Up",
-        accessorKey: 'nextFollowUpDate',
+        header: 'Transferred To',
+        accessorKey: 'transferTo',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("nextFollowUpDate")}</span>
+                    <span>{row.original.LeadTransferTo[0].transferTo.name} - {row.original.LeadTransferTo[0].transferTo.role?.name}</span>
                 </div>
             )
-        },
-    },
-    {
-        id: "actions",
-        cell: ({ row }) => <AssignedLeadTableRowActions lead={row.original} />,
-    },
+        }
+    }
 ];
-
-
-const EnquiryDetails = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
-    const { onOpen } = useModal()
-      return (
-          <div className="flex items-center">
-              <span
-              className="text-blue-900 cursor-pointer hover:underline" 
-              onClick={() => onOpen("enquiryDetails", { lead })}>{lead.id}</span>
-          </div>
-      )
-}

@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useToast } from '@/components/ui/use-toast';
 
 import { leadSchema } from '@/types/lead';
-import { leads, lastMonthLeads } from '@/lib/atom/leadAtom';
+import { leads } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
 import { userAtom } from '@/lib/atom/userAtom';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
@@ -24,6 +24,8 @@ const LeadContext = createContext<LeadProviderType | undefined>(undefined);
 
 export const LeadProvider = ({ children }: { children: ReactNode }) => {
     const userInfo = useAtomValue(userAtom)
+    console.log('userInfo:', userInfo);
+    
 
     const { toast } = useToast()
     const setLeads = useSetAtom(leads)
@@ -32,7 +34,9 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
         variables: { companyId: userInfo?.companyId },
         useCache: true,
         onSuccess: ({ data }) => {
-            setLeads(data.getCompanyLeads)
+            console.log(data.getCompanyLeads.lead, 'company leads');
+            
+            setLeads(data.getCompanyLeads.lead)
         },
         refetchAfterMutations: [
             {
