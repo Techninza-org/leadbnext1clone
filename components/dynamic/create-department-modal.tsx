@@ -33,7 +33,7 @@ const CreateDepartmentModal = () => {
     const isModalOpen = isOpen && type === "createDepartment";
 
     const DepartmentSchema = z.object({
-        formName: z.string().min(1, "Form name is required"),
+        // formName: z.string().min(1, "Form name is required"),
         deptName: z.string().min(1, "Department name is required"),
         order: z.any().optional(),
         deptFields: z.array(z.object({
@@ -78,8 +78,24 @@ const CreateDepartmentModal = () => {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="mt-4">
+                            <FormField
+                                control={form.control}
+                                name="deptName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Department Name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                placeholder="Department Name"
+                                                {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <div className=" grid grid-cols-2 gap-2">
-                                <FormField
+                                {/* <FormField
                                     control={form.control}
                                     name="formName"
                                     render={({ field }) => (
@@ -94,24 +110,9 @@ const CreateDepartmentModal = () => {
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="deptName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Department Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                    placeholder="Department Name"
-                                                    {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
+                                /> */}
+
+                                {/* <FormField
                                     control={form.control}
                                     name="order"
                                     render={({ field }) => (
@@ -126,7 +127,7 @@ const CreateDepartmentModal = () => {
                                             <FormMessage />
                                         </FormItem>
                                     )}
-                                />
+                                /> */}
                             </div>
                         </div>
 
