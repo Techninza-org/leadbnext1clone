@@ -3,13 +3,15 @@ import { atom } from "jotai";
 import { createLeadSchema, leadSchema } from "@/types/lead";
 import { CompanyDeptFieldSchema} from "@/types/company";
 
-export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead" | "bidForm"  | "finacerBidApproval" | 'viewLeadInfo' | "addMember" | "enquiryDetails" | "createDepartment";
+export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead" | "bidForm"  | "finacerBidApproval" | 'viewLeadInfo' | "addMember" | "enquiryDetails" | "updateDepartmentFields";
 export interface ModalData {
     customerId?: string;
 
     lead?: z.infer<typeof leadSchema>,
     leads?: z.infer<typeof createLeadSchema>[],
     fields?: z.infer<typeof CompanyDeptFieldSchema>
+    deptName?: string;
+    deptId?: string;
 
     apiUrl?: string;
     query?: Record<string, any>;

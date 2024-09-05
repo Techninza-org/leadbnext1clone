@@ -83,9 +83,4 @@ export const ADMIN_NAV_LINKS = [
         icon: Settings,
         href: "/admin/settings",
     },
-    {
-        title: "Create",
-        icon: Pencil,
-        href: "/admin/create",
-    },
 ]

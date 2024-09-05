@@ -9,7 +9,7 @@ import { FinancerBidApprovalModal } from "../modals/financer-bid-approval-modal"
 import { ViewLeadInfoModal } from "../modals/view-lead-info-modal";
 import { AssignMemberModal } from "../modals/assign-member-modal";
 import { EnquiryDetailsModal } from "../modals/enquiry-details-modal";
-import CreateDepartmentModal from "../dynamic/create-department-modal";
+import UpdateDepartmentFieldsModal from "../dynamic/create-department-modal";
 
 
 export const ModalProvider = () => {
@@ -32,7 +32,7 @@ export const ModalProvider = () => {
       <FinancerBidApprovalModal/>
       <ViewLeadInfoModal/>
       <EnquiryDetailsModal />
-      <CreateDepartmentModal />
+      <UpdateDepartmentFieldsModal />
 
     </>
   );

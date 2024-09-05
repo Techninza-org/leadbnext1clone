@@ -143,7 +143,7 @@ const LeadApprovedAction = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
     const [appvedLead, { loading }] = useMutation(leadMutation.APPROVED_LEAD_MUTATION)
 
     return (
-        <Switch id="isLeadApproved" checked={lead.isLeadApproved} onCheckedChange={async (value) => await appvedLead({
+        <Switch id="isLeadApproved" checked={lead.isLeadApproved} onCheckedChange={async (value: any) => await appvedLead({
             variables: {
                 leadId: lead.id,
                 status: value

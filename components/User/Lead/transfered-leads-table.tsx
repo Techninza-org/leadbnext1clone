@@ -18,8 +18,6 @@ export const TransferedLeadsTable = () => {
         variables: { userId: userInfo?.id }
     });
 
-    console.log(data?.getTransferedLeads[0]?.LeadTransferTo[0]?.transferBy?.name, "data transfered leads");
-    
     if (loading) return (
         <div>Loading...</div>
     )
