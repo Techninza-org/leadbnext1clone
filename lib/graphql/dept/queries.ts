@@ -18,16 +18,34 @@ const GET_COMPANY_DEPTS = `
       companyDeptForms {
         id
         name
-        subDeptFields {
-          name
-          fieldType
-        }
       }
     }
   }
 `;
 
+const GET_COMPANY_DEPT_FIELDS = `
+  query GetCompanyDeptFields($deptId: String!) {
+    getCompanyDeptFields(deptId: $deptId) {
+      id
+        name
+        subDeptFields { 
+          name
+          fieldType
+          options {
+              label
+              value
+          }
+          isDisabled
+          isRequired
+          imgLimit
+          order
+        }
+      }
+    }
+`;
+
 export const deptQueries = {
   GET_DEPT_FIELDS,
   GET_COMPANY_DEPTS,
-}
+  GET_COMPANY_DEPT_FIELDS,
+};

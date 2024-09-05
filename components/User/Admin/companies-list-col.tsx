@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Link from "next/link";
 
 
 export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
@@ -28,12 +29,14 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
     //     enableHiding: false,
     // },
     {
-        header: 'ID',
-        accessorKey: 'id',
+        header: 'Company ID',
         cell: ({ row }) => {
+            const id = row.original.companyId;
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("id")}</span>
+                    <Link href={`/admin/dept/${id}`} className="ml-2 text-blue-800">
+                        <span>{id}</span>
+                    </ Link >
                 </div>
             )
         }
@@ -42,6 +45,7 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
         header: 'Root User',
         accessorKey: 'name',
         cell: ({ row }) => {
+            console.log(row, 'name');
             return (
                 <div className="flex items-center">
                     <span>{row.getValue("name")}</span>
@@ -50,42 +54,42 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
 
         }
     },
-    {
-        header: 'Company Name',
-        accessorKey: 'name',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("name")}</span>
-                </div>
-            )
+    // {
+    //     header: 'Company Name',
+    //     accessorKey: 'name',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span>{row.getValue("name")}</span>
+    //             </div>
+    //         )
 
-        }
-    },
-    {
-        header: 'Contact',
-        accessorKey: 'phone',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("phone")}</span>
-                </div>
-            )
+    //     }
+    // },
+    // {
+    //     header: 'Contact',
+    //     accessorKey: 'phone',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 <span>{row.getValue("phone")}</span>
+    //             </div>
+    //         )
 
-        }
-    },
-    {
-        header: 'Address',
-        accessorKey: 'address',
-        cell: ({ row }) => {
-            return (
-                <HoverCardToolTip label="Details" >
-                    <p>Address: </p>
-                    <p>Email: </p>
-                </HoverCardToolTip>
-            )
-        }
-    },
+    //     }
+    // },
+    // {
+    //     header: 'Address',
+    //     accessorKey: 'address',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <HoverCardToolTip label="Details" >
+    //                 <p>Address: </p>
+    //                 <p>Email: </p>
+    //             </HoverCardToolTip>
+    //         )
+    //     }
+    // },
     {
         header: 'Plan',
         accessorKey: 'plan',

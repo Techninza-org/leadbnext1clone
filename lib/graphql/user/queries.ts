@@ -13,6 +13,16 @@ const GET_COMPANY_DEPT_MEMBERS = `
   }
 `;
 
+const GET_COMPANIES = `
+  query GetMembersByRole($role: String!) {
+    getMembersByRole(role: $role) {
+      name   
+      companyId
+    }
+  }
+`
+
 export const userQueries = {
-    GET_COMPANY_DEPT_MEMBERS
+    GET_COMPANY_DEPT_MEMBERS,
+    GET_COMPANIES
 }

@@ -24,16 +24,33 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { ArrowDown, ArrowUp, TrashIcon } from "lucide-react";
+import { useQuery } from "graphql-hooks";
+import { deptQueries } from "@/lib/graphql/dept/queries";
 
-const CreateDepartmentModal = () => {
-    const { isOpen, onClose, type } = useModal();
+const UpdateDepartmentFieldsModal = () => {
+    const [deptFields, setDeptFields] = React.useState([]);
+    const { isOpen, onClose, type, data: modalData } = useModal();
+
+    const {deptName, deptId} = modalData;
 
     const { toast } = useToast();
 
-    const isModalOpen = isOpen && type === "createDepartment";
+    const isModalOpen = isOpen && type === "updateDepartmentFields";
+
+    const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+        variables: {
+          deptId: deptId,
+        },
+        onSuccess: ({ data }) => {
+            console.log(data, 'fields data');
+            
+        //   setDeptFields(data?.getCompanyDepts[0]?.companyDeptForms)
+        },
+      })
 
     const DepartmentSchema = z.object({
-        formName: z.string().min(1, "Form name is required"),
+        // formName: z.string().min(1, "Form name is required"),
         deptName: z.string().min(1, "Department name is required"),
         order: z.any().optional(),
         deptFields: z.array(z.object({
@@ -67,71 +84,41 @@ const CreateDepartmentModal = () => {
         onClose();
     }
 
+    function decreaseOrder(){
+        console.log(form.getFieldState("order"));
+    }
+
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="text-black max-w-screen-md max-h-[80%]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        New Department
+                        {deptName}
                     </DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
-                        <div className="mt-4">
-                            <div className=" grid grid-cols-2 gap-2">
-                                <FormField
-                                    control={form.control}
-                                    name="formName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Form Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                    placeholder="Form Name"
-                                                    {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="deptName"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Department Name</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                    placeholder="Department Name"
-                                                    {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                <FormField
-                                    control={form.control}
-                                    name="order"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Order</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                    placeholder="Department Order"
-                                                    {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                        </div>
+                        {/* <div className="mt-4">
+                            <FormField
+                                control={form.control}
+                                name="deptName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Department Name</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                placeholder="Department Name"
+                                                {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div> */}
 
                         <div className="mt-4">
-                            <h3 className="text-xl font-semibold mb-4">Department Fields</h3>
+                            <h3 className="text-md font-semibold mb-4">Department Fields</h3>
                             {fields.map((field, index) => (
                                 <div key={field.id} className="mb-4 border p-4 rounded-md">
                                     <div className=" grid grid-cols-2 gap-2">
@@ -184,30 +171,30 @@ const CreateDepartmentModal = () => {
                                                 </FormItem>
                                             )}
                                         />
-                                        <FormField
-                                            control={form.control}
-                                            name={`deptFields.${index}.fieldOrder`}
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Field Order</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                            placeholder="Field Order"
-                                                            type="number"
-                                                            {...field} />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
+                                        {/* <FormField
+                                    control={form.control}
+                                    name={`deptFields.${index}.fieldOrder`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Field Order</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                    placeholder="Field Order"
+                                                    type="number"
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                /> */}
                                         <div>
                                             <FormField
                                                 control={form.control}
                                                 name={`deptFields.${index}.fieldRequired`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="mr-4">Field Required</FormLabel>
+                                                        <FormLabel className="mr-4">Required</FormLabel>
                                                         <FormControl>
                                                             <Checkbox
                                                                 {...field}
@@ -223,7 +210,7 @@ const CreateDepartmentModal = () => {
                                                 name={`deptFields.${index}.fieldDisabled`}
                                                 render={({ field }) => (
                                                     <FormItem>
-                                                        <FormLabel className="mr-4">Field Disabled</FormLabel>
+                                                        <FormLabel className="mr-4">Disabled</FormLabel>
                                                         <FormControl>
                                                             <Checkbox
                                                                 {...field}
@@ -237,7 +224,13 @@ const CreateDepartmentModal = () => {
                                             />
                                         </div>
                                     </div>
-                                    <Button type="button" onClick={() => remove(index)} className="mt-2 bg-red-500 text-white">Remove Field</Button>
+                                    <div className="flex justify-between">
+                                        <Button type="button" onClick={() => remove(index)} className="mt-4 bg-red-500 text-white"><TrashIcon size={15} /></Button>
+                                        <div className="flex gap-4">
+                                            <Button type="button" variant={"default"} onClick={() => decreaseOrder()} className="mt-4  text-white"><ArrowUp size={15} /></Button>
+                                            <Button type="button" variant={"default"} onClick={() => decreaseOrder()} className="mt-4  text-white"><ArrowDown size={15} /></Button>
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                             <Button type="button" onClick={() => append({ fieldName: '', fieldType: '', fieldOrder: fields.length + 1, fieldRequired: true, fieldDisabled: false })} className="mt-4 bg-blue-500 text-white">Add Field</Button>
@@ -254,4 +247,4 @@ const CreateDepartmentModal = () => {
     )
 }
 
-export default CreateDepartmentModal;
+export default UpdateDepartmentFieldsModal;
