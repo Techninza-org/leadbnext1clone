@@ -24,9 +24,6 @@ const LeadContext = createContext<LeadProviderType | undefined>(undefined);
 
 export const LeadProvider = ({ children }: { children: ReactNode }) => {
     const userInfo = useAtomValue(userAtom)
-    console.log('userInfo:', userInfo);
-    
-
     const { toast } = useToast()
     const setLeads = useSetAtom(leads)
 
@@ -34,8 +31,6 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
         variables: { companyId: userInfo?.companyId },
         useCache: true,
         onSuccess: ({ data }) => {
-            console.log(data.getCompanyLeads.lead, 'company leads');
-            
             setLeads(data.getCompanyLeads.lead)
         },
         refetchAfterMutations: [
