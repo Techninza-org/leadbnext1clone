@@ -26,7 +26,7 @@ import { Input } from "@/components/ui/input"
 import { useMutation } from "graphql-hooks"
 import { useAuth } from "@/components/providers/AuthProvider"
 
-import { LOGIN_USER } from "@/lib/graphql/user/mutations"
+import { GENRATE_OTP, LOGIN_USER } from "@/lib/graphql/user/mutations"
 
 
 export const LoginForm = () => {
@@ -34,6 +34,7 @@ export const LoginForm = () => {
     const { handleUserLogin } = useAuth()
 
     const [loginUser, { loading }] = useMutation(LOGIN_USER);
+    const [generateOTP, { loading: genratingOTP }] = useMutation(GENRATE_OTP);
 
     const form = useForm<z.infer<typeof loginViaPhoneFormSchema>>({
         resolver: zodResolver(loginViaPhoneFormSchema),
@@ -52,12 +53,25 @@ export const LoginForm = () => {
                 otp: data.otp,
             },
         })
-        handleUserLogin({ user: value?.loginUser?.user, error: error  })
+        handleUserLogin({ user: value?.loginUser?.user, error: error })
     }
 
-    const genrateOTP = () => {
+    const genrateOTP = async () => {
         const phoneValue = getValues('phone');
         if (phoneValue.length === 10) {
+            const { error } = await generateOTP({
+                variables: {
+                    phone: phoneValue
+                }
+            })
+            if (error) {
+                const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ")
+                setError('phone', {
+                    type: 'manual',
+                    message: message || "Something went wrong",
+                });
+                return;
+            }
             setIsOTPFormVisible(true);
         } else {
             setError('phone', {
@@ -88,7 +102,7 @@ export const LoginForm = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button type="button" onClick={() => genrateOTP()} className="mt-6 w-full">Send OTP</Button>
+                        <Button type="button" disabled={genratingOTP} onClick={() => genrateOTP()} className="mt-6 w-full">Send OTP</Button>
                     </div> : <OTPForm form={form} />}
                 </form>
             </Form>

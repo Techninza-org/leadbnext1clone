@@ -20,6 +20,6 @@ export const CompaniesListTable = () => {
     )
 
     return (
-        <RootTable columns={CompaniesListCol} data={data.getMembersByRole ?? []} />
+        <RootTable columns={CompaniesListCol} data={data?.getMembersByRole ?? []} />
     )
 }
