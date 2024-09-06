@@ -50,7 +50,6 @@ export function BarGraph({ className }: { className: string }) {
 
   const [userInfo] = useAtom(userAtom)
     const companyId = userInfo?.companyId
-    console.log(companyId, 'companyId');
     
     
     const { data, loading, error } = useQuery(leadQueries.GET_LEADS_BY_DATE_RANGE, {

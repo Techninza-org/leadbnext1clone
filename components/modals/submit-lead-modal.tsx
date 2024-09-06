@@ -61,7 +61,6 @@ export const SubmitLeadModal = () => {
     const [files, setFiles] = useState<File[] | null>([]);
     const [fileStates, setFileStates] = useState<{ [key: string]: File[] | null }>({});
 
-    console.log(fileStates, "fileStates")
 
     const dropzone = {
         accept: {

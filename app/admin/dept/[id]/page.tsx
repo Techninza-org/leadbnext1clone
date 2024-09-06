@@ -6,7 +6,6 @@ import CompanyDepartments from '@/components/User/Admin/company-departments';
 const page = () => {
     const params = useParams();
     const {id} = params;
-    console.log(id, 'params');
     
     return (
         <div>

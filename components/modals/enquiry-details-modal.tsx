@@ -47,7 +47,6 @@ export const EnquiryDetailsModal = () => {
     const { isOpen, onClose, type, data: modalData } = useModal();
 
     const { lead } = modalData;
-    console.log(lead, "leadv modal")
     const { companyDeptMembers } = useCompany()
     const [submitFeedback, { loading: feedBackLoading }] = useMutation(leadMutation.SUBMIT_LEAD);
     const [transferLead, { loading }] = useMutation(leadMutation.TRANSFER_LEAD);
@@ -64,7 +63,6 @@ export const EnquiryDetailsModal = () => {
         resolver: zodResolver(FollowUpSchema),
     });
 
-    console.log('companyDeptMembers', companyDeptMembers);
 
     const myrole = user?.role?.name;
     if(myrole === "Telecaller") {
@@ -116,7 +114,6 @@ export const EnquiryDetailsModal = () => {
     }
 
     async function handleTransferLead() {
-        console.log('selectedMember', selectedMember);
 
         const {data, error} = await transferLead({
             variables: {
@@ -124,7 +121,6 @@ export const EnquiryDetailsModal = () => {
                 transferToId: selectedMember,
             }
         });
-        console.log('data', data);
          
         if (error) {
             const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
@@ -244,7 +240,6 @@ export const EnquiryDetailsModal = () => {
 
                                 {
                                     feedback?.map((item) => {
-                                        console.log('item', item);
                                         const isValidUrl = (url: string) => {
                                             const pattern = new RegExp('^(https?:\\/\\/)' + // protocol
                                                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name and extension
