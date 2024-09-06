@@ -99,3 +99,11 @@ export const CREATE_OR_UPDATE_MANAGER = `
     }
   }
 `;
+
+export const GENRATE_OTP = `
+  mutation generateOTP($phone: String!) {
+    generateOTP(phone: $phone) {
+      otpExpiry
+    }
+  }
+`;
