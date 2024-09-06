@@ -45,7 +45,6 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
         header: 'Root User',
         accessorKey: 'name',
         cell: ({ row }) => {
-            console.log(row, 'name');
             return (
                 <div className="flex items-center">
                     <span>{row.getValue("name")}</span>

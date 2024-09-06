@@ -73,7 +73,6 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             return;
         }
 
-        console.log('Lead created:', lead);
     }
 
     return (
