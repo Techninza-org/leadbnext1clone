@@ -1,11 +1,10 @@
+import { ApprovedLeadTable } from "@/components/Lead/approved-lead-table";
 import {
     Card,
     CardContent,
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-  
-import { TransferedLeadsTable } from "@/components/User/Lead/transfered-leads-table";
   
   export default function TransferedLeadsPage() {
     return (
@@ -14,7 +13,7 @@ import { TransferedLeadsTable } from "@/components/User/Lead/transfered-leads-ta
           <CardTitle className="font-bold">Leads</CardTitle>
         </CardHeader>
         <CardContent>
-          <TransferedLeadsTable />
+          <ApprovedLeadTable />
         </CardContent>
       </Card>
     );
