@@ -23,6 +23,6 @@ export const SettingsTable = () => {
     )
 
     return (
-        <RootTable columns={SettingsCols} data={data?.getMembersByRole ?? []} />
+        <RootTable columns={SettingsCols} data={data?.getRootUsers ?? []} />
     )
 }
