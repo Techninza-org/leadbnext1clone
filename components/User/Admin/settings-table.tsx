@@ -7,15 +7,22 @@ import { leadMutation } from "@/lib/graphql/lead/mutation";
 import { RootTable } from "./root-table";
 import { CompaniesListCol } from "./companies-list-col";
 import { SettingsCols } from "./settings-cols";
+import { userQueries } from "@/lib/graphql/user/queries";
 
 export const SettingsTable = () => {
     const [userInfo] = useAtom(userAtom);
 
-    // if (loading) return (
-    //     <div>Loading...</div>
-    // )
+    const { data, loading, error } = useQuery(userQueries.GET_COMPANIES, {
+        variables: {
+            role: "Root"
+        }
+    }) 
+
+    if (loading) return (
+        <div>Loading...</div>
+    )
 
     return (
-        <RootTable columns={SettingsCols} data={userInfo ? [userInfo] : []} />
+        <RootTable columns={SettingsCols} data={data?.getMembersByRole ?? []} />
     )
 }

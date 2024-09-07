@@ -47,7 +47,7 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
     //     }
     // },
     {
-        header: 'Company Name',
+        header: 'Root User',
         accessorKey: 'name',
         cell: ({ row }) => {
             return (
@@ -82,7 +82,7 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
         }
     },
     {
-        header: 'Telecaller',
+        header: 'Exchange',
         accessorKey: 'plan',
         cell: ({ row }) => {
             return (
@@ -98,7 +98,7 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
         }
     },
     {
-        header: 'Salesperson',
+        header: 'Document',
         accessorKey: 'plan',
         cell: ({ row }) => {
             return (
@@ -114,7 +114,7 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
         }
     },
     {
-        header: 'Financer',
+        header: 'Reporting',
         accessorKey: 'plan',
         cell: ({ row }) => {
             return (
@@ -130,23 +130,7 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
         }
     },
     {
-        header: 'Exchanger',
-        accessorKey: 'plan',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <Checkbox
-                    checked={false}
-                // checked={row.getValue("plan") === "Silver" || row.getValue("plan") === "Gold" || row.getValue("plan") === "Platinum"}
-                // onCheckedChange={(value) => row.toggleSelected(!!value)}
-                // aria-label="Select row"
-            />
-                </div>
-            )
-        }
-    },
-    {
-        header: 'Manager',
+        header: 'Payment',
         accessorKey: 'plan',
         cell: ({ row }) => {
             return (

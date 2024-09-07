@@ -36,12 +36,14 @@ export async function middleware(request: NextRequest) {
     '/dashboard',
     '/leads',
     '/members',
+    '/leads/transfered'
     // Add more paths for root and manager
   ];
 
   const managerPaths = [
     '/dashboard',
     '/leads',
+    '/leads/transfered'
     // Add more paths for root and manager
   ];
 

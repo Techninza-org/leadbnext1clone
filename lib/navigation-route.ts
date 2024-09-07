@@ -43,9 +43,14 @@ export const MANAGER_NAV_LINKS = [
         href: "/dashboard",
     },
     {
-        title: "Leads",
+        title: "Prospects",
         icon: FileTextIcon,
         href: "/leads",
+    },
+    {
+        title: "Leads",
+        icon: FileTextIcon,
+        href: "/leads/transfered",
     },
     // {
     //     title: "Assign Lead",
@@ -83,4 +88,9 @@ export const ADMIN_NAV_LINKS = [
         icon: Settings,
         href: "/admin/settings",
     },
+    // {
+    //     title: "Create",
+    //     icon: Pencil,
+    //     href: "/admin/create",
+    // },
 ]
