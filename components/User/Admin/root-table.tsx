@@ -158,6 +158,7 @@ export function RootTable<TData, TValue>({
                 </Popover> */}
                 <DataTableToolbar table={table} setFilter={setFilter} />
                 </div>
+                {/*
                 <Select onValueChange={(value) => handleSort(value || 'Reset')}>
                     <SelectTrigger className="w-64">
                         <SelectValue placeholder="Sort By" />
@@ -169,7 +170,7 @@ export function RootTable<TData, TValue>({
                             <SelectItem value="None">None</SelectItem>
                         </SelectGroup>
                     </SelectContent>
-                </Select>
+                </Select> */}
             </div>
             <div className="rounded-md border">
                 <Table>

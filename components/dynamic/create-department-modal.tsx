@@ -95,7 +95,7 @@ const UpdateDepartmentFieldsModal = () => {
 
     const onSubmit = async (values: any) => {
         console.log(values, 'values');
-        
+
     };
 
     const moveField = (index: number, direction: number) => {
@@ -269,17 +269,6 @@ const UpdateDepartmentFieldsModal = () => {
                                             {form.getValues(`deptFields.${index}.options`)?.map((_option: any, optIndex: React.Key | null | undefined) => (
                                                 <div key={optIndex} className="flex items-center mb-2 mt-2">
                                                     <Controller
-                                                        name={`deptFields.${index}.options.${optIndex}.label`}
-                                                        control={form.control}
-                                                        render={({ field }) => (
-                                                            <Input
-                                                                placeholder="Label"
-                                                                className="mr-2"
-                                                                {...field}
-                                                            />
-                                                        )}
-                                                    />
-                                                    <Controller
                                                         name={`deptFields.${index}.options.${optIndex}.value`}
                                                         control={form.control}
                                                         render={({ field }) => (
@@ -287,6 +276,11 @@ const UpdateDepartmentFieldsModal = () => {
                                                                 placeholder="Value"
                                                                 className="mr-2"
                                                                 {...field}
+                                                                onChange={(e) => {
+                                                                    const value = e.target.value;
+                                                                    field.onChange(value);
+                                                                    form.setValue(`deptFields.${index}.options.${optIndex}.label`, value); 
+                                                                }}
                                                             />
                                                         )}
                                                     />

@@ -43,9 +43,14 @@ export const MANAGER_NAV_LINKS = [
         href: "/dashboard",
     },
     {
-        title: "Leads",
+        title: "Prospects",
         icon: FileTextIcon,
         href: "/leads",
+    },
+    {
+        title: "Leads",
+        icon: FileTextIcon,
+        href: "/leads/transfered",
     },
     // {
     //     title: "Assign Lead",

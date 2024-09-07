@@ -47,7 +47,7 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
     //     }
     // },
     {
-        header: 'Company Name',
+        header: 'Root User',
         accessorKey: 'name',
         cell: ({ row }) => {
             return (
