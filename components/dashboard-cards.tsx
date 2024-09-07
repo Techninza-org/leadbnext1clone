@@ -19,7 +19,7 @@ const DashboardCards = () => {
 
   return (
     <div className="lg:grid grid-cols-3 gap-3">
-        <AnalysisCard title='Total Companies' data={data?.getMembersByRole.length} />
+        <AnalysisCard title='Total Companies' data={data?.getRootUsers.length} />
     </div>
   )
 }

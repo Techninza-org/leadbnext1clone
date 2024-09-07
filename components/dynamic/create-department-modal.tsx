@@ -1,3 +1,4 @@
+//@ts-nocheck
 "use client"
 import {
     Dialog,
@@ -72,7 +73,7 @@ const UpdateDepartmentFieldsModal = () => {
         resolver: zodResolver(DepartmentSchema),
         defaultValues: {
             //@ts-ignore
-            deptFields: filteredDeptFields[0]?.SubDeptField?.sort((a, b) => a.order - b.order) || [],
+            deptFields: filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || [],
         },
     });
 
@@ -89,7 +90,7 @@ const UpdateDepartmentFieldsModal = () => {
     useEffect(() => {
         form.reset({
             //@ts-ignore
-            deptFields: filteredDeptFields[0]?.SubDeptField?.sort((a, b) => a.order - b.order) || [],
+            deptFields: filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || [],
         });
     }, [filteredDeptFields, form.reset]);
 

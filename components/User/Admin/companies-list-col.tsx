@@ -31,7 +31,7 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
     {
         header: 'Company ID',
         cell: ({ row }) => {
-            const id = row.original.companyId;
+            const id = row.original.Company.id;
             return (
                 <div className="flex items-center">
                     <Link href={`/admin/dept/${id}`} className="ml-2 text-blue-800">

@@ -1,4 +1,3 @@
-
 const GET_COMPANY_DEPT_MEMBERS = `
   query GetCompanyDeptMembers($deptId: String, $companyId: String!) {
     getCompanyDeptMembers(deptId: $deptId, companyId: $companyId) {
@@ -13,16 +12,32 @@ const GET_COMPANY_DEPT_MEMBERS = `
   }
 `;
 
+// const GET_COMPANIES = `
+//   query GetMembersByRole($role: String!) {
+//     getMembersByRole(role: $role) {
+//       name
+//       companyId
+//     }
+//   }
+// `
+
 const GET_COMPANIES = `
-  query GetMembersByRole($role: String!) {
-    getMembersByRole(role: $role) {
-      name   
-      companyId
+  query getRootUsers {
+    getRootUsers {
+      id
+      name
+      Company { 
+        id
+        name
+        Subscriptions {
+            planId
+        }
+    }
     }
   }
-`
+`;
 
 export const userQueries = {
-    GET_COMPANY_DEPT_MEMBERS,
-    GET_COMPANIES
-}
+  GET_COMPANY_DEPT_MEMBERS,
+  GET_COMPANIES,
+};
