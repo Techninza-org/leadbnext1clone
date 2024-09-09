@@ -3,22 +3,24 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useMutation, useQuery } from 'graphql-hooks';
 import { userQueries } from '@/lib/graphql/user/queries';
 import { useAtom, useAtomValue } from 'jotai';
-import { companyDeptMembersAtom, userAtom } from "@/lib/atom/userAtom";
+import { companyDeptMembersAtom, rootMembersAtom, userAtom } from "@/lib/atom/userAtom";
 import { z } from 'zod';
 import { createCompanyMemberSchema } from '@/types/auth';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
+    rootMembersInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
 
 export const CompanyProvider = ({ children }: { children: React.ReactNode }) => {
     const userInfo = useAtomValue(userAtom)
-    
+
     const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
     const [companyDeptMembers, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom);
+    const [rootMembersInfo, setRootMembersAtom] = useAtom(rootMembersAtom)
 
     const { skip, variables } = {
         skip: ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || ""),
@@ -37,8 +39,15 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         }
     });
 
+    const { data: rootDate, loading, error } = useQuery(userQueries.GET_COMPANIES, {
+        onSuccess: ({ data }) => {
+            if (data?.getRootUsers) setRootMembersAtom(data.getRootUsers)
+        }
+    })
+
+
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers }}>
+        <CompanyContext.Provider value={{ companyDeptMembers, rootMembersInfo }}>
             {children}
         </CompanyContext.Provider>
     );
