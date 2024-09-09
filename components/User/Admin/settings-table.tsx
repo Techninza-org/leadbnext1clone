@@ -8,11 +8,13 @@ import { RootTable } from "./root-table";
 import { CompaniesListCol } from "./companies-list-col";
 import { SettingsCols } from "./settings-cols";
 import { userQueries } from "@/lib/graphql/user/queries";
+import { useCompany } from "@/components/providers/CompanyProvider";
 
 export const SettingsTable = () => {
-    const [rootMembersInfo] = useAtom(rootMembersAtom);
+    // const [rootMembersInfo] = useAtom(rootMembersAtom);
+    const {rootInfo} = useCompany()
 
     return (
-        <RootTable columns={SettingsCols} data={rootMembersInfo ?? []} />
+        <RootTable columns={SettingsCols} data={rootInfo ?? []} />
     )
 }

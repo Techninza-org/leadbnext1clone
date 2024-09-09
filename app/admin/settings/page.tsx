@@ -14,7 +14,6 @@ import {
         </CardHeader>
         <CardContent>
             <SettingsTable />
-
         </CardContent>
       </Card>
     );

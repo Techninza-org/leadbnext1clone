@@ -10,7 +10,7 @@ import { leadMutation } from '@/lib/graphql/lead/mutation';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
-    rootMembersInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
+    rootInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -21,6 +21,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
     const [companyDeptMembers, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom);
     const [rootMembersInfo, setRootMembersAtom] = useAtom(rootMembersAtom)
+    const [rootInfo, setRootInto] = useState<z.infer<typeof createCompanyMemberSchema>[] | null>(null)
 
     const { skip, variables } = {
         skip: ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || ""),
@@ -40,14 +41,18 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     });
 
     const { data: rootDate, loading, error } = useQuery(userQueries.GET_COMPANIES, {
+        skip: !userInfo?.token,
         onSuccess: ({ data }) => {
+            if (data?.getRootUsers) setRootInto(data.getRootUsers)
             if (data?.getRootUsers) setRootMembersAtom(data.getRootUsers)
         }
     })
 
 
+    console.log(rootDate, "rootDateTT")
+
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers, rootMembersInfo }}>
+        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo }}>
             {children}
         </CompanyContext.Provider>
     );
