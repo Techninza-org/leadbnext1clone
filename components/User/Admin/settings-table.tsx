@@ -12,11 +12,7 @@ import { userQueries } from "@/lib/graphql/user/queries";
 export const SettingsTable = () => {
     const [userInfo] = useAtom(userAtom);
 
-    const { data, loading, error } = useQuery(userQueries.GET_COMPANIES, {
-        variables: {
-            role: "Root"
-        }
-    }) 
+    const { data, loading, error } = useQuery(userQueries.GET_COMPANIES)
 
     if (loading) return (
         <div>Loading...</div>
