@@ -10,6 +10,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import { Switch } from "../ui/switch";
 import { useMutation } from "graphql-hooks";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
+import HoverCardToolTip from "../hover-card-tooltip";
 
 export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -72,9 +73,9 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: 'address',
         cell: ({ row }) => {
             return (
-                <div className="flex items-center">
+                <HoverCardToolTip label="Address">
                     <span>{row.getValue("address")}</span>
-                </div>
+                </HoverCardToolTip>
             )
 
         }
@@ -96,26 +97,35 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         cell: ({ row }) => {
             const rowData = row?.original;
             const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
-            const assigneeRole = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.role?.name).join(", ");
-            const notAssigned = assigneeName === 'rounak' ? true : false
+            const approved = rowData?.isLeadApproved
+            // const notAssigned = assigneeName === 'rounak' ? true : false
             // const isAssigned = [MANAGER, "company"].includes(assigneeName?.toLowerCase());
-            
+
             return (
                 // <ActionTooltip label={assigneeName === 'rounak' ? 'Awaited' : assigneeName} align="center" side="top" key={"assignedMembers"}>
-                    <Button
-                        size={'sm'}
-                        variant={notAssigned ? "destructive" : "secondary"}
-                        className="text-xs p-2  capitalize"
-                    >
-                        {notAssigned ? "Not Assigned" : assigneeName}
-                    </Button>
+                <Button
+                    size={'sm'}
+                    variant={approved ? "secondary" : "destructive"}
+                    className="text-xs p-2  capitalize"
+                >
+                    {approved ? assigneeName : "Not Assigned"}
+                </Button>
                 // </ActionTooltip>
                 // <span>{assigneeName}</span>
             );
         }
     },
     {
-        header: 'Approved',
+        header: 'Department',
+        cell: ({ row }) => {
+            const dept = row.original?.department
+            return (
+                <span>{dept}</span>
+            );
+        }
+    },
+    {
+        header: 'Converted To Lead',
         accessorKey: '',
         cell: ({ row }) => {
             const rowData = row?.original;

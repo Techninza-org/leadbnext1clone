@@ -21,6 +21,7 @@ export const createLeadSchema = z.object({
     vehicleDate: z.date(),
     vehicleName: z.string(),
     vehicleModel: z.string(),
+    department: z.string().optional(),
 
 });
 

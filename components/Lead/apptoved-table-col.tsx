@@ -10,6 +10,7 @@ import { useModal } from "@/hooks/use-modal-store";
 import { Switch } from "../ui/switch";
 import { useMutation } from "graphql-hooks";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
+import HoverCardToolTip from "../hover-card-tooltip";
 
 export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -73,7 +74,9 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("address")}</span>
+                    <HoverCardToolTip label="Address">
+                        <span>{row.getValue("address")}</span>
+                    </HoverCardToolTip>
                 </div>
             )
 
@@ -91,6 +94,14 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         }
     },
     {
+        header: 'Department',
+        cell: ({ row }) => {
+            return (
+                <span>Sales</span>
+            );
+        }
+    },
+    {
         header: 'Assigned',
         accessorKey: '',
         cell: ({ row }) => {
@@ -98,10 +109,8 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
             const assigneeRole = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.role?.name).join(", ");
             const notAssigned = assigneeName === 'rounak' ? true : false
-            // const isAssigned = [MANAGER, "company"].includes(assigneeName?.toLowerCase());
             
             return (
-                // <ActionTooltip label={assigneeName === 'rounak' ? 'Awaited' : assigneeName} align="center" side="top" key={"assignedMembers"}>
                     <Button
                         size={'sm'}
                         variant={notAssigned ? "destructive" : "secondary"}
@@ -109,22 +118,9 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                     >
                         {notAssigned ? "Not Assigned" : assigneeName}
                     </Button>
-                // </ActionTooltip>
-                // <span>{assigneeName}</span>
             );
         }
     },
-    // {
-    //     header: 'Approved',
-    //     accessorKey: '',
-    //     cell: ({ row }) => {
-    //         const rowData = row?.original;
-
-    //         return (
-    //             <LeadApprovedAction lead={rowData} />
-    //         );
-    //     }
-    // }
 ];
 
 const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {

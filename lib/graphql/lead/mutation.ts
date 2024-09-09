@@ -13,6 +13,7 @@ mutation createLead(
   $vehicleDate: String!, 
   $vehicleModel: String!, 
   $vehicleName: String!
+  $department: String
 ) {
   createLead(
     input: {
@@ -28,7 +29,8 @@ mutation createLead(
       rating: $rating,
       vehicleDate: $vehicleDate,
       vehicleModel: $vehicleModel,
-      vehicleName: $vehicleName
+      vehicleName: $vehicleName,
+      department: $department
     }
   ) {
     lead {

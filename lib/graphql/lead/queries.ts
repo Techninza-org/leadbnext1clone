@@ -17,6 +17,7 @@ const GET_COMPANY_LEADS = `
         callStatus
         paymentStatus
         isLeadApproved
+        department
 
         LeadMember {
           id

@@ -2,10 +2,10 @@
 
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'graphql-hooks';
+import { useMutation, useQuery } from 'graphql-hooks';
 import { userAtom } from '@/lib/atom/userAtom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
 import {
     Dialog,
@@ -21,6 +21,13 @@ import {
     FormLabel,
     FormMessage
 } from "@/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -35,12 +42,19 @@ import { format } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { useEffect } from 'react';
+import { deptQueries } from '@/lib/graphql/dept/queries';
 
 export const CreateLeadModal = () => {
     const { handleCreateLead } = useLead()
     const [userInfo] = useAtom(userAtom)
     const { isOpen, onClose, type } = useModal();
     const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
+
+    const user = useAtomValue(userAtom)
+
+    const { loading: deptLoading, error: deptError, data: deptData } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
+        variables: { companyId: user?.companyId },
+    });
 
     const isModalOpen = isOpen && type === "addLead";
 
@@ -66,6 +80,7 @@ export const CreateLeadModal = () => {
                     vehicleDate: format(values.vehicleDate, 'dd-MM-yyyy'),
                     vehicleName: values.vehicleName,
                     vehicleModel: values.vehicleModel,
+                    department: values.department
                 }
             });
             
@@ -324,6 +339,39 @@ export const CreateLeadModal = () => {
                                             </FormItem>
                                         )}
                                     />
+                                    <FormField
+                            control={form.control}
+                            name="department"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel
+                                    className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Department</FormLabel>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        defaultValue={field.value}
+                                    >
+                                        <FormControl>
+                                            <SelectTrigger
+                                                className="bg-zinc-100 placeholder:capitalize  border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                            >
+                                                <SelectValue placeholder="Select Department" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent
+                                            className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+
+                                        >
+                                            {
+                                                deptData?.getCompanyDepts?.map((role: any) => (
+                                                    <SelectItem key={role.id} value={role.name} className="capitalize">{role.name}</SelectItem>
+                                                ))
+                                            }
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                         </div>
                         <Button type="submit" className="mt-6 w-full">Create</Button>
                     </form>
