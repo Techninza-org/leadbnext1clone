@@ -55,11 +55,11 @@ export const AssignLeadModal = () => {
     const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
 
     const { companyDeptMembers: deptMembers } = useCompany()
-    
+
     const isModalOpen = isOpen && type === "assignLead";
-    
+
     const { toast } = useToast()
-    
+
     const form = useForm<z.infer<typeof leadAssignToSchema>>({
         resolver: zodResolver(leadAssignToSchema),
         defaultValues: {
@@ -67,9 +67,9 @@ export const AssignLeadModal = () => {
             leadIds: leadIds || [],
         }
     })
-    
+
     const isLoading = assignLoading;
-    
+
     if (!deptMembers) return null;
     const onSubmit = async (data: z.infer<typeof leadAssignToSchema>) => {
 
@@ -126,6 +126,12 @@ export const AssignLeadModal = () => {
                         Assign Lead
                     </DialogTitle>
                 </DialogHeader>
+                <div className="grid grid-flow-col place-content-end h-1">
+                    <Button
+                        type="submit"
+                        disabled={isLoading}
+                    >Assign</Button>
+                </div>
                 <ScrollArea className="max-h-60 w-full rounded-md border">
                     <div className="p-4">
                         <h4 className="mb-4 text-sm font-medium leading-none">Selected Leads</h4>
@@ -176,11 +182,6 @@ export const AssignLeadModal = () => {
                                 </FormItem>
                             )}
                         />
-                        <Button
-                            type="submit"
-                            className="mt-10"
-                            disabled={isLoading}
-                        >Assign</Button>
                     </form>
                 </Form>
             </DialogContent>

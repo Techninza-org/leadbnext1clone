@@ -13,13 +13,18 @@ import Image from "next/image";
 import { Badge } from "../ui/badge";
 import Link from "next/link";
 import { ImageOffIcon } from "lucide-react";
+import { Button } from "../ui/button";
+import FollowUpForm from "../Lead/follow-up-form";
+import { useState } from "react";
+import FollowUpsData from "../Lead/follow-ups-data";
 
 
 export const ViewLeadInfoModal = () => {
+    const [isFollowUpActive, setIsFollowUpActive] = useState(false);
 
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { lead } = modalData;
-    
+
 
     const isModalOpen = isOpen && type === "viewLeadInfo";
 
@@ -33,11 +38,42 @@ export const ViewLeadInfoModal = () => {
             <DialogContent className="text-black max-w-screen-md max-h-[80%]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Lead Details
+                        Prospect Details
                     </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="max-h-full w-full rounded-md border">
                     <div className="p-4">
+                        {
+                            lead && (
+                                <div>
+                                    <div className="flex justify-between pb-4 items-center">
+                                        <div className="flex items-center">
+                                            <span className="text-sm font-semibold">Name:</span>
+                                        </div>
+                                        <span className="text-sm font-semibold capitalize">{lead.name}</span>
+                                    </div>
+                                    <div className="flex justify-between pb-4 items-center">
+                                        <div className="flex items-center">
+                                            <span className="text-sm font-semibold">Email:</span>
+                                        </div>
+                                        <span className="text-sm font-semibold capitalize">{lead.email}</span>
+                                    </div>
+                                    <div className="flex justify-between pb-4 items-center">
+                                        <div className="flex items-center">
+                                            <span className="text-sm font-semibold">Phone:</span>
+                                        </div>
+                                        <span className="text-sm font-semibold capitalize">{lead.phone}</span>
+                                    </div>
+                                    <div className="flex justify-between pb-4 items-center">
+                                        <div className="flex items-center">
+                                            <span className="text-sm font-semibold mr-10">Address:</span>
+                                        </div>
+                                        <span className="text-sm font-semibold capitalize">{lead.address} {lead.city}</span>
+                                    </div>
+                                    <Separator className="my-2" />
+                                </div>
+                            )
+                        }
                         {!!lead?.LeadFeedback && lead?.LeadFeedback?.map(({ feedback, member, imageUrls }) => (
                             <>
                                 {member && <div className="flex justify-between pb-4 items-center">

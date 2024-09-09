@@ -29,7 +29,7 @@ import {
 import { DataTablePagination } from "./table-pagination"
 import { DataTableToolbar } from "./table-toolbar"
 import { Button } from "./button"
-import { PlusCircle, UploadIcon } from "lucide-react"
+import { DownloadIcon, PlusCircle, UploadIcon } from "lucide-react"
 import { useModal } from "@/hooks/use-modal-store"
 import { useAtom, useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
@@ -38,6 +38,7 @@ import { useLead } from "../providers/LeadProvider"
 import { useMutation } from "graphql-hooks"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
 import { format, parse } from "date-fns"
+import { handleFileDownload } from "@/lib/utils"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -119,6 +120,7 @@ export function DataTable<TData, TValue>({
                     vehicleDate: formattedVehicleDate,
                     vehicleName: lead.vehicleName,
                     vehicleModel: lead.vehicleModel,
+                    department: lead.department,
                 }
             });
             
@@ -155,6 +157,17 @@ export function DataTable<TData, TValue>({
               </Button>
             )
           }
+          <div>
+            <Button
+              variant="default"
+              color="primary"
+              size={"sm"}
+              className="items-center gap-1"
+              onClick={() => handleFileDownload("lead.xlsx")}
+            >
+              <DownloadIcon size={15} /> <span>Download Sample</span>
+            </Button>
+          </div>
           <div>
             <input
               type="file"

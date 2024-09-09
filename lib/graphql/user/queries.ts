@@ -29,6 +29,8 @@ const GET_COMPANIES = `
       Company { 
         id
         name
+        phone
+        email
         Subscriptions {
             planId
         }

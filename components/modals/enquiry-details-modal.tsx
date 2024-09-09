@@ -39,10 +39,13 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { useState } from "react";
+import FollowUpForm from "../Lead/follow-up-form";
+import FollowUpsData from "../Lead/follow-ups-data";
 
 
 export const EnquiryDetailsModal = () => {
     const [selectedMember, setSelectedMember] = useState("");
+    const [isFollowUpActive, setIsFollowUpActive] = useState(false);
     const user = useAtomValue(userAtom)
     const { isOpen, onClose, type, data: modalData } = useModal();
 
@@ -293,10 +296,8 @@ export const EnquiryDetailsModal = () => {
                                         ))
                                     }
                                 </div>
-                                {/* <Separator className="my-2" /> */}
-                                {/* <p>Enquiry Id: {lead.id}</p> */}
                             </>
-                        ))}
+                        ))}                      
                     </div>
                 </ScrollArea>
             </DialogContent>

@@ -42,6 +42,17 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
         }
     },
     {
+        header: 'Company Name',
+        cell: ({ row }) => {
+            const id = row.original.Company.name;
+            return (
+                <div className="flex items-center">
+                    <span>{id}</span>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Root User',
         accessorKey: 'name',
         cell: ({ row }) => {
@@ -77,18 +88,19 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
 
     //     }
     // },
-    // {
-    //     header: 'Address',
-    //     accessorKey: 'address',
-    //     cell: ({ row }) => {
-    //         return (
-    //             <HoverCardToolTip label="Details" >
-    //                 <p>Address: </p>
-    //                 <p>Email: </p>
-    //             </HoverCardToolTip>
-    //         )
-    //     }
-    // },
+    {
+        header: 'Details',
+        cell: ({ row }) => {
+            const email = row.original.Company.email
+            const phone = row.original.Company.phone
+            return (
+                <HoverCardToolTip label="Details" >
+                    <p>Email: {email}</p>
+                    <p>Phone: {phone}</p>
+                </HoverCardToolTip>
+            )
+        }
+    },
     {
         header: 'Plan',
         accessorKey: 'plan',
