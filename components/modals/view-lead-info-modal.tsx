@@ -35,7 +35,7 @@ export const ViewLeadInfoModal = () => {
     return (
 
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
-            <DialogContent className="text-black max-w-screen-md max-h-[80%]">
+            <DialogContent className="text-black max-w-screen-lg max-h-[80%]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
                         Prospect Details
@@ -145,6 +145,18 @@ export const ViewLeadInfoModal = () => {
                                 <Separator className="my-2" />
                             </>
                         ))}
+                        <div>
+                            <FollowUpsData lead={lead} />
+                            <div className="my-4 grid place-items-end grid-flow-col">
+                                <Button
+                                    size="sm"
+                                    variant="default"
+                                    disabled={isFollowUpActive}
+                                    onClick={() => setIsFollowUpActive(!isFollowUpActive)}
+                                >Add Follow Up</Button>
+                            </div>
+                            {isFollowUpActive && <FollowUpForm lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
+                        </div>
                     </div>
                 </ScrollArea>
             </DialogContent>

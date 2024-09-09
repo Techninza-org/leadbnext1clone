@@ -157,6 +157,27 @@ mutation TransferLead(
 }
 `
 
+const UPDATE_FOLLOWUP = `
+  mutation updateLeadFollowUpDate(
+    $leadId: String!,
+    $nextFollowUpDate: String!,
+    $rating: String!,
+    $customerResponse: String!,
+    $remark: String!
+  ) {
+    updateLeadFollowUpDate(
+      leadId: $leadId,
+      nextFollowUpDate: $nextFollowUpDate,
+      rating: $rating,
+      customerResponse: $customerResponse,
+      remark: $remark
+    ) {
+      id
+      name
+    }
+  }
+`
+
 export const leadMutation = {
   CREATE_LEAD,
   LEAD_ASSIGN_TO,
@@ -164,5 +185,6 @@ export const leadMutation = {
   SUBMIT_BID_MUTATION,
   UPDATE_LEAD_FINANCE_STATUS,
   APPROVED_LEAD_MUTATION,
-  TRANSFER_LEAD
+  TRANSFER_LEAD,
+  UPDATE_FOLLOWUP
 } 

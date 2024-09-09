@@ -18,8 +18,10 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
+import { useMutation } from 'graphql-hooks';
+import { leadMutation } from '@/lib/graphql/lead/mutation';
+import { useToast } from '../ui/use-toast';
 
 const FollowUpSchema = z.object({
     nextFollowUpDate: z.date(),
@@ -35,6 +37,8 @@ interface FollowUpFormProps {
   }
 
 const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpFormProps) => {
+    const [updateLeadFollowUpDate, { loading }] = useMutation(leadMutation.UPDATE_FOLLOWUP);
+    const {toast} = useToast();
     
     const form = useForm<z.infer<typeof FollowUpSchema>>({
         resolver: zodResolver(FollowUpSchema),
@@ -48,20 +52,36 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
 
     const onSubmit = async (values: z.infer<typeof FollowUpSchema>) => {
         console.log(values, 'follow up form data');
-        // try {
-        //     const { data, error } = await submitFeedback({
-        //         variables: {
-        //             leadId: lead?.id,
-        //             nextFollowUpDate: values.nextFollowUpDate?.toLocaleDateString() || "",
-        //             customerResponse: values.customerResponse,
-        //             rating: values.rating,
-        //             remarks: values.remarks,
-        //         },
-        //     });
+        try {
+            const { data, error } = await updateLeadFollowUpDate({
+                variables: {
+                    leadId: lead?.id,
+                    nextFollowUpDate: values.nextFollowUpDate?.toLocaleDateString() || "",
+                    customerResponse: values.customerResponse,
+                    rating: values.rating,
+                    remark: values.remarks,
+                },
+            });
+            console.log(data, 'data');
             
-        // } catch (error) {
-        //     console.log(error);
-        // }
+            if (error) {
+                const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
+                toast({
+                    title: 'Error',
+                    description: message || "Something went wrong",
+                    variant: "destructive"
+                });
+                return;
+            }
+    
+            toast({
+                variant: "default",
+                title: "FollowUp Added Successfully!",
+            });
+            
+        } catch (error) {
+            console.log(error);
+        }
         setIsFollowUpActive(false);
     }
 
@@ -139,9 +159,9 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
                                             <SelectContent
                                                 className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
                                             >
-                                                <SelectItem value="hot">Hot</SelectItem>
-                                                <SelectItem value="warm">Warm</SelectItem>
-                                                <SelectItem value="cold">Cold</SelectItem>
+                                                <SelectItem value="Hot">Hot</SelectItem>
+                                                <SelectItem value="Warm">Warm</SelectItem>
+                                                <SelectItem value="Cold">Cold</SelectItem>
 
                                             </SelectContent>
                                         </Select>
