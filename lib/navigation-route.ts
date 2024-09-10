@@ -1,4 +1,4 @@
-import { FileTextIcon, HandCoins, Home, Pencil, Settings, UsersRoundIcon } from "lucide-react";
+import { FileTextIcon, HandCoins, Home, Pencil, Pin, Settings, UsersRoundIcon } from "lucide-react";
 
 export const ROOT_NAV_LINKS = [
     {
@@ -51,6 +51,11 @@ export const MANAGER_NAV_LINKS = [
         title: "Leads",
         icon: FileTextIcon,
         href: "/leads/transfered",
+    },
+    {
+        title: "Track Location",
+        icon: Pin,
+        href: "/track",
     },
     // {
     //     title: "Assign Lead",
