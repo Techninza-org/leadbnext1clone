@@ -187,6 +187,23 @@ const GET_TRANSFERED_LEADS = `
   }
 `;
 
+const GET_FOLLOWUP = `
+  query getFollowUpByLeadId($leadId: String!) {
+    getFollowUpByLeadId(leadId: $leadId) {
+      id
+      followUpBy{
+          name
+      }
+      customerResponse
+      nextFollowUpDate
+      rating
+      leadId
+      createdAt
+      remark
+    }
+  }
+`;
+
 export const leadQueries = {
   GET_COMPANY_LEADS,
   GET_ASSIGNED_LEADS,
@@ -195,4 +212,5 @@ export const leadQueries = {
   UPDATE_LEAD_FOLLOW_UP_DATE,
   GET_LEADS_BY_DATE_RANGE,
   GET_TRANSFERED_LEADS,
+  GET_FOLLOWUP,
 };

@@ -68,14 +68,14 @@ export const EnquiryDetailsModal = () => {
 
 
     const myrole = user?.role?.name;
-    if(myrole === "Telecaller") {
+    if (myrole === "Telecaller") {
         members = companyDeptMembers?.filter((member) => member.role?.name === "Sales Person" || member.role?.name === "Manager")
-    }else if (myrole === "Manager") {
+    } else if (myrole === "Manager") {
         members = companyDeptMembers?.filter((member) => member.role?.name !== "Manager")
-    }else {
+    } else {
         members = companyDeptMembers?.filter((member) => member.role?.name === "Manager")
     }
-    
+
 
     const onSubmit = async (values: z.infer<typeof FollowUpSchema>) => {
 
@@ -118,13 +118,13 @@ export const EnquiryDetailsModal = () => {
 
     async function handleTransferLead() {
 
-        const {data, error} = await transferLead({
+        const { data, error } = await transferLead({
             variables: {
                 leadId: lead?.id,
                 transferToId: selectedMember,
             }
         });
-         
+
         if (error) {
             const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
             toast({
@@ -144,14 +144,14 @@ export const EnquiryDetailsModal = () => {
     return (
 
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
-            <DialogContent className="text-black max-w-screen-md max-h-[80%]">
+            <DialogContent className="text-black max-w-screen-lg max-h-[80%]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
                         Enquiry Details
                     </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="max-h-full w-full rounded-md border">
-                <div className="p-4 leading-10">
+                    <div className="p-4 leading-10">
                         <div className=" grid grid-cols-2">
                             <h4 className="font-bold">ID: <span className="font-normal">{lead?.id}</span></h4>
                             <h4 className="font-bold">Customer Name: <span className="font-normal">{lead?.name}</span></h4>
@@ -159,72 +159,72 @@ export const EnquiryDetailsModal = () => {
                             {lead?.nextFollowUpDate && <h4 className="font-bold">Next Follow Up Date: <span className="font-normal">{String(lead?.nextFollowUpDate)}</span></h4>}
                         </div>
                         <div className="grid grid-cols-2">
-                        <div className="mt-4 w-1/2">
-                            <Form {...form}>
-                                <form onSubmit={form.handleSubmit(onSubmit)}>
-                                    <FormField
-                                        control={form.control}
-                                        name="followUpDate"
-                                        render={({ field }) => (
-                                            <FormItem className="flex flex-col">
-                                                <FormLabel className="capitalize  font-bold text-zinc-500 dark:text-secondary/70">Select Follow Up Date</FormLabel>
-                                                <Popover>
-                                                    <PopoverTrigger asChild>
-                                                        <FormControl>
-                                                            <Button
-                                                                variant={"outline"}
-                                                                className={cn(
-                                                                    "pl-3 text-left font-normal",
-                                                                    !field.value && "text-muted-foreground"
-                                                                )}
-                                                            >
-                                                                {field.value ? (
-                                                                    format(field.value, "PPP")
-                                                                ) : (
-                                                                    <span>Pick Follow Up Date</span>
-                                                                )}
-                                                                <CalendarDaysIcon className="ml-auto h-4 w-4 opacity-50" />
-                                                            </Button>
-                                                        </FormControl>
-                                                    </PopoverTrigger>
-                                                    <PopoverContent className="w-auto p-0" align="start">
-                                                        <Calendar
-                                                            mode="single"
-                                                            selected={field.value as any}
-                                                            onSelect={field.onChange}
-                                                            disabled={(date) =>
-                                                                date < new Date()
-                                                            }
-                                                            initialFocus
-                                                        />
-                                                    </PopoverContent>
-                                                </Popover>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <Button type="submit" className="mt-6 w-full">Submit</Button>
-                                </form>
-                            </Form>
-                        </div>
-                        <div className=" w-1/2">
-                            <h4 className="capitalize  font-bold text-zinc-500 dark:text-secondary/70">Transfer Lead</h4>
-                            <Select onValueChange={(value) => setSelectedMember(value || "")}>
-                                <SelectTrigger>
-                                    <SelectValue placeholder="Select Member" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {members?.map((member) => (
-                                            <SelectItem key={member.id} value={member.id || ''}>
-                                                {member.name} - {member.role?.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                            <Button className="mt-6 w-full" onClick={handleTransferLead}>Transfer</Button>
-                        </div>
+                            <div className="mt-4 w-1/2">
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                                        <FormField
+                                            control={form.control}
+                                            name="followUpDate"
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-col">
+                                                    <FormLabel className="capitalize  font-bold text-zinc-500 dark:text-secondary/70">Select Follow Up Date</FormLabel>
+                                                    <Popover>
+                                                        <PopoverTrigger asChild>
+                                                            <FormControl>
+                                                                <Button
+                                                                    variant={"outline"}
+                                                                    className={cn(
+                                                                        "pl-3 text-left font-normal",
+                                                                        !field.value && "text-muted-foreground"
+                                                                    )}
+                                                                >
+                                                                    {field.value ? (
+                                                                        format(field.value, "PPP")
+                                                                    ) : (
+                                                                        <span>Pick Follow Up Date</span>
+                                                                    )}
+                                                                    <CalendarDaysIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                                </Button>
+                                                            </FormControl>
+                                                        </PopoverTrigger>
+                                                        <PopoverContent className="w-auto p-0" align="start">
+                                                            <Calendar
+                                                                mode="single"
+                                                                selected={field.value as any}
+                                                                onSelect={field.onChange}
+                                                                disabled={(date) =>
+                                                                    date < new Date()
+                                                                }
+                                                                initialFocus
+                                                            />
+                                                        </PopoverContent>
+                                                    </Popover>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button type="submit" className="mt-6 w-full">Submit</Button>
+                                    </form>
+                                </Form>
+                            </div>
+                            <div className=" w-1/2">
+                                <h4 className="capitalize  font-bold text-zinc-500 dark:text-secondary/70">Transfer Lead</h4>
+                                <Select onValueChange={(value) => setSelectedMember(value || "")}>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Member" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectGroup>
+                                            {members?.map((member) => (
+                                                <SelectItem key={member.id} value={member.id || ''}>
+                                                    {member.name} - {member.role?.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
+                                <Button className="mt-6 w-full" onClick={handleTransferLead}>Transfer</Button>
+                            </div>
                         </div>
                     </div>
                     <div className="p-4">
@@ -297,7 +297,19 @@ export const EnquiryDetailsModal = () => {
                                     }
                                 </div>
                             </>
-                        ))}                      
+                        ))}
+                        <div>
+                            <FollowUpsData lead={lead} />
+                            <div className="my-4 grid place-items-end grid-flow-col">
+                                <Button
+                                    size="sm"
+                                    variant="default"
+                                    disabled={isFollowUpActive}
+                                    onClick={() => setIsFollowUpActive(!isFollowUpActive)}
+                                >Add Follow Up</Button>
+                            </div>
+                            {isFollowUpActive && <FollowUpForm lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
+                        </div>
                     </div>
                 </ScrollArea>
             </DialogContent>

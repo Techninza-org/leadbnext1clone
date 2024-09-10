@@ -126,13 +126,7 @@ export const AssignLeadModal = () => {
                         Assign Lead
                     </DialogTitle>
                 </DialogHeader>
-                <div className="grid grid-flow-col place-content-end h-1">
-                    <Button
-                        type="submit"
-                        disabled={isLoading}
-                    >Assign</Button>
-                </div>
-                <ScrollArea className="max-h-60 w-full rounded-md border">
+                <ScrollArea className="max-h-40 w-full rounded-md border">
                     <div className="p-4">
                         <h4 className="mb-4 text-sm font-medium leading-none">Selected Leads</h4>
                         {leads && leads.map((lead) => (
@@ -148,6 +142,12 @@ export const AssignLeadModal = () => {
                 </ScrollArea>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <div className="grid grid-flow-col place-content-end h-1">
+                            <Button
+                                type="submit"
+                                disabled={isLoading}
+                            >Assign</Button>
+                        </div>
                         <FormField
                             control={form.control}
                             name="userIds"
