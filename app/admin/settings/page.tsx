@@ -1,4 +1,3 @@
-import { CompaniesListTable } from "@/components/User/Admin/companies-list-table";
 import { SettingsTable } from "@/components/User/Admin/settings-table";
 import {
     Card,
@@ -6,7 +5,6 @@ import {
     CardHeader,
     CardTitle,
   } from "@/components/ui/card"
-import { useModal } from "@/hooks/use-modal-store";
   
   export default function SettingsPage() {
     return (
@@ -16,7 +14,6 @@ import { useModal } from "@/hooks/use-modal-store";
         </CardHeader>
         <CardContent>
             <SettingsTable />
-
         </CardContent>
       </Card>
     );

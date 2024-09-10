@@ -83,7 +83,6 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
     },
     {
         header: 'Exchange',
-        accessorKey: 'plan',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
@@ -99,7 +98,6 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
     },
     {
         header: 'Document',
-        accessorKey: 'plan',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
@@ -115,7 +113,6 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
     },
     {
         header: 'Reporting',
-        accessorKey: 'plan',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
@@ -131,7 +128,6 @@ export const SettingsCols: ColumnDef<z.infer<any>>[] = [
     },
     {
         header: 'Payment',
-        accessorKey: 'plan',
         cell: ({ row }) => {
             return (
                 <div className="flex items-center">
