@@ -15,6 +15,7 @@ const GET_COMPANY_DEPT_MEMBERS = `
 const GET_MEMBERS = `
   query GetMembersByRole($role: String!) {
     getMembersByRole(role: $role) {
+      id
       name
       companyId
     }
@@ -40,7 +41,7 @@ const GET_COMPANIES = `
 `;
 
 const GET_MEMBER_LOCATION = `
-  query GetMemberLocation($memberId: String!, $date: String) {
+  query GetMemberLocation($memberId: String!, $date: String!) {
     getMemberLocation(memberId: $memberId, date: $date) {
       day
       leadAssingeeMemberId

@@ -5,9 +5,7 @@ import { useQuery } from 'graphql-hooks'
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
@@ -21,8 +19,8 @@ import { Calendar } from './ui/calendar'
 import Map from './map'
 
 const Track = () => {
-    const [selectedMember, setSelectedMember] = React.useState('')
-    const [date, setDate] = React.useState(null)
+    const [selectedMember, setSelectedMember] = useState(null)
+    const [date, setDate] = useState(null)
     const [show, setShow] = useState(false)
    
     const { data, loading, error } = useQuery(userQueries.GET_MEMBERS, {
@@ -34,9 +32,8 @@ const Track = () => {
         }
     })
 
-    async function handleTrack() {
-        console.log(selectedMember, date, 'track');
-        setShow(!show)
+    function handleTrack() {
+        setShow(true)
     }
 
     useEffect(() => {
@@ -47,42 +44,22 @@ const Track = () => {
         <div>
             <h1 className="text-2xl font-bold">Track</h1>
             <div className='my-6 flex gap-8'>
-                <Select
-                    onValueChange={(value) => setSelectedMember(value)}
-                >
-                    <SelectTrigger
-                        className="w-1/4 bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                    >
+                <Select onValueChange={(value: any) => setSelectedMember(value)}>
+                    <SelectTrigger className="w-1/4 bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
                         <SelectValue placeholder="Select Member" />
                     </SelectTrigger>
-                    <SelectContent
-                        className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                    >
-                        {data?.getMembersByRole.map((member: any) => {
-                            return (
-                                <SelectItem
-                                    key={member.name}
-                                    value={member.name}
-                                >
-                                    {member.name}
-                                </SelectItem>
-                            );
-                        })}
+                    <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white">
+                        {data?.getMembersByRole.map((member: any) => (
+                            <SelectItem key={member.id} value={member.id}>
+                                {member.name}
+                            </SelectItem>
+                        ))}
                     </SelectContent>
                 </Select>
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button
-                            variant={"outline"}
-                            className={cn(
-                                "pl-3 text-left font-normal"
-                            )}
-                        >
-                            {date ? (
-                                format(date, "PPP")
-                            ) : (
-                                <span>Pick A Date</span>
-                            )}
+                        <Button variant={"outline"} className={cn("pl-3 text-left font-normal")}>
+                            {date ? format(date, "PPP") : <span>Pick A Date</span>}
                             <CalendarDaysIcon className="ml-2 h-4 w-4 opacity-50" />
                         </Button>
                     </PopoverTrigger>
@@ -95,9 +72,10 @@ const Track = () => {
                         />
                     </PopoverContent>
                 </Popover>
-                <Button onClick={handleTrack}>Track</Button>
+                <Button onClick={handleTrack} disabled={!date || !selectedMember || show}>Track</Button>
+                <Button variant={"destructive"} onClick={() => window.location.reload()} disabled={!show} >Stop</Button>
             </div>
-                <Map memberId={selectedMember} date={date} />
+            {show && <Map memberId={selectedMember || ''} date={date} />}
         </div>
     )
 }

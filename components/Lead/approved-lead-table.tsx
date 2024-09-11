@@ -1,6 +1,6 @@
 "use client";
-import { useState } from "react";
-import { useAtom } from "jotai";
+import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, useState } from "react";
+import { useAtom, useAtomValue } from "jotai";
 
 import { DataTable } from "@/components/ui/DataTable"
 import { leads } from "@/lib/atom/leadAtom";
@@ -17,10 +17,22 @@ import {
 } from "@/components/ui/select"
 import { ApprovedDataTable } from "./approved-data-table";
 import { AssignedLeadColDefs } from "./apptoved-table-col";
+import { useQuery } from "graphql-hooks";
+import { deptQueries } from "@/lib/graphql/dept/queries";
+import { userAtom } from "@/lib/atom/userAtom";
 
 export const ApprovedLeadTable = () => {
     const [leadInfo] = useAtom(leads)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
+    const [selectedForm, setSelectedForm] = useState<string | null>(null);
+    const user = useAtomValue(userAtom)
+
+    const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+        variables: { deptId: user?.deptId },
+        onSuccess: (data) => {
+            console.log(data, 'dept');
+        }
+    });
 
     const groupedByFormName = leadInfo?.groupedLeads?.reduce((acc, current) => {
         if (!acc[current.formName]) {
@@ -32,16 +44,26 @@ export const ApprovedLeadTable = () => {
 
     const data2Display = selectedRole && selectedRole !== 'all' ? groupedByFormName?.[selectedRole] : leadInfo;
     //@ts-ignore
-    const filteredLeads = data2Display?.filter((lead: any) => (
+    let filteredLeads = data2Display?.filter((lead: any) => (
         lead.isLeadApproved === true
     ))
+    
+    if(filteredLeads){
+        if(selectedForm && selectedForm == 'Payment'){
+            console.log('Payment');
+            //@ts-ignore
+            filteredLeads = data2Display?.filter((lead: any) => (
+                lead.paymentStatus === "PAID"
+            ))
+        }
+    }
     
     
 
     return (
         <>
-            <div className="mb-6">
-                <Select onValueChange={(value) => setSelectedRole(value || null)}>
+            <div className="mb-6 flex gap-6">
+                {/* <Select onValueChange={(value) => setSelectedRole(value || null)}>
                     <SelectTrigger className="w-64">
                         <SelectValue placeholder="Filter" />
                     </SelectTrigger>
@@ -52,6 +74,23 @@ export const ApprovedLeadTable = () => {
                                 Object.keys(groupedByFormName || {}).map((formName) => (
                                     <SelectItem key={formName} value={formName}>
                                         {formName}
+                                    </SelectItem>
+                                ))
+                            }
+                        </SelectGroup>
+                    </SelectContent>
+                </Select> */}
+                <Select onValueChange={(value) => setSelectedForm(value || null)}>
+                    <SelectTrigger className="w-64">
+                        <SelectValue placeholder="Select Department" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem value="all">All</SelectItem>
+                            {
+                               data?.getCompanyDeptFields.map((dept: { id: Key | null | undefined; name: string  }) => (
+                                    <SelectItem key={dept.id} value={dept.name}>
+                                        {dept.name}
                                     </SelectItem>
                                 ))
                             }
