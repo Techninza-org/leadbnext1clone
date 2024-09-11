@@ -19,10 +19,7 @@ const FollowUpsData = ({ lead }: { lead: any }) => {
       leadId: lead?.id
     }
   })
-  useEffect(() => {
-    console.log(data?.getFollowUpByLeadId, 'fff');
-     
-  }, [data])
+  
   return (
     <div className="rounded-md border mt-2">
       <Table className='text-sm'>

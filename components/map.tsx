@@ -92,7 +92,6 @@ function calculateAndConvertTotalIdelTime(data: any[]) {
 }
 
 const Map = ({ memberId, date }: { memberId: string, date: any }) => {
-    console.log(memberId, format(date, 'dd-MM-yyyy'), 'map');
     const [currentLongitude, setCurrentLongitude] = useState(null);
     const [currentLatitude, setCurrentLatitude] = useState(null);
 
@@ -154,7 +153,6 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
         },
         skip: !memberId || !date,
         onSuccess: (data) => {
-            console.log(data, 'location');
 
             if ((data as any)?.getMemberLocation) {
                 setLocations((data as any).getMemberLocation);
@@ -180,11 +178,9 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
     }, [dailyLocation])
 
     useEffect(() => {
-        console.log('location get data::::', data?.getMemberLocation && data?.getMemberLocation?.locations);
         if (data?.getMemberLocation?.locations !== undefined) {
             // total ideal time
             var idelTime = calculateAndConvertTotalIdelTime(data?.getMemberLocation?.locations);
-            console.log('idel time::', idelTime);
             setTotalIdelTime({
                 hrs: String((idelTime.hours).toFixed(0)),
                 min: String((idelTime.minutes).toFixed(0)),
@@ -202,8 +198,6 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
             });
             // const waypointChunks = chunkArray(data?.getMemberLocation?.locations, MAX_WAYPOINTS);
             const chunks = chunkArrayIntoMax20Arrays(data?.getMemberLocation?.locations);
-            // console.log('waypointChunks:::::::::::', chunks)
-            // 
             const destinationPoints = chunks.map((array, index) => {
                 if (index === chunks.length - 1) {
                     return array[array.length - 1]; // Last item of the last array
@@ -214,7 +208,6 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
             //@ts-ignore
             setDailyLocation(destinationPoints);
             const { totalDistance } = calculateTotalDistance(chunks);
-            console.log('total distance::', totalDistance);
             setTotalDistance(totalDistance?.toFixed(2))
         }
     }, [data])
@@ -245,11 +238,13 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
             >
                 {dailyLocation.map((location: any, index: number) => {
                     const markerTime = format(new Date(location?.timestamp), 'hh:mm:ss a');
+                    const battery = Number(location?.batteryPercentage).toFixed(0)
+                    const network = location?.networkStrength;
                     return (
                         <Marker
                             key={index}
                             position={{ lat: location.latitude, lng: location.longitude }}
-                            title={`Updated at ${markerTime}`}
+                            title={`Updated at ${markerTime}, Battery: ${battery}, Network: ${network}`}
                         />
                     )
                 })}

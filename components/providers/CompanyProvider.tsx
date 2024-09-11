@@ -48,9 +48,6 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         }
     })
 
-
-    console.log(rootDate, "rootDateTT")
-
     return (
         <CompanyContext.Provider value={{ companyDeptMembers, rootInfo }}>
             {children}

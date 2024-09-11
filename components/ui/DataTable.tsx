@@ -102,7 +102,6 @@ export function DataTable<TData, TValue>({
       try {
         const fileContent = await file.text();
             const jsonData = await csvtojson().fromString(fileContent);
-            console.log('Parsed JSON Data:', jsonData);
             const results = await Promise.all(jsonData.map(async (lead) => {
               const vehicleDate = parse(lead.vehicleDate, 'dd-MM-yyyy', new Date());
               const formattedVehicleDate = format(vehicleDate, 'dd-MM-yyyy');
@@ -128,7 +127,6 @@ export function DataTable<TData, TValue>({
 
             }));
 
-            console.log('All responses:', results);
       } catch (error) {
         console.error('Error parsing CSV:', error);
       }

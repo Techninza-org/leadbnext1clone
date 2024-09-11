@@ -51,7 +51,6 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
     });
 
     const onSubmit = async (values: z.infer<typeof FollowUpSchema>) => {
-        console.log(values, 'follow up form data');
         try {
             const { data, error } = await updateLeadFollowUpDate({
                 variables: {
@@ -62,7 +61,6 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
                     remark: values.remarks,
                 },
             });
-            console.log(data, 'data');
             
             if (error) {
                 const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
