@@ -62,3 +62,13 @@ export const createUpdateManagerSchema = z.object({
     type: z.string(),
 })
 
+export const createUpdateMemberSchema = z.object({
+    id: z.string().optional(),
+    name: z.string().min(3, 'Please enter your name.').optional(),
+    email: z.string().min(3, 'Please enter your email.').email('The email address is badly formatted.'),
+    phone: z.string().length(10, 'Please enter a valid phone number.').optional(),
+    roleId: z.string().min(3, 'Please select a role.').optional(),
+    deptId: z.string().min(3, 'Please select a role.').optional(),
+    companyId: z.string().optional(),
+})
+
