@@ -47,23 +47,55 @@ export const ApprovedLeadTable = () => {
     let filteredLeads = data2Display?.filter((lead: any) => (
         lead.isLeadApproved === true
     ))
-    
-    if(filteredLeads){
-        if(selectedForm && selectedForm == 'Payment'){
-            console.log('Payment');
+
+    if (filteredLeads) {
+        if (selectedForm && selectedForm == 'Payment') {
             //@ts-ignore
             filteredLeads = data2Display?.filter((lead: any) => (
                 lead.paymentStatus === "PAID"
             ))
-        }
-    }
-    
-    
+        } else if (selectedForm && selectedForm == 'Exchange') {
+            //@ts-ignore
+            filteredLeads = data2Display?.filter((lead: any) => (
+                lead.bids.length > 0
+            ))
+        } else if (selectedForm && selectedForm == 'Document') {
+            const documents = data?.getCompanyDeptFields.filter((doc: any) => doc.name === 'Document');
+            const fields = documents[0]?.subDeptFields || []; 
+            //@ts-ignore
+            filteredLeads = data2Display?.filter((lead: any) => {
+                const feedback = lead.LeadFeedback[0]?.feedback || []; 
 
-    return (
-        <>
-            <div className="mb-6 flex gap-6">
-                {/* <Select onValueChange={(value) => setSelectedRole(value || null)}>
+                return feedback.some((fb: any) => {
+                    return fields.some((field: any) => field.name === fb.name);
+                });
+            });
+        }else if(selectedForm && selectedForm == 'Reporting'){
+            const documents = data?.getCompanyDeptFields.filter((doc: any) => doc.name === 'Reporting');
+            const fields = documents[0]?.subDeptFields || [];
+            //@ts-ignore
+            filteredLeads = data2Display?.filter((lead: any) => {
+                const feedback = lead.LeadFeedback[0]?.feedback || []; 
+
+                return feedback.some((fb: any) => {
+                    return fields.some((field: any) => field.name === fb.name);
+                });
+            });
+        }else if(selectedForm && selectedForm == 'Customer Feedback'){
+            //@ts-ignore
+            filteredLeads = data2Display?.filter((lead: any) => {
+                const feedback = lead.LeadFeedback[0]?.feedback || []; 
+
+                return feedback.some((fb: any) => {
+                    return fb.name === 'Customer Feedback'
+                });
+            });
+        }
+
+        return (
+            <>
+                <div className="mb-6 flex gap-6">
+                    {/* <Select onValueChange={(value) => setSelectedRole(value || null)}>
                     <SelectTrigger className="w-64">
                         <SelectValue placeholder="Filter" />
                     </SelectTrigger>
@@ -80,26 +112,28 @@ export const ApprovedLeadTable = () => {
                         </SelectGroup>
                     </SelectContent>
                 </Select> */}
-                <Select onValueChange={(value) => setSelectedForm(value || null)}>
-                    <SelectTrigger className="w-64">
-                        <SelectValue placeholder="Select Department" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="all">All</SelectItem>
-                            {
-                               data?.getCompanyDeptFields.map((dept: { id: Key | null | undefined; name: string  }) => (
-                                    <SelectItem key={dept.id} value={dept.name}>
-                                        {dept.name}
-                                    </SelectItem>
-                                ))
-                            }
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-            </div>
-            {/* @ts-ignore */}
-            <ApprovedDataTable columns={AssignedLeadColDefs} data={filteredLeads || []} />
-        </>
-    )
+                    <Select onValueChange={(value) => setSelectedForm(value || null)}>
+                        <SelectTrigger className="w-64">
+                            <SelectValue placeholder="Select Department" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="all">All</SelectItem>
+                                {
+                                    data?.getCompanyDeptFields.map((dept: { id: Key | null | undefined; name: string }) => (
+                                        <SelectItem key={dept.id} value={dept.name}>
+                                            {dept.name}
+                                        </SelectItem>
+                                    ))
+                                }
+                                <SelectItem value="Customer Feedback">Feedback</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+                {/* @ts-ignore */}
+                <ApprovedDataTable columns={AssignedLeadColDefs} data={filteredLeads || []} />
+            </>
+        )
+    }
 }

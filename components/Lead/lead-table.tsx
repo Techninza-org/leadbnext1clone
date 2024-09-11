@@ -27,12 +27,13 @@ export const LeadTable = () => {
         acc[current.formName].push(...current.feedback);
         return acc;
     }, {} as Record<string, { name: string; value: string }[]>);
+    
 
     const data2Display = selectedRole && selectedRole !== 'all' ? groupedByFormName?.[selectedRole] : leadInfo;
 
     return (
         <>
-            <div className="mb-6">
+            {/* <div className="mb-6">
                 <Select onValueChange={(value) => setSelectedRole(value || null)}>
                     <SelectTrigger className="w-64">
                         <SelectValue placeholder="Filter" />
@@ -50,7 +51,7 @@ export const LeadTable = () => {
                         </SelectGroup>
                     </SelectContent>
                 </Select>
-            </div>
+            </div> */}
             {/* @ts-ignore */}
             <DataTable columns={LeadColDefs} data={data2Display || []} />
         </>

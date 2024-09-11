@@ -32,9 +32,10 @@ import { companyDeptSchema } from "@/types/company"
 import { companyQueries } from "@/lib/graphql/company/queries"
 import { useModal } from "@/hooks/use-modal-store"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
+import { useState } from "react"
 
 export const AssignMemberModal = () => {
-
+    const [filteredRoles, setFilteredRoles] = useState([])
     const { toast } = useToast()
     const user = useAtomValue(userAtom)
     const [createUser, { loading, error, data }] = useMutation(CREATE_USER);
@@ -46,7 +47,11 @@ export const AssignMemberModal = () => {
     });
 
     const { loading: roleLoading, error: roleError, data: rolesData } = useQuery(companyQueries.GET_ALL_ROLES, {
-        skip: !user?.companyId
+        skip: !user?.companyId,
+        onSuccess: ({ data }) => {
+            const filter = data.getAllRoles.filter((role: any) => role.name !== "Root" && role.name !== "Admin")
+            setFilteredRoles(filter)
+        }
     });
 
     const form = useForm<z.infer<typeof createCompanyMemberSchema>>({
@@ -221,7 +226,7 @@ export const AssignMemberModal = () => {
 
                                         >
                                             {
-                                                rolesData?.getAllRoles?.map((role: any) => (
+                                                filteredRoles?.map((role: any) => (
                                                     <SelectItem key={role.id} value={role.id} className="capitalize">{role.name}</SelectItem>
                                                 ))
                                             }

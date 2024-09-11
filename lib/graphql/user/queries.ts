@@ -51,6 +51,8 @@ const GET_MEMBER_LOCATION = `
         idleTime
         movingTime
         timestamp
+        batteryPercentage
+        networkStrength
       }
     }
   }

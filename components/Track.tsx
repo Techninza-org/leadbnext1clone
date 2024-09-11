@@ -26,19 +26,12 @@ const Track = () => {
     const { data, loading, error } = useQuery(userQueries.GET_MEMBERS, {
         variables: {
             role: "Sales Person"
-        },
-        onSuccess: (data) => {
-            console.log(data, 'sales')
         }
     })
 
     function handleTrack() {
         setShow(true)
     }
-
-    useEffect(() => {
-        console.log(selectedMember, 'selectedMember');
-    }, [selectedMember])
 
     return (
         <div>

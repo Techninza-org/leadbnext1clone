@@ -18,6 +18,9 @@ const GET_COMPANY_LEADS = `
         paymentStatus
         isLeadApproved
         department
+        bids{
+          id
+        }
 
         LeadMember {
           id
