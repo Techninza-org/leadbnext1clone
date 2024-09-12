@@ -60,13 +60,25 @@ export const UpdateMember = ({ userId }: { userId: string }) => {
         },
     })
 
+    const member = companyDeptMembers?.find((member) => member.id === userId)
+    useEffect(() => {
+        if (member) {
+            form.setValue("name", member.name)
+            form.setValue("email", member.email)
+            form.setValue("phone", member.phone)
+            form.setValue("deptId", member.deptId)
+        }
+    }, [companyDeptMembers, form, member])
+
     const onSubmit = async (data: z.infer<typeof createUpdateMemberSchema>) => {
+        console.log(data, 'data')
         const { error, data: newResData } = await UpdateUser({
             variables: {
                 updateUserInput: {
                     name: data.name,
                     email: data.email,
                     roleId: data.roleId,
+                    phone: member?.phone || "",
                     deptId: data.deptId,
                 }
             }
@@ -84,21 +96,9 @@ export const UpdateMember = ({ userId }: { userId: string }) => {
 
         toast({
             variant: "default",
-            title: "Manager  Successfully!",
+            title: "Update Successfully!",
         })
-
-        form.reset();
     }
-
-    const member = companyDeptMembers?.find((member) => member.id === userId)
-    useEffect(() => {
-        if (member) {
-            form.setValue("name", member.name)
-            form.setValue("email", member.email)
-            form.setValue("phone", member.phone)
-            form.setValue("deptId", member.deptId)
-        }
-    }, [companyDeptMembers, userId])
 
     return (
         <Form {...form}>

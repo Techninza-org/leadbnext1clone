@@ -1,12 +1,13 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useMutation, useQuery } from 'graphql-hooks';
+import { useManualQuery, useMutation, useQuery } from 'graphql-hooks';
 import { userQueries } from '@/lib/graphql/user/queries';
 import { useAtom, useAtomValue } from 'jotai';
 import { companyDeptMembersAtom, rootMembersAtom, userAtom } from "@/lib/atom/userAtom";
 import { z } from 'zod';
 import { createCompanyMemberSchema } from '@/types/auth';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
+import { UPDATE_USER_COMPANY } from '@/lib/graphql/user/mutations';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
@@ -34,7 +35,8 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         },
     };
 
-    const { data: memberData } = useQuery(userQueries.GET_MEMBERS, {
+    const [GetMembersByRole, { data: memberData }] = useManualQuery(userQueries.GET_MEMBERS, {
+        skip: !userInfo?.token,
         variables: {
             role: "Sales Person"
         },
@@ -44,6 +46,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     })
 
     useEffect(() => {
+        GetMembersByRole()
         if (memberData) {
             setMembers(memberData)
         }
@@ -52,7 +55,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const { data, error: queryError, loading: queryLoading } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
         skip,
         variables,
-        refetchAfterMutations: leadAssignTo,
+        refetchAfterMutations: [leadAssignTo, UPDATE_USER_COMPANY],
         onSuccess: ({ data }) => {
             if (data?.getCompanyDeptMembers) setCompanyDeptMembers(data.getCompanyDeptMembers)
         }
