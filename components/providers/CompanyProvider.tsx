@@ -13,6 +13,7 @@ type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
     rootInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
     members: any;
+    GetMembersByRole: any;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -41,16 +42,10 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             role: "Sales Person"
         },
         onSuccess: ({ data }) => {
+            console.log("running1")
             setMembers(data)
         }
     })
-
-    useEffect(() => {
-        GetMembersByRole()
-        if (memberData) {
-            setMembers(memberData)
-        }
-    }, [memberData])
 
     const { data, error: queryError, loading: queryLoading } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
         skip,
@@ -70,7 +65,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     })
 
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members }}>
+        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, GetMembersByRole }}>
             {children}
         </CompanyContext.Provider>
     );

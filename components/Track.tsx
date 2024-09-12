@@ -1,5 +1,5 @@
 'use client'
-import React, { useState } from 'react'
+import React, { use, useEffect, useState } from 'react'
 import {
     Select,
     SelectContent,
@@ -16,9 +16,12 @@ import { CalendarDaysIcon } from 'lucide-react'
 import { Calendar } from './ui/calendar'
 import Map from './map'
 import { useCompany } from './providers/CompanyProvider'
+import { useAtomValue } from 'jotai'
+import { userAtom } from '@/lib/atom/userAtom'
 
 const Track = () => {
-    const { members } = useCompany()
+    const userInfo = useAtomValue(userAtom)
+    const { members, GetMembersByRole } = useCompany()
     const [selectedMember, setSelectedMember] = useState(null)
     const [date, setDate] = useState(null)
     const [show, setShow] = useState(false)
@@ -26,6 +29,11 @@ const Track = () => {
     function handleTrack() {
         setShow(true)
     }
+
+    useEffect(() => {
+        console.log("running")
+        GetMembersByRole()
+    }, [userInfo?.token])
 
     return (
         <div>
