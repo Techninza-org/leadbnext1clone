@@ -39,10 +39,15 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             role: "Sales Person"
         },
         onSuccess: ({ data }) => {
-            console.log(data)
             setMembers(data)
         }
     })
+
+    useEffect(() => {
+        if (memberData) {
+            setMembers(memberData)
+        }
+    }, [memberData])
 
     const { data, error: queryError, loading: queryLoading } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
         skip,
