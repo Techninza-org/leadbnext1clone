@@ -1,7 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { userQueries } from '@/lib/graphql/user/queries'
-import { useQuery } from 'graphql-hooks'
+import React, { useState } from 'react'
 import {
     Select,
     SelectContent,
@@ -17,21 +15,13 @@ import { format } from 'date-fns'
 import { CalendarDaysIcon } from 'lucide-react'
 import { Calendar } from './ui/calendar'
 import Map from './map'
+import { useCompany } from './providers/CompanyProvider'
 
 const Track = () => {
-    const [members, setMembers] = useState<any>([])
+    const { members } = useCompany()
     const [selectedMember, setSelectedMember] = useState(null)
     const [date, setDate] = useState(null)
     const [show, setShow] = useState(false)
-
-    const { loading, error } = useQuery(userQueries.GET_MEMBERS, {
-        variables: {
-            role: "Sales Person"
-        },
-        onSuccess: ({ data }) => {
-            setMembers(data)
-        }
-    })
 
     function handleTrack() {
         setShow(true)

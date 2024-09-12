@@ -11,6 +11,7 @@ import { leadMutation } from '@/lib/graphql/lead/mutation';
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
     rootInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
+    members: any;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -22,6 +23,8 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [companyDeptMembers, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom);
     const [rootMembersInfo, setRootMembersAtom] = useAtom(rootMembersAtom)
     const [rootInfo, setRootInto] = useState<z.infer<typeof createCompanyMemberSchema>[] | null>(null)
+    const [members, setMembers] = useState<any>([])
+
 
     const { skip, variables } = {
         skip: ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || ""),
@@ -30,6 +33,16 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             companyId: userInfo?.companyId,
         },
     };
+
+    const { data: memberData } = useQuery(userQueries.GET_MEMBERS, {
+        variables: {
+            role: "Sales Person"
+        },
+        onSuccess: ({ data }) => {
+            console.log(data)
+            setMembers(data)
+        }
+    })
 
     const { data, error: queryError, loading: queryLoading } = useQuery(userQueries.GET_COMPANY_DEPT_MEMBERS, {
         skip,
@@ -49,7 +62,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     })
 
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo }}>
+        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members }}>
             {children}
         </CompanyContext.Provider>
     );
