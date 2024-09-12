@@ -12,6 +12,7 @@ export interface ModalData {
     fields?: z.infer<typeof CompanyDeptFieldSchema>
     deptName?: string;
     deptId?: string;
+    depId?: string;
 
     apiUrl?: string;
     query?: Record<string, any>;

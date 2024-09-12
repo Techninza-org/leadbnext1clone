@@ -26,8 +26,9 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { ArrowDown, ArrowUp, PlusIcon, X } from "lucide-react";
-import { useQuery } from "graphql-hooks";
+import { useMutation, useQuery } from "graphql-hooks";
 import { deptQueries } from "@/lib/graphql/dept/queries";
+import { DeptMutation } from "@/lib/graphql/dept/mutation";
 
 // Define the schema
 const DepartmentSchema = z.object({
@@ -48,9 +49,14 @@ const UpdateDepartmentFieldsModal = () => {
     const [deptFields, setDeptFields] = useState([]);
     const [filteredDeptFields, setFilteredDeptFields] = useState([]);
     const { isOpen, onClose, type, data: modalData } = useModal();
-    const { deptName, deptId } = modalData;
+    const { deptName, deptId, depId } = modalData;
+    console.log(deptName, 'deptName');
+    
+    
     const { toast } = useToast();
+    const [updateDepartmentFields] = useMutation(DeptMutation.UPDATE_DEPT);
     const isModalOpen = isOpen && type === "updateDepartmentFields";
+    
 
     const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
         variables: { deptId },
@@ -95,7 +101,40 @@ const UpdateDepartmentFieldsModal = () => {
     }, [filteredDeptFields, form.reset]);
 
     const onSubmit = async (values: any) => {
-        console.log(values, 'values');
+        const { deptFields } = values;
+        console.log(deptFields, 'deptFields');
+
+        try {
+            const { data, error } = await updateDepartmentFields({
+                variables: {
+                    input: {
+                        companyDeptId: depId,
+                        name: deptName,  //form name
+                        order: 4,
+                        subDeptFields: deptFields,
+                    }
+                },
+            });
+            console.log(data, 'data');
+
+            if (error) {
+                const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
+                toast({
+                    title: 'Error',
+                    description: message || "Something went wrong",
+                    variant: "destructive"
+                });
+                return;
+            }
+
+            toast({
+                variant: "default",
+                title: "Department Form Updated Successfully!",
+            });
+
+        } catch (error) {
+            console.log(error);
+        }
 
     };
 
@@ -280,7 +319,7 @@ const UpdateDepartmentFieldsModal = () => {
                                                                 onChange={(e) => {
                                                                     const value = e.target.value;
                                                                     field.onChange(value);
-                                                                    form.setValue(`deptFields.${index}.options.${optIndex}.label`, value); 
+                                                                    form.setValue(`deptFields.${index}.options.${optIndex}.label`, value);
                                                                 }}
                                                             />
                                                         )}
