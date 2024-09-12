@@ -25,19 +25,20 @@ export async function middleware(request: NextRequest) {
     '/reset-password',
     '/admin/login',
   ];
-
+  
   const adminPaths = [
     '/admin',
     '/admin/dashboard',
     // Add more admin paths as needed
   ];
-
+  
   const rootManagerPaths = [
     '/dashboard',
     '/leads',
     '/members',
     '/leads/transfered',
-    '/track'
+    '/track',
+    '/lead.csv'
     // Add more paths for root and manager
   ];
 

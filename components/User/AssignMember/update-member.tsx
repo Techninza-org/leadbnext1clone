@@ -60,8 +60,6 @@ export const UpdateMember = ({ userId }: { userId: string }) => {
         },
     })
 
-    console.log(form.formState.errors)
-
     const onSubmit = async (data: z.infer<typeof createUpdateMemberSchema>) => {
         const { error, data: newResData } = await UpdateUser({
             variables: {

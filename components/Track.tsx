@@ -19,13 +19,17 @@ import { Calendar } from './ui/calendar'
 import Map from './map'
 
 const Track = () => {
+    const [members, setMembers] = useState<any>([])
     const [selectedMember, setSelectedMember] = useState(null)
     const [date, setDate] = useState(null)
     const [show, setShow] = useState(false)
-   
-    const { data, loading, error } = useQuery(userQueries.GET_MEMBERS, {
+
+    const { loading, error } = useQuery(userQueries.GET_MEMBERS, {
         variables: {
             role: "Sales Person"
+        },
+        onSuccess: ({ data }) => {
+            setMembers(data)
         }
     })
 
@@ -42,7 +46,7 @@ const Track = () => {
                         <SelectValue placeholder="Select Member" />
                     </SelectTrigger>
                     <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white">
-                        {data?.getMembersByRole.map((member: any) => (
+                        {members?.getMembersByRole?.map((member: any) => (
                             <SelectItem key={member.id} value={member.id}>
                                 {member.name}
                             </SelectItem>
