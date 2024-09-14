@@ -45,6 +45,20 @@ mutation CreateUser(
 }
 `;
 
+export const UPDATE_USER_COMPANY = `
+  mutation UpdateUser($updateUserInput: UpdateUserInput!) {
+    updateUser(updateUserInput: $updateUserInput) {
+      id
+      name
+      email
+      role {
+        id
+        name
+      }
+    }
+  }
+`
+
 export const CREATE_ROOT_USER_MUTATION = `
   mutation CreateUser(
     $name: String!,

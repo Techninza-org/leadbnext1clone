@@ -1,7 +1,5 @@
 'use client'
-import React, { useEffect, useState } from 'react'
-import { userQueries } from '@/lib/graphql/user/queries'
-import { useQuery } from 'graphql-hooks'
+import React, { use, useEffect, useState } from 'react'
 import {
     Select,
     SelectContent,
@@ -17,21 +15,25 @@ import { format } from 'date-fns'
 import { CalendarDaysIcon } from 'lucide-react'
 import { Calendar } from './ui/calendar'
 import Map from './map'
+import { useCompany } from './providers/CompanyProvider'
+import { useAtomValue } from 'jotai'
+import { userAtom } from '@/lib/atom/userAtom'
 
 const Track = () => {
+    const userInfo = useAtomValue(userAtom)
+    const { members, GetMembersByRole } = useCompany()
     const [selectedMember, setSelectedMember] = useState(null)
     const [date, setDate] = useState(null)
     const [show, setShow] = useState(false)
-   
-    const { data, loading, error } = useQuery(userQueries.GET_MEMBERS, {
-        variables: {
-            role: "Sales Person"
-        }
-    })
 
     function handleTrack() {
         setShow(true)
     }
+
+    useEffect(() => {
+        console.log("running")
+        GetMembersByRole()
+    }, [userInfo?.token])
 
     return (
         <div>
@@ -42,7 +44,7 @@ const Track = () => {
                         <SelectValue placeholder="Select Member" />
                     </SelectTrigger>
                     <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white">
-                        {data?.getMembersByRole.map((member: any) => (
+                        {members?.getMembersByRole?.map((member: any) => (
                             <SelectItem key={member.id} value={member.id}>
                                 {member.name}
                             </SelectItem>

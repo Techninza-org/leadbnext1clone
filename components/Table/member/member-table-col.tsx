@@ -3,6 +3,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { createCompanyMemberSchema } from "@/types/auth";
+import Link from "next/link";
+import { PenLineIcon } from "lucide-react";
 
 export const MemberColDefs: ColumnDef<z.infer<typeof createCompanyMemberSchema>>[] = [
     {
@@ -71,6 +73,18 @@ export const MemberColDefs: ColumnDef<z.infer<typeof createCompanyMemberSchema>>
             return (
                 <div className="flex items-center">
                     <span>{row.getValue("phone")}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: '',
+        accessorKey: 'id',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <Link href={`/members/assign/${row.getValue("id")}`}><PenLineIcon size={18} /></Link>
                 </div>
             )
 

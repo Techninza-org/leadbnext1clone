@@ -1,5 +1,6 @@
 import { AssignMember } from "@/components/User/AssignMember/assign-member-form";
 import { CreateUpdateCompanyMenager } from "@/components/User/AssignMember/create-update-company-manager-form";
+import { UpdateMember } from "@/components/User/AssignMember/update-member";
 import {
   Card,
   CardContent,
@@ -8,25 +9,25 @@ import {
 } from "@/components/ui/card"
 
 
-export default function AssignMemberPage() {
+export default function AssignMemberPage({ params }: { params: { id: string } }) {
   return (
     <div className="space-y-4">
-      {/* <Card className="bg-inherit mx-auto">
+      <Card className="bg-inherit mx-auto">
         <CardHeader>
-          <CardTitle className="font-bold">Assign Member!</CardTitle>
+          <CardTitle className="font-bold">Update Member!</CardTitle>
         </CardHeader>
         <CardContent>
-          <AssignMember />
+          <UpdateMember userId={params.id} />
         </CardContent>
-      </Card> */}
-      <Card className="bg-inherit mx-auto">
+      </Card>
+      {/* <Card className="bg-inherit mx-auto">
         <CardHeader>
           <CardTitle className="font-bold">Update Manager!</CardTitle>
         </CardHeader>
         <CardContent>
           <CreateUpdateCompanyMenager />
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 }

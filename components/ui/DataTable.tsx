@@ -161,7 +161,7 @@ export function DataTable<TData, TValue>({
               color="primary"
               size={"sm"}
               className="items-center gap-1"
-              onClick={() => handleFileDownload("lead.xlsx")}
+              onClick={() => handleFileDownload("lead.csv")}
             >
               <DownloadIcon size={15} /> <span>Download Sample</span>
             </Button>
