@@ -3,17 +3,19 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useManualQuery, useMutation, useQuery } from 'graphql-hooks';
 import { userQueries } from '@/lib/graphql/user/queries';
 import { useAtom, useAtomValue } from 'jotai';
-import { companyDeptMembersAtom, rootMembersAtom, userAtom } from "@/lib/atom/userAtom";
+import { companyDeptFieldsAtom, companyDeptMembersAtom, rootMembersAtom, userAtom } from "@/lib/atom/userAtom";
 import { z } from 'zod';
 import { createCompanyMemberSchema } from '@/types/auth';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
 import { UPDATE_USER_COMPANY } from '@/lib/graphql/user/mutations';
+import { deptQueries } from '@/lib/graphql/dept/queries';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
     rootInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
     members: any;
     GetMembersByRole: any;
+    companyDeptFields: any;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -23,6 +25,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
 
     const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
     const [companyDeptMembers, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom);
+    const [companyDeptFields, setCompanyDeptFields] = useAtom(companyDeptFieldsAtom);
     const [rootMembersInfo, setRootMembersAtom] = useAtom(rootMembersAtom)
     const [rootInfo, setRootInto] = useState<z.infer<typeof createCompanyMemberSchema>[] | null>(null)
     const [members, setMembers] = useState<any>([])
@@ -56,6 +59,13 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         }
     });
 
+    const { data: deptFields, loading: deptFieldsLoading, error: deptFieldsError } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+        variables: { deptId:  userInfo?.deptId },
+        onSuccess: () => {
+            if (deptFields?.getCompanyDeptFields) setCompanyDeptFields(deptFields.getCompanyDeptFields)
+        }
+    });
+
     const { data: rootDate, loading, error } = useQuery(userQueries.GET_COMPANIES, {
         skip: !userInfo?.token,
         onSuccess: ({ data }) => {
@@ -65,7 +75,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     })
 
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, GetMembersByRole }}>
+        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, GetMembersByRole, companyDeptFields }}>
             {children}
         </CompanyContext.Provider>
     );

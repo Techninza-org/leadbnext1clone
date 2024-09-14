@@ -20,12 +20,14 @@ import { AssignedLeadColDefs } from "./apptoved-table-col";
 import { useQuery } from "graphql-hooks";
 import { deptQueries } from "@/lib/graphql/dept/queries";
 import { userAtom } from "@/lib/atom/userAtom";
+import { useCompany } from "../providers/CompanyProvider";
 
 export const ApprovedLeadTable = () => {
     const [leadInfo] = useAtom(leads)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
     const [selectedForm, setSelectedForm] = useState<string | null>(null);
     const user = useAtomValue(userAtom)
+    const {companyDeptFields} = useCompany();
 
     const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
         variables: { deptId: user?.deptId },
