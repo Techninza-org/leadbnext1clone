@@ -1,5 +1,5 @@
 "use client";
-import { AwaitedReactNode, JSXElementConstructor, Key, ReactElement, ReactNode, useState } from "react";
+import { AwaitedReactNode, JSXElementConstructor, Key, useState } from "react";
 import { useAtom, useAtomValue } from "jotai";
 
 import { DataTable } from "@/components/ui/DataTable"
@@ -61,30 +61,30 @@ export const ApprovedLeadTable = () => {
             ))
         } else if (selectedForm && selectedForm == 'Document') {
             const documents = data?.getCompanyDeptFields.filter((doc: any) => doc.name === 'Document');
-            const fields = documents[0]?.subDeptFields || []; 
+            const fields = documents[0]?.subDeptFields || [];
             //@ts-ignore
             filteredLeads = data2Display?.filter((lead: any) => {
-                const feedback = lead.LeadFeedback[0]?.feedback || []; 
+                const feedback = lead.LeadFeedback[0]?.feedback || [];
 
                 return feedback.some((fb: any) => {
                     return fields.some((field: any) => field.name === fb.name);
                 });
             });
-        }else if(selectedForm && selectedForm == 'Reporting'){
+        } else if (selectedForm && selectedForm == 'Reporting') {
             const documents = data?.getCompanyDeptFields.filter((doc: any) => doc.name === 'Reporting');
             const fields = documents[0]?.subDeptFields || [];
             //@ts-ignore
             filteredLeads = data2Display?.filter((lead: any) => {
-                const feedback = lead.LeadFeedback[0]?.feedback || []; 
+                const feedback = lead.LeadFeedback[0]?.feedback || [];
 
                 return feedback.some((fb: any) => {
                     return fields.some((field: any) => field.name === fb.name);
                 });
             });
-        }else if(selectedForm && selectedForm == 'Customer Feedback'){
+        } else if (selectedForm && selectedForm == 'Customer Feedback') {
             //@ts-ignore
             filteredLeads = data2Display?.filter((lead: any) => {
-                const feedback = lead.LeadFeedback[0]?.feedback || []; 
+                const feedback = lead.LeadFeedback[0]?.feedback || [];
 
                 return feedback.some((fb: any) => {
                     return fb.name === 'Customer Feedback'

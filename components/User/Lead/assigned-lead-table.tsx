@@ -15,7 +15,6 @@ export const AssignedLeadTable = () => {
     const [leadInfo, setAssigneLeads] = useAtom(assignedLeadsAtom)
     const { loading } = useQuery(leadQueries.GET_ASSIGNED_LEADS, {
         variables: { userId: userInfo?.id },
-        useCache: true,
         skip: !userInfo?.id,
         onSuccess: ({ data }) => {
             setAssigneLeads(data.getAssignedLeads)

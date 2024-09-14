@@ -29,7 +29,6 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
 
     const { loading } = useQuery(leadQueries.GET_COMPANY_LEADS, {
         variables: { companyId: userInfo?.companyId },
-        useCache: true,
         onSuccess: ({ data }) => {
             setLeads(data.getCompanyLeads.lead)
         },
