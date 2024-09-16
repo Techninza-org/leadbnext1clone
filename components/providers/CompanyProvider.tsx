@@ -74,6 +74,10 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         }
     })
 
+    useEffect(() => {
+        GetMembersByRole()
+    }, [userInfo?.token])
+
     return (
         <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, GetMembersByRole, companyDeptFields }}>
             {children}
