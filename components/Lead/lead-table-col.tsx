@@ -105,10 +105,11 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                 // <ActionTooltip label={assigneeName === 'rounak' ? 'Awaited' : assigneeName} align="center" side="top" key={"assignedMembers"}>
                 <Button
                     size={'sm'}
-                    variant={approved ? "secondary" : "destructive"}
+                    variant={assigneeName ? "secondary" : "destructive"}
                     className="text-xs p-2  capitalize"
                 >
-                    {approved ? assigneeName : "Not Assigned"}
+                    {/* {approved ? assigneeName : "Not Assigned"} */}
+                    { assigneeName || "Not Assigned"}
                 </Button>
                 // </ActionTooltip>
                 // <span>{assigneeName}</span>
