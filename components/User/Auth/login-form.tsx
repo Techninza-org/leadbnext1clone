@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -31,6 +31,7 @@ import { GENRATE_OTP, LOGIN_USER } from "@/lib/graphql/user/mutations"
 
 export const LoginForm = () => {
     const [isOTPFormVisible, setIsOTPFormVisible] = useState(false)
+    const [timer, setTimer] = useState(0)
     const { handleUserLogin } = useAuth()
 
     const [loginUser, { loading }] = useMutation(LOGIN_USER);
@@ -73,6 +74,7 @@ export const LoginForm = () => {
                 return;
             }
             setIsOTPFormVisible(true);
+            setTimer(45);
         } else {
             setError('phone', {
                 type: 'manual',
@@ -80,6 +82,16 @@ export const LoginForm = () => {
             });
         };
     }
+
+    useEffect(() => {
+        if (timer > 0) {
+            const interval = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [timer]);
+
     return (
         <>
             <Form {...form}>
@@ -103,7 +115,7 @@ export const LoginForm = () => {
                             )}
                         />
                         <Button type="button" disabled={genratingOTP} onClick={() => genrateOTP()} className="mt-6 w-full">Send OTP</Button>
-                    </div> : <OTPForm form={form} />}
+                    </div> : <OTPForm form={form} timer={timer} setTimer={setTimer} resendOTP={genrateOTP}  />}
                 </form>
             </Form>
 
@@ -111,7 +123,16 @@ export const LoginForm = () => {
     )
 }
 
-const OTPForm = ({ form }: { form: any }) => {
+const OTPForm = ({ form, timer, setTimer, resendOTP }: { form: any, timer: number, setTimer: any, resendOTP: any  }) => {
+
+    useEffect(() => {
+        if (timer > 0) {
+            const interval = setInterval(() => {
+                setTimer((prev: number) => prev - 1);
+            }, 1000);
+            return () => clearInterval(interval);
+        }
+    }, [timer, setTimer]);
 
     return (
         <>
@@ -151,6 +172,15 @@ const OTPForm = ({ form }: { form: any }) => {
                 />
             </div>
             <Button type="submit" className="mt-6 w-full">Login</Button>
+            <Button
+                type="button"
+                variant="outline"
+                className="mt-4"
+                disabled={timer > 0}
+                onClick={resendOTP}
+            >
+                {timer > 0 ? `Resend OTP in ${timer}s` : "Resend OTP"}
+            </Button>
         </>
     )
 }
