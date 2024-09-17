@@ -7,14 +7,13 @@ import { companyDeptFieldsAtom, companyDeptMembersAtom, rootMembersAtom, userAto
 import { z } from 'zod';
 import { createCompanyMemberSchema } from '@/types/auth';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
-import { UPDATE_USER_COMPANY } from '@/lib/graphql/user/mutations';
+import { LOGIN_USER, UPDATE_USER_COMPANY } from '@/lib/graphql/user/mutations';
 import { deptQueries } from '@/lib/graphql/dept/queries';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
     rootInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
     members: any;
-    GetMembersByRole: any;
     companyDeptFields: any;
 };
 
@@ -39,13 +38,13 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         },
     };
 
-    const [GetMembersByRole, { data: memberData }] = useManualQuery(userQueries.GET_MEMBERS, {
+    const { data: memberData } = useQuery(userQueries.GET_MEMBERS, {
         skip: !userInfo?.token,
         variables: {
             role: "Sales Person"
         },
+        refetchAfterMutations: LOGIN_USER,
         onSuccess: ({ data }) => {
-            console.log("running1")
             setMembers(data)
         }
     })
@@ -60,7 +59,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     });
 
     const { data: deptFields, loading: deptFieldsLoading, error: deptFieldsError } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId:  userInfo?.deptId },
+        variables: { deptId: userInfo?.deptId },
         onSuccess: () => {
             if (deptFields?.getCompanyDeptFields) setCompanyDeptFields(deptFields.getCompanyDeptFields)
         }
@@ -75,7 +74,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     })
 
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, GetMembersByRole, companyDeptFields }}>
+        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, companyDeptFields }}>
             {children}
         </CompanyContext.Provider>
     );

@@ -102,10 +102,11 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             return (
                 <Button
                     size={'sm'}
-                    variant={approved ? "secondary" : "destructive"}
+                    variant={assigneeName ? "secondary" : "destructive"}
                     className="text-xs p-2  capitalize"
                 >
-                    {approved ? assigneeName : "Not Assigned"}
+                    {/* {approved ? assigneeName : "Not Assigned"} */}
+                    { assigneeName || "Not Assigned"}
                 </Button>
             );
         }

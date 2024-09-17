@@ -1,4 +1,4 @@
-//@ts-nocheck
+"use client";
 import React, { useEffect, useState } from 'react'
 import { DirectionsRenderer, DirectionsService, GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
 import { useQuery } from 'graphql-hooks';
@@ -6,8 +6,8 @@ import { userQueries } from '@/lib/graphql/user/queries';
 import { format } from 'date-fns';
 
 const Map = ({ memberId, date }: { memberId: string, date: any }) => {
-    const [currentLongitude, setCurrentLongitude] = useState(null);
-    const [currentLatitude, setCurrentLatitude] = useState(null);
+    const [currentLongitude, setCurrentLongitude] = useState<number | null>(null);
+    const [currentLatitude, setCurrentLatitude] = useState<number | null>(null);
     const [directions, setDirections] = useState(null);
 
     // user data
@@ -22,7 +22,7 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
         sec: ""
     });
     const [totalDistance, setTotalDistance] = useState("");
-    const [dailyLocation, setDailyLocation] = useState([]); //daily location coordinates
+    const [dailyLocation, setDailyLocation] = useState<{ latitude: number; longitude: number; timestamp?: string; batteryPercentage?: number; networkStrength?: string }[]>([]); //daily location coordinates
     const [locations, setLocations] = useState<any[]>([]);
 
     const containerStyle = {
@@ -51,7 +51,7 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
             date: format(date, 'dd-MM-yyyy'),
         },
         skip: !memberId || !date,
-        onSuccess: (data) => {
+        onSuccess: ({ data }) => {
             if (data?.getMemberLocation) {
                 setLocations(data.getMemberLocation);
             }
@@ -75,7 +75,7 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
     useEffect(() => {
         if (data?.getMemberLocation?.locations !== undefined) {
             const chunks = chunkArrayIntoMax20Arrays(data?.getMemberLocation?.locations);
-            const destinationPoints = chunks.map((array, index) => {
+            const destinationPoints: any[] = chunks?.map((array, index) => {
                 if (index === chunks.length - 1) {
                     return array[array.length - 1]; // Last item of the last array
                 } else {
@@ -86,7 +86,6 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
         }
     }, [data]);
 
-    // Calculate route when dailyLocation changes
     useEffect(() => {
         if (dailyLocation.length >= 2) {
             const waypoints = dailyLocation.slice(1, dailyLocation.length - 1).map((location) => ({
@@ -97,24 +96,30 @@ const Map = ({ memberId, date }: { memberId: string, date: any }) => {
             const origin = { lat: dailyLocation[0].latitude, lng: dailyLocation[0].longitude };
             const destination = { lat: dailyLocation[dailyLocation.length - 1].latitude, lng: dailyLocation[dailyLocation.length - 1].longitude };
 
-            const directionsService = new window.google.maps.DirectionsService();
-            directionsService.route(
-                {
-                    origin,
-                    destination,
-                    waypoints: waypoints,
-                    travelMode: 'DRIVING',
-                },
-                (result, status) => {
-                    if (status === 'OK') {
-                        setDirections(result);
-                    } else {
-                        console.error(`Error fetching directions: ${status}`);
+            if (window.google && window.google.maps && window.google.maps.DirectionsService) {
+                const directionsService = new window.google.maps.DirectionsService();
+                directionsService.route(
+                    {
+                        origin,
+                        destination,
+                        waypoints: waypoints,
+                        // @ts-ignore
+                        travelMode: 'TRANSIT',
+                    },
+                    (result: any, status: any) => {
+                        if (status === 'OK') {
+                            setDirections(result);
+                        } else {
+                            console.error(`Error fetching directions: ${status}`);
+                        }
                     }
-                }
-            );
+                );
+            } else {
+                console.error('Google Maps API is not loaded');
+            }
         }
     }, [dailyLocation]);
+
 
     if (dailyLocation.length === 0) {
         return <div>Locations not available...</div>;
