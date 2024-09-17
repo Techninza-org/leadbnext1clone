@@ -34,6 +34,9 @@ const GET_COMPANIES = `
         email
         Subscriptions {
             planId
+            plan{
+              name
+            }
         }
     }
     }
@@ -58,9 +61,40 @@ const GET_MEMBER_LOCATION = `
   }
 `;
 
+const GET_PLANS = `
+  query GetPlans {
+    getPlans{
+        id
+        name
+        duration
+        defaultAllowedDeptsIds
+        price
+        description
+        isActive
+        createdAt
+        updatedAt
+    }
+  }
+`;
+
+const GET_DEPT_FIELDS = `
+  query GetDeptFields {
+      getDeptWFields{
+         id
+         name
+         deptFields {
+          id
+          name
+         }
+      }
+  }
+`;
+
 export const userQueries = {
   GET_COMPANY_DEPT_MEMBERS,
   GET_COMPANIES,
   GET_MEMBERS,
-  GET_MEMBER_LOCATION
+  GET_MEMBER_LOCATION,
+  GET_PLANS,
+  GET_DEPT_FIELDS
 };

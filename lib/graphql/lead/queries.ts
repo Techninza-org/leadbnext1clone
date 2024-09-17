@@ -20,6 +20,11 @@ const GET_COMPANY_LEADS = `
         department
         bids{
           id
+          bidAmount
+          Member {
+            id
+            name
+          }
         }
 
         LeadMember {
@@ -76,6 +81,14 @@ query getAssignedLeads($userId: String!) {
       vehicleModel
       callStatus
       paymentStatus
+      bids{
+        id
+        bidAmount
+        Member {
+          id
+          name
+        }
+      }
       LeadFeedback {
         id
         memberId

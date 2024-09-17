@@ -6,9 +6,27 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-  } from "@/components/ui/table"
+} from "@/components/ui/table"
+import { userQueries } from "@/lib/graphql/user/queries";
+import { useQuery } from "graphql-hooks";
+import { useState } from "react";
+
+interface Dept {
+    id: string;
+    name: string;
+  }
 
 export const SettingsTable = () => {
+    const [departs, setDeparts] = useState([])
+    const { data: plans, loading: planLoading } = useQuery(userQueries.GET_PLANS);
+    console.log(plans?.getPlans);
+    const { data: depts, loading: deptLoading } = useQuery(userQueries.GET_DEPT_FIELDS, {
+        onSuccess: ({ data }) => {
+            setDeparts(data?.getDeptWFields[0]?.deptFields)
+        }
+    });
+
+    if(planLoading || deptLoading) return <div>Loading...</div>
 
     return (
         // <RootTable columns={SettingsCols} data={rootInfo ?? []} />
@@ -21,21 +39,25 @@ export const SettingsTable = () => {
                         <TableHead>ALLOWED DEPTS</TableHead>
                     </TableRow>
                 </TableHeader>
-                {/* <TableBody>
+                <TableBody>
                     {
-                        data?.getFollowUpByLeadId?.map((row: any) => (
+                        plans?.getPlans?.map((plan: any) => (
                             <TableRow
-                                key={row.id}
+                                key={plan.id}
                             >
-                                <TableCell>{row.createdAt}</TableCell>
-                                <TableCell>{row.followUpBy.name}</TableCell>
-                                <TableCell>{row.nextFollowUpDate}</TableCell>
-                                <TableCell>{row.customerResponse}</TableCell>
-                                <TableCell>{row.rating}</TableCell>
+                                <TableCell>{plan.name}</TableCell>
+                                <TableCell>{plan.price}</TableCell>
+                                <TableCell>
+                                    {plan.defaultAllowedDeptsIds.map((deptId: string) => {
+                                        const dept = departs?.find((d: Dept) => d.id === deptId);
+                                        //@ts-ignore
+                                        return dept ? dept.name : 'Unknown Dept';
+                                    }).join(', ')}
+                                </TableCell>
                             </TableRow>
                         ))
                     }
-                </TableBody> */}
+                </TableBody>
             </Table>
         </div>
     )

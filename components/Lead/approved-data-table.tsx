@@ -137,10 +137,7 @@ export function ApprovedDataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      {/* <div className="flex justify-between">
-        <DataTableToolbar table={table} setFilter={setFilter} />
-        <div className="flex gap-2 items-center">
-          {
+      {
             userRole === "manager" && (
               <Button
                 onClick={() => onOpen("assignLead", { leads: selectedRows })}
@@ -153,6 +150,9 @@ export function ApprovedDataTable<TData, TValue>({
               </Button>
             )
           }
+      {/* <div className="flex justify-between">
+        <DataTableToolbar table={table} setFilter={setFilter} />
+        <div className="flex gap-2 items-center">
           <div>
             <input
               type="file"
