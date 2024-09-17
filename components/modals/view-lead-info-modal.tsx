@@ -17,6 +17,10 @@ import { Button } from "../ui/button";
 import FollowUpForm from "../Lead/follow-up-form";
 import { useState } from "react";
 import FollowUpsData from "../Lead/follow-ups-data";
+import { useQuery } from "graphql-hooks";
+import { leadQueries } from "@/lib/graphql/lead/queries";
+import { formatCurrencyForIndia } from "@/lib/utils";
+import { leadSchema } from "@/types/lead";
 
 
 export const ViewLeadInfoModal = () => {
@@ -145,6 +149,24 @@ export const ViewLeadInfoModal = () => {
                                 <Separator className="my-2" />
                             </>
                         ))}
+
+                        { lead?.bids && lead?.bids?.length > 0 &&
+                            <ScrollArea className="h-44 w-full rounded-md border">
+                                <div className="p-4">
+                                    <h4 className="mb-4 text-sm font-medium leading-none">All Bids</h4>
+                                    {!!lead?.bids && lead?.bids?.map((bid: any) => (
+                                        <>
+                                            <div key={bid?.id} className="text-sm grid-cols-2 grid">
+                                                <span>{bid?.Member?.name}</span>
+                                                <span>{formatCurrencyForIndia(bid?.bidAmount || 0)}</span>
+                                            </div>
+                                            <Separator className="my-2" />
+                                        </>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        }
+
                         <div>
                             <FollowUpsData lead={lead} />
                             <div className="my-4 grid place-items-end grid-flow-col">

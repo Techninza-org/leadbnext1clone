@@ -1,33 +1,9 @@
 import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Link from "next/link";
 
-
 export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
-    // {
-    //     id: "id",
-    //     header: ({ table }) => (
-    //         <Checkbox
-    //             checked={
-    //                 table.getIsAllPageRowsSelected() ||
-    //                 (table.getIsSomePageRowsSelected() && "indeterminate")
-    //             }
-    //             onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //             aria-label="Select all"
-    //         />
-    //     ),
-    //     cell: ({ row }) => (
-    //         <Checkbox
-    //             checked={row.getIsSelected()}
-    //             onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //             aria-label="Select row"
-    //         />
-    //     ),
-    //     enableSorting: false,
-    //     enableHiding: false,
-    // },
     {
         header: 'Company ID',
         cell: ({ row }) => {
@@ -64,30 +40,6 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
 
         }
     },
-    // {
-    //     header: 'Company Name',
-    //     accessorKey: 'name',
-    //     cell: ({ row }) => {
-    //         return (
-    //             <div className="flex items-center">
-    //                 <span>{row.getValue("name")}</span>
-    //             </div>
-    //         )
-
-    //     }
-    // },
-    // {
-    //     header: 'Contact',
-    //     accessorKey: 'phone',
-    //     cell: ({ row }) => {
-    //         return (
-    //             <div className="flex items-center">
-    //                 <span>{row.getValue("phone")}</span>
-    //             </div>
-    //         )
-
-    //     }
-    // },
     {
         header: 'Details',
         cell: ({ row }) => {
@@ -103,26 +55,17 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
     },
     {
         header: 'Plan',
-        accessorKey: 'plan',
+        accessorKey: 'Subscriptions',
         cell: ({ row }) => {
+            if(row.original.Company.Subscriptions.length === 0) return <span>No Plan</span>
+            const length = row.original.Company.Subscriptions.length;
+            const sub = row.original.Company.Subscriptions[length -1]
             return (
                 <div className="flex items-center">
-                    <Select value={row.getValue("plan")} >
-                        <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Silver" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectGroup>
-                                <SelectItem value="Silver">Silver</SelectItem>
-                                <SelectItem value="Gold">Gold</SelectItem>
-                                <SelectItem value="Platinum">Platinum</SelectItem>
-                            </SelectGroup>
-                        </SelectContent>
-                    </Select>
+                    <span>{sub.plan.name}</span>
                 </div>
             )
 
         }
     }
 ];
-//onChange={(e) => row.setValue("plan", e.target.value)}

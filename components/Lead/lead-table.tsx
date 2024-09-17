@@ -15,10 +15,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Button } from "../ui/button";
 
 export const LeadTable = () => {
     const [leadInfo] = useAtom(leads)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
+    const [showUnassigned, setShowUnassigned] = useState<boolean>(false);
 
     const groupedByFormName = leadInfo?.groupedLeads?.reduce((acc, current) => {
         if (!acc[current.formName]) {
@@ -27,9 +29,16 @@ export const LeadTable = () => {
         acc[current.formName].push(...current.feedback);
         return acc;
     }, {} as Record<string, { name: string; value: string }[]>);
-    
 
-    const data2Display = selectedRole && selectedRole !== 'all' ? groupedByFormName?.[selectedRole] : leadInfo;
+
+    let data2Display = selectedRole && selectedRole !== 'all' ? groupedByFormName?.[selectedRole] : leadInfo;
+
+    if (showUnassigned) {
+        //@ts-ignore
+        data2Display = data2Display?.filter((lead: any) => (
+            lead.isLeadApproved === false
+        ))
+    }
 
     return (
         <>
@@ -52,6 +61,9 @@ export const LeadTable = () => {
                     </SelectContent>
                 </Select>
             </div> */}
+            <div className="flex float-end">
+                <Button size={"sm"} className="items-center ml-2" onClick={() => setShowUnassigned((prev) => !prev)}>{showUnassigned ? 'Show All': 'Show Unassigned'}</Button>
+            </div>
             {/* @ts-ignore */}
             <DataTable columns={LeadColDefs} data={data2Display || []} />
         </>

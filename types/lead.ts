@@ -49,6 +49,13 @@ export const leadSchema = createLeadSchema.extend({
             value: z.string(),
         })),
     })),
+    bids: z.array(z.object({
+        id: z.string(),
+        bidAmount: z.number(),
+        description: z.string().optional(),
+        bidStatus: z.string().optional(),
+        Member: loggedUserSchema,
+    })),
 });
 
 export const groupedLeadSchema = z.object({

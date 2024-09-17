@@ -98,11 +98,8 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             const rowData = row?.original;
             const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
             const approved = rowData?.isLeadApproved
-            // const notAssigned = assigneeName === 'rounak' ? true : false
-            // const isAssigned = [MANAGER, "company"].includes(assigneeName?.toLowerCase());
 
             return (
-                // <ActionTooltip label={assigneeName === 'rounak' ? 'Awaited' : assigneeName} align="center" side="top" key={"assignedMembers"}>
                 <Button
                     size={'sm'}
                     variant={assigneeName ? "secondary" : "destructive"}
@@ -111,8 +108,6 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                     {/* {approved ? assigneeName : "Not Assigned"} */}
                     { assigneeName || "Not Assigned"}
                 </Button>
-                // </ActionTooltip>
-                // <span>{assigneeName}</span>
             );
         }
     },

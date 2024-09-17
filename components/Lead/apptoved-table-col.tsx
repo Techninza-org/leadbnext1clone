@@ -11,6 +11,7 @@ import { Switch } from "../ui/switch";
 import { useMutation } from "graphql-hooks";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
 import HoverCardToolTip from "../hover-card-tooltip";
+import { Dot } from "lucide-react";
 
 export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -39,8 +40,12 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         header: 'Name',
         accessorKey: 'name',
         cell: ({ row }) => {
+            const length = row.original.LeadFeedback.length
             return (
+                <div className="flex">
                 <ViewLeadInfo lead={row.original} />
+                {row.original.LeadFeedback[length - 1 ]?.member?.role?.name === 'Telecaller' || row.original.LeadFeedback[length - 1 ]?.member?.role?.name === 'Sales Person' && <Dot color="green" size={30} /> }
+                </div>
             )
         }
     },
@@ -97,7 +102,7 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         header: 'Department',
         cell: ({ row }) => {
             return (
-                <span>Sales</span>
+                <span>{row.getValue("department")}</span>
             );
         }
     },
@@ -107,17 +112,16 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         cell: ({ row }) => {
             const rowData = row?.original;
             const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
-            const assigneeRole = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.role?.name).join(", ");
-            const notAssigned = assigneeName === 'rounak' ? true : false
-            
+            const approved = rowData?.isLeadApproved
+
             return (
-                    <Button
-                        size={'sm'}
-                        variant={notAssigned ? "destructive" : "secondary"}
-                        className="text-xs p-2  capitalize"
-                    >
-                        {notAssigned ? "Not Assigned" : assigneeName}
-                    </Button>
+                <Button
+                    size={'sm'}
+                    variant={approved ? "secondary" : "destructive"}
+                    className="text-xs p-2  capitalize"
+                >
+                    {approved ? assigneeName : "Not Assigned"}
+                </Button>
             );
         }
     },
