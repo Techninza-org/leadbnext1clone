@@ -9,6 +9,7 @@ import { leadQueries } from "@/lib/graphql/lead/queries";
 import { AssignedLeadColDefs } from "./assigned-lead-table-col";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
 import { UserLeadTable } from "./user-lead-table";
+import { LOGIN_USER } from "@/lib/graphql/user/mutations";
 
 export const AssignedLeadTable = () => {
     const [userInfo] = useAtom(userAtom);
@@ -25,7 +26,7 @@ export const AssignedLeadTable = () => {
             },
             {
                 mutation: leadMutation.SUBMIT_BID_MUTATION
-            }
+            },
         ]
     });
 

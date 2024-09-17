@@ -21,19 +21,21 @@ import { useQuery } from "graphql-hooks";
 import { deptQueries } from "@/lib/graphql/dept/queries";
 import { userAtom } from "@/lib/atom/userAtom";
 import { useCompany } from "../providers/CompanyProvider";
+import { LOGIN_USER } from "@/lib/graphql/user/mutations";
 
 export const ApprovedLeadTable = () => {
     const [leadInfo] = useAtom(leads)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
     const [selectedForm, setSelectedForm] = useState<string | null>(null);
     const user = useAtomValue(userAtom)
-    const {companyDeptFields} = useCompany();
+    const { companyDeptFields } = useCompany();
 
     const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
         variables: { deptId: user?.deptId },
         onSuccess: (data) => {
             console.log(data, 'dept');
-        }
+        },
+        refetchAfterMutations: LOGIN_USER
     });
 
     const groupedByFormName = leadInfo?.groupedLeads?.reduce((acc, current) => {
