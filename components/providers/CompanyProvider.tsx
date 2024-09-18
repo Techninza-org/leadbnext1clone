@@ -59,9 +59,15 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     });
 
     const { data: deptFields, loading: deptFieldsLoading, error: deptFieldsError } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+        skip: !userInfo?.token,
         variables: { deptId: userInfo?.deptId },
-        onSuccess: () => {
-            if (deptFields?.getCompanyDeptFields) setCompanyDeptFields(deptFields.getCompanyDeptFields)
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER,
+            },
+        ],
+        onSuccess: ({data}) => {
+            if (data?.getCompanyDeptFields) setCompanyDeptFields(data?.getCompanyDeptFields)
         }
     });
 

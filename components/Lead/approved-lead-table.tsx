@@ -1,42 +1,26 @@
 "use client";
-import { AwaitedReactNode, JSXElementConstructor, Key, useState } from "react";
-import { useAtom, useAtomValue } from "jotai";
+import { Key, useState } from "react";
+import { useAtom } from "jotai";
 
-import { DataTable } from "@/components/ui/DataTable"
 import { leads } from "@/lib/atom/leadAtom";
 
-import { LeadColDefs } from "./lead-table-col";
 import {
     Select,
     SelectContent,
     SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
 import { ApprovedDataTable } from "./approved-data-table";
 import { AssignedLeadColDefs } from "./apptoved-table-col";
-import { useQuery } from "graphql-hooks";
-import { deptQueries } from "@/lib/graphql/dept/queries";
-import { userAtom } from "@/lib/atom/userAtom";
 import { useCompany } from "../providers/CompanyProvider";
-import { LOGIN_USER } from "@/lib/graphql/user/mutations";
 
 export const ApprovedLeadTable = () => {
     const [leadInfo] = useAtom(leads)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
     const [selectedForm, setSelectedForm] = useState<string | null>(null);
-    const user = useAtomValue(userAtom)
-    const { companyDeptFields } = useCompany();
-
-    const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId: user?.deptId },
-        onSuccess: (data) => {
-            console.log(data, 'dept');
-        },
-        refetchAfterMutations: LOGIN_USER
-    });
+    const { companyDeptFields: deptFields } = useCompany();
 
     const groupedByFormName = leadInfo?.groupedLeads?.reduce((acc, current) => {
         if (!acc[current.formName]) {
@@ -64,7 +48,7 @@ export const ApprovedLeadTable = () => {
                 lead.bids.length > 0
             ))
         } else if (selectedForm && selectedForm == 'Document') {
-            const documents = data?.getCompanyDeptFields.filter((doc: any) => doc.name === 'Document');
+            const documents = deptFields?.filter((doc: any) => doc.name === 'Document');
             const fields = documents[0]?.subDeptFields || [];
             //@ts-ignore
             filteredLeads = data2Display?.filter((lead: any) => {
@@ -75,7 +59,7 @@ export const ApprovedLeadTable = () => {
                 });
             });
         } else if (selectedForm && selectedForm == 'Reporting') {
-            const documents = data?.getCompanyDeptFields.filter((doc: any) => doc.name === 'Reporting');
+            const documents = deptFields?.filter((doc: any) => doc.name === 'Reporting');
             const fields = documents[0]?.subDeptFields || [];
             //@ts-ignore
             filteredLeads = data2Display?.filter((lead: any) => {
@@ -124,7 +108,7 @@ export const ApprovedLeadTable = () => {
                             <SelectGroup>
                                 <SelectItem value="all">All</SelectItem>
                                 {
-                                    data?.getCompanyDeptFields.map((dept: { id: Key | null | undefined; name: string }) => (
+                                    deptFields?.map((dept: { id: Key | null | undefined; name: string }) => (
                                         <SelectItem key={dept.id} value={dept.name}>
                                             {dept.name}
                                         </SelectItem>

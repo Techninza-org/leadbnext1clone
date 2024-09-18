@@ -14,6 +14,7 @@ import { leads } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
 import { userAtom } from '@/lib/atom/userAtom';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
+import { LOGIN_USER } from '@/lib/graphql/user/mutations';
 
 interface LeadProviderType {
     handleCreateLead: ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => void;
@@ -33,6 +34,9 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             setLeads(data.getCompanyLeads.lead)
         },
         refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER,
+            },
             {
                 mutation: leadMutation.LEAD_ASSIGN_TO,
             },
