@@ -21,10 +21,6 @@ const GET_COMPANY_LEADS = `
         bids{
           id
           bidAmount
-          Member {
-            id
-            name
-          }
         }
 
         LeadMember {
@@ -84,10 +80,6 @@ query getAssignedLeads($userId: String!) {
       bids{
         id
         bidAmount
-        Member {
-          id
-          name
-        }
       }
       LeadFeedback {
         id
