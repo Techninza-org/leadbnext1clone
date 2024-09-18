@@ -305,7 +305,7 @@ export const EnquiryDetailsModal = () => {
                                     {!!lead?.bids && lead?.bids?.map((bid: any) => (
                                         <>
                                             <div key={bid?.id} className="text-sm grid-cols-2 grid">
-                                                <span>{bid?.Member?.name}</span>
+                                                <span>{bid?.Member?.name || ""}</span>
                                                 <span>{formatCurrencyForIndia(bid?.bidAmount || 0)}</span>
                                             </div>
                                             <Separator className="my-2" />
