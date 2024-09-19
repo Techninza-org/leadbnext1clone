@@ -39,19 +39,19 @@ export const ApprovedLeadTable = () => {
     if (filteredLeads) {
         if (selectedForm && selectedForm == 'Payment') {
             //@ts-ignore
-            filteredLeads = data2Display?.filter((lead: any) => (
+            filteredLeads = filteredLeads?.filter((lead: any) => (
                 lead.paymentStatus === "PAID"
             ))
         } else if (selectedForm && selectedForm == 'Exchange') {
             //@ts-ignore
-            filteredLeads = data2Display?.filter((lead: any) => (
+            filteredLeads = filteredLeads?.filter((lead: any) => (
                 lead.bids.length > 0
             ))
         } else if (selectedForm && selectedForm == 'Document') {
             const documents = deptFields?.filter((doc: any) => doc.name === 'Document');
             const fields = documents[0]?.subDeptFields || [];
             //@ts-ignore
-            filteredLeads = data2Display?.filter((lead: any) => {
+            filteredLeads = filteredLeads?.filter((lead: any) => {
                 const feedback = lead.LeadFeedback[0]?.feedback || [];
 
                 return feedback.some((fb: any) => {
@@ -62,7 +62,7 @@ export const ApprovedLeadTable = () => {
             const documents = deptFields?.filter((doc: any) => doc.name === 'Reporting');
             const fields = documents[0]?.subDeptFields || [];
             //@ts-ignore
-            filteredLeads = data2Display?.filter((lead: any) => {
+            filteredLeads = filteredLeads?.filter((lead: any) => {
                 const feedback = lead.LeadFeedback[0]?.feedback || [];
 
                 return feedback.some((fb: any) => {
@@ -71,7 +71,7 @@ export const ApprovedLeadTable = () => {
             });
         } else if (selectedForm && selectedForm == 'Customer Feedback') {
             //@ts-ignore
-            filteredLeads = data2Display?.filter((lead: any) => {
+            filteredLeads = filteredLeads?.filter((lead: any) => {
                 const feedback = lead.LeadFeedback[0]?.feedback || [];
 
                 return feedback.some((fb: any) => {

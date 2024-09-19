@@ -50,7 +50,6 @@ const UpdateDepartmentFieldsModal = () => {
     const [filteredDeptFields, setFilteredDeptFields] = useState([]);
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { deptName, deptId, depId } = modalData;
-    console.log(deptName, 'deptName');
     
     
     const { toast } = useToast();
@@ -102,7 +101,6 @@ const UpdateDepartmentFieldsModal = () => {
 
     const onSubmit = async (values: any) => {
         const { deptFields } = values;
-        console.log(deptFields, 'deptFields');
 
         try {
             const { data, error } = await updateDepartmentFields({
@@ -115,7 +113,6 @@ const UpdateDepartmentFieldsModal = () => {
                     }
                 },
             });
-            console.log(data, 'data');
 
             if (error) {
                 const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");

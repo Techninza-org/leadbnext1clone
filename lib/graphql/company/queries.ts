@@ -28,7 +28,20 @@ const GET_COMPANY_DEPT_FIELDS = `
   }
 `;
 
+const GET_COMPANY_SUBSCRIPTION = `
+  query GetCompanySubscription($companyId: String!) {
+    getCompanySubscription(companyId: $companyId) {
+      id
+      name
+      Subscriptions {
+        planId
+      } 
+    }
+  }
+`;
+
 export const companyQueries = {
   GET_ALL_ROLES,
-  GET_COMPANY_DEPT_FIELDS
+  GET_COMPANY_DEPT_FIELDS,
+  GET_COMPANY_SUBSCRIPTION,
 }
