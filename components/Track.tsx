@@ -14,7 +14,7 @@ import { Button } from './ui/button'
 import { format } from 'date-fns'
 import { CalendarDaysIcon } from 'lucide-react'
 import { Calendar } from './ui/calendar'
-import Map from './map'
+import { DirectionMap } from './map'
 import { useCompany } from './providers/CompanyProvider'
 
 const Track = () => {
@@ -62,7 +62,7 @@ const Track = () => {
                 <Button onClick={handleTrack} disabled={!date || !selectedMember || show}>Track</Button>
                 <Button variant={"destructive"} onClick={() => window.location.reload()} disabled={!show} >Stop</Button>
             </div>
-            {show && <Map memberId={selectedMember || ''} date={date} />}
+            {show && <DirectionMap memberId={selectedMember || ''} date={date} />}
         </div>
     )
 }
