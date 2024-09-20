@@ -38,6 +38,9 @@ export async function middleware(request: NextRequest) {
     '/members',
     '/leads/transfered',
     '/track',
+    '/broadcast',
+
+
     '/lead.csv'
     // Add more paths for root and manager
   ];
@@ -46,7 +49,9 @@ export async function middleware(request: NextRequest) {
     '/dashboard',
     '/leads',
     '/leads/transfered',
-    '/track'
+    '/track',
+    '/broadcast',
+
     // Add more paths for root and manager
   ];
 

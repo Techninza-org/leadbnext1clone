@@ -77,7 +77,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             if (data?.getRootUsers) setRootInto(data.getRootUsers)
             if (data?.getRootUsers) setRootMembersAtom(data.getRootUsers)
         }
-    })
+    });
 
     return (
         <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, companyDeptFields }}>

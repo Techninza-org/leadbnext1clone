@@ -57,6 +57,11 @@ export const MANAGER_NAV_LINKS = [
         icon: Pin,
         href: "/track",
     },
+    {
+        title: "Broadcast",
+        icon: Pin,
+        href: "/broadcast",
+    },
     // {
     //     title: "Assign Lead",
     //     icon: ShoppingCart,
