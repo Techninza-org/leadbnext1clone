@@ -38,19 +38,18 @@ const CompanyDepartments = ({ id }: { id: string }) => {
       companyId: id
     },
     onSuccess: ({ data }) => {
-      if(data.getCompanySubscription.Subscriptions.length === 0) return;
+      if (data.getCompanySubscription.Subscriptions.length === 0) return;
       const subsLenght = data.getCompanySubscription.Subscriptions.length;
-      setCompanySubscription(data.getCompanySubscription.Subscriptions[subsLenght -1].planId)
+      setCompanySubscription(data.getCompanySubscription.Subscriptions[subsLenght - 1].planId)
     },
     refetchAfterMutations: [
       {
-          mutation: companyMutation.UPDATE_COMPANY_SUBSCRIPTION,
+        mutation: companyMutation.UPDATE_COMPANY_SUBSCRIPTION,
       },
-  ]
+    ]
   });
 
   async function handleUpdatePlan(planId: string, planAllowedDeptsIds: string[], duration: number) {
-
     try {
       const startDate = new Date().toISOString();
       const endDate = new Date();
@@ -111,12 +110,12 @@ const CompanyDepartments = ({ id }: { id: string }) => {
             <Card key={plan.id} onClick={() => handleUpdatePlan(plan.id, plan.defaultAllowedDeptsIds, plan.duration)} className={`${plan.id === companySubscription ? 'bg-green-500 text-white' : ''}`}>
               <CardContent className='grid place-content-center p-6 hover:bg-slate-200 cursor-pointer hover:rounded-md'>
                 <CardTitle>
-                {plan.name}
-              </CardTitle>
-            </CardContent>
+                  {plan.name}
+                </CardTitle>
+              </CardContent>
             </Card>
-  ))
-}
+          ))
+        }
       </CardContent >
     </Card >
   )
