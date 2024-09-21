@@ -11,6 +11,7 @@ import { AssignMemberModal } from "../modals/assign-member-modal";
 import { EnquiryDetailsModal } from "../modals/enquiry-details-modal";
 import UpdateDepartmentFieldsModal from "../dynamic/create-department-modal";
 import CreateBroadcastModal from "../modals/create-broadcast-modal";
+import BroadcastDetailsModal from "../modals/broadcast-details-modal";
 
 
 export const ModalProvider = () => {
@@ -35,6 +36,7 @@ export const ModalProvider = () => {
       <EnquiryDetailsModal />
       <UpdateDepartmentFieldsModal />
       <CreateBroadcastModal />
+      <BroadcastDetailsModal />
     </>
   );
 };
