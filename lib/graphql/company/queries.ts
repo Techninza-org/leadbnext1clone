@@ -55,9 +55,25 @@ const GET_BROADCASTS = `
   }
 `;
 
+const GET_BROADCAST_BY_ID = `
+  query GetBroadcastById($broadcastId: ID!){
+    getBroadcastById(broadcastId: $broadcastId) {
+      id
+      message
+      companyId
+      isOffer
+      isTemplate
+      isMessage
+      imgURL
+      createdAt
+    }
+  }
+`;
+
 export const companyQueries = {
   GET_ALL_ROLES,
   GET_COMPANY_DEPT_FIELDS,
   GET_COMPANY_SUBSCRIPTION,
-  GET_BROADCASTS
+  GET_BROADCASTS,
+  GET_BROADCAST_BY_ID
 }
