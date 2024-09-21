@@ -62,12 +62,14 @@ export const BroadcastForm = () => {
     const isLoading = form.formState.isSubmitting;
 
     const onSubmit = async (data: any) => {
+        
         try {
             let uploadedFiles: any[] = [];
 
             const formData = new FormData();
 
             // formData.append('id', '66e97b8ba05d53af8f834526');
+            
             formData.append('isOffer', data.type === "offer" ? "true" : "false");
             formData.append('isTemplate', data.type === "template" ? "true" : "false");
             formData.append('isMessage', data.type === "message" ? "true" : "false");
@@ -151,7 +153,7 @@ export const BroadcastForm = () => {
             "image/*": [".jpg", ".jpeg", ".png"],
         },
         multiple: true,
-        maxFiles: 4,
+        maxFiles: 1,
         maxSize: 1 * 1024 * 1024,
     } satisfies DropzoneOptions;
 
@@ -190,10 +192,10 @@ export const BroadcastForm = () => {
                                     </FormItem>
                                     <FormItem className="flex items-center space-x-3 space-y-0">
                                         <FormControl>
-                                            <RadioGroupItem value="messasge" />
+                                            <RadioGroupItem value="message" />
                                         </FormControl>
                                         <FormLabel className="font-normal capitalize">
-                                            messasge
+                                            message
                                         </FormLabel>
                                     </FormItem>
                                 </RadioGroup>

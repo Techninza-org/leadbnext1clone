@@ -40,8 +40,24 @@ const GET_COMPANY_SUBSCRIPTION = `
   }
 `;
 
+const GET_BROADCASTS = `
+  query GetBroadcasts {
+    getBroadcasts {
+      id
+      message
+      companyId
+      isOffer
+      isTemplate
+      isMessage
+      imgURL
+      createdAt
+    }
+  }
+`;
+
 export const companyQueries = {
   GET_ALL_ROLES,
   GET_COMPANY_DEPT_FIELDS,
   GET_COMPANY_SUBSCRIPTION,
+  GET_BROADCASTS
 }

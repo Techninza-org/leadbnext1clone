@@ -1,3 +1,4 @@
+'use client'
 import { useAtom } from 'jotai';
 import { modalTypeAtom, modalDataAtom, modalIsOpenAtom } from '@/stores/modalAtoms';
 import { ModalType, ModalData } from '@/stores/modalAtoms';

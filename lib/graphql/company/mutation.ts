@@ -19,6 +19,15 @@ mutation updateCompanySubscription(
 }
 `;
 
+const DELETE_BROADCAST = `
+mutation deleteBroadcast($broadcastId: ID!) {
+    deleteBroadcast(broadcastId: $broadcastId) {
+        id
+    }
+}
+`;
+
 export const companyMutation = {
-    UPDATE_COMPANY_SUBSCRIPTION
+    UPDATE_COMPANY_SUBSCRIPTION,
+    DELETE_BROADCAST
 }
