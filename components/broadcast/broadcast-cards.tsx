@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select"
 import { companyMutation } from '@/lib/graphql/company/mutation'
 import { useToast } from '../ui/use-toast'
+import { LOGIN_USER } from '@/lib/graphql/user/mutations'
 
 const BroadcastCards = () => {
     const { onOpen } = useModal();
@@ -27,9 +28,13 @@ const BroadcastCards = () => {
     const [deleteBroadcast] = useMutation(companyMutation.DELETE_BROADCAST);
 
     const { loading, error, data } = useQuery(companyQueries.GET_BROADCASTS, {
+        skip: !user?.token,
         refetchAfterMutations: [
             {
                 mutation: companyMutation.DELETE_BROADCAST
+            },
+            {
+                mutation: LOGIN_USER
             },
         ]
     });
