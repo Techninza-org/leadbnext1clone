@@ -1,7 +1,7 @@
 'use client'
 import React, { useEffect } from 'react'
 import { Button } from '../ui/button'
-import { PlusCircle, TrashIcon } from 'lucide-react'
+import { PlusCircle, TrashIcon, X } from 'lucide-react'
 import { useModal } from '@/hooks/use-modal-store'
 import { useMutation, useQuery } from 'graphql-hooks'
 import { companyQueries } from '@/lib/graphql/company/queries'
@@ -19,6 +19,7 @@ import {
 import { companyMutation } from '@/lib/graphql/company/mutation'
 import { useToast } from '../ui/use-toast'
 import { LOGIN_USER } from '@/lib/graphql/user/mutations'
+import { Card } from '../ui/card'
 
 const BroadcastCards = () => {
     const { onOpen } = useModal();
@@ -101,23 +102,27 @@ const BroadcastCards = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 
                 {filteredData?.map((broadcast: any) => (
-                    <div key={broadcast.id} className="bg-white rounded-lg shadow-md p-4 flex">
-                        <div className="flex-shrink-0 w-1/3 pr-4">
-                            <img src={broadcast.imgURL[0].url} alt="broadcast" className="w-full h-32 object-cover rounded-lg" />
+                    <Card key={broadcast.id}>
+                        <div className='flex float-end p-4'>
+                            <X onClick={() => handleDelete(broadcast.id)} size={20} color='red' className='cursor-pointer' />
                         </div>
-                        <div className="flex-grow">
-                            <h2 className='font-bold'>TYPE</h2>
-                            {broadcast.isOffer && <h3 className="text-lg ">Offer</h3>}
-                            {broadcast.isMessage && <h3 className="text-lg ">Message</h3>}
-                            {broadcast.isTemplate && <h3 className="text-lg ">Template</h3>}
-                            <br />
-                            <h2 className='font-bold'>DESCRIPTION</h2>
-                            <h3 className="text-lg break-words">
-                                {broadcast.message.split(" ").slice(0, 4).join(" ") + (broadcast.message.split(" ").length > 4 ? "..." : "")}
-                            </h3>
+                        <div className=" cursor-pointer p-4 flex" onClick={() => onOpen('broadcastDetails', {broadcastId: broadcast.id})}>
+                            <div className="flex-shrink-0 w-1/3 pr-4">
+                                <img src={broadcast.imgURL[0].url} alt="broadcast" className="w-full h-32 object-cover rounded-lg" />
+                            </div>
+                            <div className="flex-grow">
+                                <h2 className='font-bold'>TYPE</h2>
+                                {broadcast.isOffer && <h3 className="text-lg ">Offer</h3>}
+                                {broadcast.isMessage && <h3 className="text-lg ">Message</h3>}
+                                {broadcast.isTemplate && <h3 className="text-lg ">Template</h3>}
+                                <br />
+                                <h2 className='font-bold'>DESCRIPTION</h2>
+                                <h3 className="text-lg break-words">
+                                    {broadcast.message.split(" ").slice(0, 4).join(" ") + (broadcast.message.split(" ").length > 4 ? "..." : "")}
+                                </h3>
+                            </div>
                         </div>
-                        <TrashIcon onClick={() => handleDelete(broadcast.id)} size={20} color='red' className='cursor-pointer' />
-                    </div>
+                    </Card>
                 ))}
             </div>
 
