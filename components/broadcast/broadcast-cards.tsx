@@ -96,24 +96,22 @@ const BroadcastCards = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 
                 {filteredData?.map((broadcast: any) => (
-                    <div>
-                        <div key={broadcast.id} className="bg-white rounded-lg shadow-md p-4 flex">
-                            <div className="flex-shrink-0 w-1/3 pr-4">
-                                <img src={broadcast.imgURL[0].url} alt="broadcast" className="w-full h-32 object-cover rounded-lg" />
-                            </div>
-                            <div className="flex-grow">
-                                <h2 className='font-bold'>TYPE</h2>
-                                {broadcast.isOffer && <h3 className="text-lg ">Offer</h3>}
-                                {broadcast.isMessage && <h3 className="text-lg ">Message</h3>}
-                                {broadcast.isTemplate && <h3 className="text-lg ">Template</h3>}
-                                <br />
-                                <h2 className='font-bold'>DESCRIPTION</h2>
-                                <h3 className="text-lg break-words">
-                                    {broadcast.message.split(" ").slice(0, 4).join(" ") + (broadcast.message.split(" ").length > 4 ? "..." : "")}
-                                </h3>
-                            </div>
-                        <TrashIcon onClick={() => handleDelete(broadcast.id)} size={20} color='red' className='cursor-pointer' />
+                    <div key={broadcast.id} className="bg-white rounded-lg shadow-md p-4 flex">
+                        <div className="flex-shrink-0 w-1/3 pr-4">
+                            <img src={broadcast.imgURL[0].url} alt="broadcast" className="w-full h-32 object-cover rounded-lg" />
                         </div>
+                        <div className="flex-grow">
+                            <h2 className='font-bold'>TYPE</h2>
+                            {broadcast.isOffer && <h3 className="text-lg ">Offer</h3>}
+                            {broadcast.isMessage && <h3 className="text-lg ">Message</h3>}
+                            {broadcast.isTemplate && <h3 className="text-lg ">Template</h3>}
+                            <br />
+                            <h2 className='font-bold'>DESCRIPTION</h2>
+                            <h3 className="text-lg break-words">
+                                {broadcast.message.split(" ").slice(0, 4).join(" ") + (broadcast.message.split(" ").length > 4 ? "..." : "")}
+                            </h3>
+                        </div>
+                        <TrashIcon onClick={() => handleDelete(broadcast.id)} size={20} color='red' className='cursor-pointer' />
                     </div>
                 ))}
             </div>
