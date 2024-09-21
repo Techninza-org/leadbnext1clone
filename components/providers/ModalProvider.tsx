@@ -10,6 +10,7 @@ import { ViewLeadInfoModal } from "../modals/view-lead-info-modal";
 import { AssignMemberModal } from "../modals/assign-member-modal";
 import { EnquiryDetailsModal } from "../modals/enquiry-details-modal";
 import UpdateDepartmentFieldsModal from "../dynamic/create-department-modal";
+import CreateBroadcastModal from "../modals/create-broadcast-modal";
 
 
 export const ModalProvider = () => {
@@ -33,7 +34,7 @@ export const ModalProvider = () => {
       <ViewLeadInfoModal/>
       <EnquiryDetailsModal />
       <UpdateDepartmentFieldsModal />
-
+      <CreateBroadcastModal />
     </>
   );
 };
