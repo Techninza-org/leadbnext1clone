@@ -100,33 +100,34 @@ export function DataTable<TData, TValue>({
     const file = event.target.files[0];
     if (file) {
       try {
-        const fileContent = await file.text();
-            const jsonData = await csvtojson().fromString(fileContent);
-            const results = await Promise.all(jsonData.map(async (lead) => {
-              const vehicleDate = parse(lead.vehicleDate, 'dd-MM-yyyy', new Date());
-              const formattedVehicleDate = format(vehicleDate, 'dd-MM-yyyy');
-              const { data, error } = await createLead({
-                variables: {
-                    companyId: userInfo?.companyId || "",
-                    name: lead.name,
-                    email: lead.email,
-                    phone: lead.phone,
-                    // alternatePhone: lead.alternatePhone,
-                    address: lead.address,
-                    city: lead.city,
-                    state: lead.state,
-                    zip: lead.zip,
-                    vehicleDate: formattedVehicleDate,
-                    vehicleName: lead.vehicleName,
-                    vehicleModel: lead.vehicleModel,
-                    department: lead.department,
-                }
-            });
-            
-            handleCreateBulkLead({ lead: data?.createLead, error });
+        const formData = new FormData();
+        formData.append('leads', file);
 
-            }));
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/bulk-upload-lead`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': `x-lead-token ${userInfo?.token || ''}`,
+          },
+        });
 
+        if (!response.ok) {
+          throw new Error('Error uploading CSV file');
+        }
+        const contentType = response.headers.get('Content-Type');
+
+        if (contentType && contentType.includes('text/csv')) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'error_report.csv';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          const result = await response.json();
+        }
       } catch (error) {
         console.error('Error parsing CSV:', error);
       }

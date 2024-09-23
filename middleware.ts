@@ -44,14 +44,15 @@ export async function middleware(request: NextRequest) {
     '/lead.csv'
     // Add more paths for root and manager
   ];
-
+  
   const managerPaths = [
     '/dashboard',
     '/leads',
     '/leads/transfered',
     '/track',
     '/broadcast',
-
+    '/lead.csv'
+    
     // Add more paths for root and manager
   ];
 
