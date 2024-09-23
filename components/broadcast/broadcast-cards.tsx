@@ -27,6 +27,8 @@ const BroadcastCards = () => {
     const user = useAtomValue(userAtom)
     const { toast } = useToast();
     const [deleteBroadcast] = useMutation(companyMutation.DELETE_BROADCAST);
+    console.log(user?.role?.name, 'role');
+    
 
     const { loading, error, data } = useQuery(companyQueries.GET_BROADCASTS, {
         skip: !user?.token,
@@ -97,7 +99,7 @@ const BroadcastCards = () => {
                         <SelectItem value="Message">Message</SelectItem>
                     </SelectContent>
                 </Select>
-            { user?.role?.name === 'Manager' || user?.role?.name === 'Root' &&  <Button size={'sm'} onClick={() => onOpen('createBroadcast')}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
+            { (user?.role?.name === 'Manager' || user?.role?.name === 'Root') &&  <Button size={'sm'} onClick={() => onOpen('createBroadcast')}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 

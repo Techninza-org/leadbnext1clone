@@ -27,8 +27,9 @@ import {
 } from "@/components/ui/select"
 import { ArrowDown, ArrowUp, PlusIcon, X } from "lucide-react";
 import { useMutation, useQuery } from "graphql-hooks";
-import { deptQueries } from "@/lib/graphql/dept/queries";
 import { DeptMutation } from "@/lib/graphql/dept/mutation";
+import { userQueries } from "@/lib/graphql/user/queries";
+import { CREATE_ROOT_USER_MUTATION } from "@/lib/graphql/user/mutations";
 
 // Define the schema
 const DepartmentSchema = z.object({
@@ -46,39 +47,18 @@ const DepartmentSchema = z.object({
 });
 
 const UpdateGlobalDepartmentFieldsModal = () => {
-    const [deptFields, setDeptFields] = useState([]);
-    const [filteredDeptFields, setFilteredDeptFields] = useState([]);
     const { isOpen, onClose, type, data: modalData } = useModal();
-    const { deptName, deptId } = modalData;
-    
+    const { dept } = modalData;
     
     const { toast } = useToast();
-    const [updateDepartmentFields] = useMutation(DeptMutation.UPDATE_DEPT);
+    const [createDept] = useMutation(DeptMutation.CREATE_OR_UPDATE_GLOBAL_DEPTS);
     const isModalOpen = isOpen && type === "updateGlobalDepartmentFields";
-    
-
-    const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId },
-    });
-
-    useEffect(() => {
-        if (data?.getCompanyDeptFields) {
-            setDeptFields(data.getCompanyDeptFields);
-        }
-    }, [data]);
-
-    useEffect(() => {
-        if (deptFields.length > 0) {
-            const filteredField = deptFields.filter((field: any) => String(field.name) === String(deptName));
-            setFilteredDeptFields(filteredField);
-        }
-    }, [deptFields, deptName]);
 
     const form = useForm({
         resolver: zodResolver(DepartmentSchema),
         defaultValues: {
             //@ts-ignore
-            deptFields: filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || [],
+            deptFields: dept?.subDeptFields?.sort((a, b) => a.order - b.order) || [],
         },
     });
 
@@ -95,21 +75,22 @@ const UpdateGlobalDepartmentFieldsModal = () => {
     useEffect(() => {
         form.reset({
             //@ts-ignore
-            deptFields: filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || [],
+            deptFields: dept?.subDeptFields?.sort((a, b) => a.order - b.order) || [],
         });
-    }, [filteredDeptFields, form.reset]);
+    }, [dept, form.reset]);
 
     const onSubmit = async (values: any) => {
         const { deptFields } = values;
+        console.log(deptFields, 'deptFields');
 
         try {
-            const { data, error } = await updateDepartmentFields({
+            const { data, error } = await createDept({
                 variables: {
                     input: {
-                        companyDeptId: depId,
-                        name: deptName,  //form name
+                        name: 'Sale Department',
+                        subDeptName: dept.name,  
                         order: 4,
-                        subDeptFields: deptFields,
+                        deptFields: deptFields,
                     }
                 },
             });
@@ -173,13 +154,13 @@ const UpdateGlobalDepartmentFieldsModal = () => {
                     <DialogHeader className="pt-6">
                         <DialogTitle className="text-2xl text-center font-bold">
                             {/* @ts-ignore */}
-                            {filteredDeptFields[0]?.name || ''}
+                            {dept?.name || ''}
                         </DialogTitle>
                     </DialogHeader>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            {fields.map((inputfield, index) => (
-                                <div key={inputfield.id} className="mb-4 border p-4 rounded-md">
+                            {dept?.subDeptFields?.map((inputfield, index) => (
+                                <div key={inputfield.name} className="mb-4 border p-4 rounded-md">
                                     <div className="">
                                         <div className="grid grid-cols-8 gap-2">
                                             <div className="col-span-3">

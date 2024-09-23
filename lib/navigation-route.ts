@@ -16,6 +16,11 @@ export const ROOT_NAV_LINKS = [
         icon: UsersRoundIcon,
         href: "/members",
     },
+    {
+        title: "Departments",
+        icon: Pencil,
+        href: "/departments",
+    },
     // {
     //     title: "Assign Lead",
     //     icon: ShoppingCart,
@@ -61,7 +66,7 @@ export const MANAGER_NAV_LINKS = [
         title: "Broadcast",
         icon: Pin,
         href: "/broadcast",
-    },
+    }
     // {
     //     title: "Assign Lead",
     //     icon: ShoppingCart,

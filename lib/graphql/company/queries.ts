@@ -35,6 +35,11 @@ const GET_COMPANY_SUBSCRIPTION = `
       name
       Subscriptions {
         planId
+        allowedDeptsIds
+        plan{
+          id
+          name
+        }
       } 
     }
   }

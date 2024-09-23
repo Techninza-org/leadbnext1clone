@@ -13,6 +13,7 @@ export interface ModalData {
     deptName?: string;
     deptId?: string;
     depId?: string;
+    dept?: any;
     broadcastId?: string;
 
     apiUrl?: string;

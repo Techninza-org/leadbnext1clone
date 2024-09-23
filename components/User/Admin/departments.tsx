@@ -23,8 +23,6 @@ const Departments = () => {
         },
     ],
     onSuccess: ({ data }) => {
-        console.log(data, 'fields');
-        
       setDepartments((data?.getDeptWFields[0]?.deptFields))
     },
   })
@@ -38,7 +36,7 @@ const Departments = () => {
       <CardContent className='grid grid-cols-2 gap-8'>
         {
           departments?.map((dept: any) => (
-            <Card key={dept.id} onClick={() => onOpen("updateGlobalDepartmentFields", { deptName: dept.name, deptId: deptId})}>
+            <Card key={dept.id} onClick={() => onOpen("updateGlobalDepartmentFields", { dept: dept})}>
               <CardContent className='grid place-content-center p-6 hover:bg-slate-200 cursor-pointer hover:rounded-md'>
                 <CardTitle>{dept.name}</CardTitle>
               </CardContent>
