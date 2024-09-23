@@ -153,7 +153,7 @@ export const BroadcastForm = () => {
             "image/*": [".jpg", ".jpeg", ".png"],
         },
         multiple: true,
-        maxFiles: 1,
+        maxFiles: 4,
         maxSize: 1 * 1024 * 1024,
     } satisfies DropzoneOptions;
 

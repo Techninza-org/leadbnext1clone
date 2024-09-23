@@ -33,8 +33,15 @@ const BroadcastDetailsModal = () => {
                     </DialogTitle>
                 </DialogHeader>
                 <div>
-                    <div className='mt-2 grid place-content-center'>
+                    {/* <div className='mt-2 grid place-content-center'>
                         <img src={data?.getBroadcastById.imgURL[0].url} alt="broadcast" className="w-1/2 " />
+                    </div> */}
+                    <div style={{ display: 'flex', overflowX: 'auto', gap: '10px' }}>
+                        {
+                            data?.getBroadcastById.imgURL?.map((image: any, index: number) => (
+                                <img key={index} src={image.url} alt='service' style={{ width: '40%', height: '100%', objectFit: 'cover' }} />
+                            ))
+                        }
                     </div>
                     <div>
                         <div className="text-lg font-bold">Type</div>

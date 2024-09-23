@@ -78,13 +78,25 @@ const GET_PLANS = `
 `;
 
 const GET_DEPT_FIELDS = `
-  query GetDeptFields {
+  query GetDeptWFields {
       getDeptWFields{
          id
          name
          deptFields {
           id
           name
+          subDeptFields {
+            name
+        fieldType
+        options {
+            label
+            value
+        }
+        isDisabled
+        isRequired
+        imgLimit
+        order
+        }
          }
       }
   }

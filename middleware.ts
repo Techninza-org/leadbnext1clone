@@ -39,8 +39,7 @@ export async function middleware(request: NextRequest) {
     '/leads/transfered',
     '/track',
     '/broadcast',
-
-
+    '/departments',
     '/lead.csv'
     // Add more paths for root and manager
   ];
@@ -91,7 +90,7 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/dashboard', request.url));
     }
   } else if (userRole) {
-    if (!pathname.startsWith(`/${userRole}/leads`)) {
+    if (!pathname.startsWith(`/${userRole}`)) {
       return NextResponse.redirect(new URL(`/${userRole}/leads`, request.url));
     }
   } else {
