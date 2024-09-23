@@ -8,7 +8,7 @@ mutation CreateNUpdateCompanyDeptForm($input: CompanyDeptFormInput!) {
 `;
 
 const CREATE_OR_UPDATE_GLOBAL_DEPTS = ` 
-  mutation createDept($input: GlobalDeptFormInput!) {
+  mutation createDept($input: CreateDeptInput!) {
     createDept(input: $input) {
       dept {
         id
