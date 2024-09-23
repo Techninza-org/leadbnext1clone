@@ -35,7 +35,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             title: "Transfered Leads",
             icon: HandCoins,
             href: `/${role}/leads/transfered`,
-        }
+        },
+        {
+            title: "Broadcast",
+            icon: FileTextIcon,
+            href: `/${role}/leads/broadcast`,
+        },
     ];
 
     const navLinks = [ROOT].includes(role) ? ROOT_NAV_LINKS : [ADMIN].includes(role) ? ADMIN_NAV_LINKS : [MANAGER].includes(role) ? MANAGER_NAV_LINKS : EMP_NAV_LINKS;

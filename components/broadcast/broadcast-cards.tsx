@@ -97,7 +97,7 @@ const BroadcastCards = () => {
                         <SelectItem value="Message">Message</SelectItem>
                     </SelectContent>
                 </Select>
-                <Button size={'sm'} onClick={() => onOpen('createBroadcast')}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>
+            { user?.role?.name === 'Manager' || user?.role?.name === 'Root' &&  <Button size={'sm'} onClick={() => onOpen('createBroadcast')}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 

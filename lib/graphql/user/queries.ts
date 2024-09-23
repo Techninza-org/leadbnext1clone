@@ -78,7 +78,7 @@ const GET_PLANS = `
 `;
 
 const GET_DEPT_FIELDS = `
-  query GetDeptFields {
+  query GetDeptWFields {
       getDeptWFields{
          id
          name
