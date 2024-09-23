@@ -2,6 +2,7 @@ import { z } from "zod";
 import { ColumnDef } from "@tanstack/react-table";
 import HoverCardToolTip from "@/components/hover-card-tooltip";
 import Link from "next/link";
+import { CompanyPlan } from "./update-plan";
 
 export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
     {
@@ -22,20 +23,16 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
         cell: ({ row }) => {
             const id = row.original.Company.name;
             return (
-                <div className="flex items-center">
-                    <span>{id}</span>
-                </div>
+                <span>{id}</span>
             )
         }
     },
     {
-        header: 'Root User',
+        header: 'Owner User',
         accessorKey: 'name',
         cell: ({ row }) => {
             return (
-                <div className="flex items-center">
-                    <span>{row.getValue("name")}</span>
-                </div>
+                <span>{row.getValue("name")}</span>
             )
 
         }
@@ -57,12 +54,9 @@ export const CompaniesListCol: ColumnDef<z.infer<any>>[] = [
         header: 'Plan',
         accessorKey: 'Subscriptions',
         cell: ({ row }) => {
-            if(row.original.Company.Subscriptions.length === 0) return <span>No Plan</span>
-            const length = row.original.Company.Subscriptions.length;
-            const sub = row.original.Company.Subscriptions[length -1]
             return (
-                <div className="flex items-center">
-                    <span>{sub.plan.name}</span>
+                <div className="w-20">
+                    <CompanyPlan row={row.original} />
                 </div>
             )
 
