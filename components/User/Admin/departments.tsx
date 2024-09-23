@@ -3,14 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
 import { useModal } from '@/hooks/use-modal-store'
 import { userAtom } from '@/lib/atom/userAtom'
-import { companyMutation } from '@/lib/graphql/company/mutation'
-import { companyQueries } from '@/lib/graphql/company/queries'
-import { deptQueries } from '@/lib/graphql/dept/queries'
 import { LOGIN_USER } from '@/lib/graphql/user/mutations'
 import { userQueries } from '@/lib/graphql/user/queries'
-import { useMutation, useQuery } from 'graphql-hooks'
+import { useQuery } from 'graphql-hooks'
 import { useAtomValue } from 'jotai'
-import React, { useState } from 'react'
+import React from 'react'
 
 const Departments = () => {
   const [departments, setDepartments] = React.useState([])

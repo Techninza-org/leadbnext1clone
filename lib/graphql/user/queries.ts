@@ -85,6 +85,18 @@ const GET_DEPT_FIELDS = `
          deptFields {
           id
           name
+          subDeptFields {
+            name
+        fieldType
+        options {
+            label
+            value
+        }
+        isDisabled
+        isRequired
+        imgLimit
+        order
+        }
          }
       }
   }
