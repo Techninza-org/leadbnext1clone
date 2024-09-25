@@ -43,6 +43,7 @@ import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
 import { useEffect } from 'react';
 import { deptQueries } from '@/lib/graphql/dept/queries';
+import { LOGIN_USER } from '@/lib/graphql/user/mutations';
 
 export const CreateLeadModal = () => {
     const { handleCreateLead } = useLead()
@@ -54,6 +55,12 @@ export const CreateLeadModal = () => {
 
     const { loading: deptLoading, error: deptError, data: deptData } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
         variables: { companyId: user?.companyId },
+        skip: !user?.token || !user?.companyId,
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER
+            },
+        ],
     });
 
     const isModalOpen = isOpen && type === "addLead";

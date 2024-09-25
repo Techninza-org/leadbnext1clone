@@ -25,6 +25,7 @@ import { companyQueries } from "@/lib/graphql/company/queries"
 import { userAtom } from "@/lib/atom/userAtom"
 import { useAtomValue } from "jotai"
 import { CompanyDeptFieldSchema } from "@/types/company"
+import { LOGIN_USER } from "@/lib/graphql/user/mutations"
 
 
 interface DataTableRowActionsProps<TData> {
@@ -37,7 +38,13 @@ export function AssignedLeadTableRowActions<TData>({
   const user = useAtomValue(userAtom)
 
   const { loading, error, data } = useQuery(companyQueries.GET_COMPANY_DEPT_FIELDS, {
+    skip: !user?.token || !user?.deptId,
     variables: { deptId: user?.deptId },
+    refetchAfterMutations: [
+      {
+          mutation: LOGIN_USER,
+      },
+  ],
   });
 
   const { onOpen } = useModal()

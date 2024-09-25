@@ -9,12 +9,15 @@ import { createCompanyMemberSchema } from '@/types/auth';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
 import { LOGIN_USER, UPDATE_USER_COMPANY } from '@/lib/graphql/user/mutations';
 import { deptQueries } from '@/lib/graphql/dept/queries';
+import { leadQueries } from '@/lib/graphql/lead/queries';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
     rootInfo: z.infer<typeof createCompanyMemberSchema>[] | null;
     members: any;
     companyDeptFields: any;
+    leadRangeData: any;
+    departments: any;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -28,6 +31,10 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [rootMembersInfo, setRootMembersAtom] = useAtom(rootMembersAtom)
     const [rootInfo, setRootInto] = useState<z.infer<typeof createCompanyMemberSchema>[] | null>(null)
     const [members, setMembers] = useState<any>([])
+    const [leadRangeData, setLeadRangeData] = React.useState<any>([])
+    const [departments, setDepartments] = useState([])
+
+
 
 
     const { skip, variables } = {
@@ -66,7 +73,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
                 mutation: LOGIN_USER,
             },
         ],
-        onSuccess: ({data}) => {
+        onSuccess: ({ data }) => {
             if (data?.getCompanyDeptFields) setCompanyDeptFields(data?.getCompanyDeptFields)
         }
     });
@@ -79,8 +86,34 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         }
     });
 
+    const { data: leadRange, loading: leadRangeLoader, error: leadRangeError, refetch } = useQuery(leadQueries.GET_LEADS_BY_DATE_RANGE, {
+        variables: {
+            companyId: userInfo?.companyId,
+            startDate: new Date(new Date().setDate(new Date().getDate() - 30)).toLocaleDateString('en-GB'),
+            endDate: new Date().toLocaleDateString('en-GB')
+        },
+        skip: !userInfo?.token || !userInfo?.companyId,
+        onSuccess: ({ data }) => {
+            setLeadRangeData(data?.getLeadsByDateRange)
+        },
+    })
+
+    const { } = useQuery(userQueries.GET_DEPT_FIELDS, {
+        skip: !userInfo?.token,
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER
+            },
+        ],
+        onSuccess: ({ data }) => {
+            // if (data?.getCompanyDepts?.[0]?.companyDeptForms.length > 0) {
+                setDepartments((data?.getDeptWFields[0]?.deptFields))
+            // };
+        },
+    })
+
     return (
-        <CompanyContext.Provider value={{ companyDeptMembers, rootInfo, members, companyDeptFields }}>
+        <CompanyContext.Provider value={{ departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields }}>
             {children}
         </CompanyContext.Provider>
     );

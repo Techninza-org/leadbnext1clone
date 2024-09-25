@@ -20,6 +20,9 @@ import { useAtom } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom";
 import { useQuery } from "graphql-hooks"
 import { leadQueries } from "@/lib/graphql/lead/queries"
+import { LOGIN_USER } from "@/lib/graphql/user/mutations"
+import { deptQueries } from "@/lib/graphql/dept/queries"
+import { useCompany } from "../providers/CompanyProvider"
 
 const chartConfig = {
   views: {
@@ -40,36 +43,18 @@ export function BarGraph({ className }: { className: string }) {
   const [activeChart, setActiveChart] =
     React.useState<keyof typeof chartConfig>("desktop")
 
-  // const total = React.useMemo(
-  //   () => ({
-  //     desktop: chartData.reduce((acc, curr) => acc + curr.desktop, 0),
-  //     mobile: chartData.reduce((acc, curr) => acc + curr.mobile, 0),
-  //   }),
-  //   []
-  // )
 
-  const [userInfo] = useAtom(userAtom)
-    const companyId = userInfo?.companyId
-    
-    
-    const { data, loading, error } = useQuery(leadQueries.GET_LEADS_BY_DATE_RANGE, {
-      variables: {
-        companyId: companyId,
-        startDate: new Date(new Date().setDate(new Date().getDate() - 60)).toLocaleDateString('en-GB'),
-        endDate: new Date().toLocaleDateString('en-GB')
-        }
-    })
+  const { leadRangeData } = useCompany()
+  React.useEffect(() => {
+    if (leadRangeData?.groupedCallPerday) {
+      const formattedData = Object?.entries(leadRangeData?.groupedCallPerday).map(([date, desktop]) => {
+        return { date, desktop };
+      });
+      //@ts-ignore
+      setChartData(formattedData);
+    }
+  }, [leadRangeData]);
 
-    React.useEffect(() => {
-      if (data?.getLeadsByDateRange?.groupedCallPerday) {
-        const formattedData = Object.entries(data.getLeadsByDateRange.groupedCallPerday).map(([date, desktop]) => {
-          return { date, desktop };
-        });
-        //@ts-ignore
-        setChartData(formattedData);
-      }
-    }, [data]);
-    
   return (
     <Card className={className}>
       <CardHeader className="flex flex-col items-stretch space-y-0 border-b p-0 sm:flex-row">

@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { useToast } from "@/components/ui/use-toast"
 import { useMutation, useQuery } from "graphql-hooks"
-import { CREATE_OR_UPDATE_MANAGER, UPDATE_USER_COMPANY } from "@/lib/graphql/user/mutations"
+import { CREATE_OR_UPDATE_MANAGER, LOGIN_USER, UPDATE_USER_COMPANY } from "@/lib/graphql/user/mutations"
 import { userAtom } from "@/lib/atom/userAtom"
 import { useAtomValue } from "jotai"
 import { deptQueries } from "@/lib/graphql/dept/queries"
@@ -42,6 +42,12 @@ export const UpdateMember = ({ userId }: { userId: string }) => {
 
     const { loading: deptLoading, error: deptError, data: deptData } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
         variables: { companyId: user?.companyId },
+        skip: !user?.token || !user?.companyId,
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER
+            },
+        ],
     });
 
     const { loading: roleLoading, error: roleError, data: rolesData } = useQuery(companyQueries.GET_ALL_ROLES, {

@@ -2,12 +2,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useToast } from '@/components/ui/use-toast'
 import { useModal } from '@/hooks/use-modal-store'
+import { userAtom } from '@/lib/atom/userAtom'
 import { companyMutation } from '@/lib/graphql/company/mutation'
 import { companyQueries } from '@/lib/graphql/company/queries'
 import { deptQueries } from '@/lib/graphql/dept/queries'
+import { LOGIN_USER } from '@/lib/graphql/user/mutations'
 import { userQueries } from '@/lib/graphql/user/queries'
 import { useMutation, useQuery } from 'graphql-hooks'
-import React, { useState } from 'react'
+import { useAtomValue } from 'jotai'
+import React, { useEffect, useState } from 'react'
 
 const CompanyDepartments = ({ id }: { id: string }) => {
   const [departments, setDepartments] = React.useState([])
@@ -16,16 +19,27 @@ const CompanyDepartments = ({ id }: { id: string }) => {
   // const [companySubscription, setCompanySubscription] = useState('')
   // const [updateCompanySubscription] = useMutation(companyMutation.UPDATE_COMPANY_SUBSCRIPTION);
   const { onOpen } = useModal()
+  const userInfo = useAtomValue(userAtom)
+
   const { toast } = useToast()
   const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
     variables: {
       companyId: id,
     },
-    onSuccess: ({ data }) => {
-      setDeptId(data.getCompanyDepts[0].id)
-      setDepartments(data?.getCompanyDepts[0]?.companyDeptForms)
-    },
+    skip: !userInfo?.token || !id,
+    refetchAfterMutations: [
+      {
+        mutation: LOGIN_USER
+      },
+    ],
   })
+
+  useEffect(()=>{
+    if(data?.getCompanyDepts?.[0]?.companyDeptForms.length > 0){
+      setDeptId(data.getCompanyDepts[0].id);
+      setDepartments(data?.getCompanyDepts[0]?.companyDeptForms);
+    }
+  },[data])
 
   // const { data: plansData, loading: plansLoading } = useQuery(userQueries.GET_PLANS, {
   //   onSuccess: ({ data }) => {
@@ -39,7 +53,7 @@ const CompanyDepartments = ({ id }: { id: string }) => {
   //   },
   //   onSuccess: ({ data }) => {
   //     console.log(data, 'data');
-      
+
   //     if (data.getCompanySubscription.Subscriptions.length === 0) return;
   //     const subsLenght = data.getCompanySubscription.Subscriptions.length;
   //     setCompanySubscription(data.getCompanySubscription.Subscriptions[subsLenght - 1].planId)

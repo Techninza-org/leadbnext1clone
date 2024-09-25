@@ -84,15 +84,6 @@ export function MemberDataTable<TData, TValue>({
             <div className="flex justify-between">
                 <DataTableToolbar table={table} setFilter={setFilter} />
                 <div className="flex gap-2 items-center">
-                    <Link href="/members/assign">
-                        <Button
-                            variant={'default'}
-                            size={"sm"}
-                            className="items-center gap-1">
-                            <span>Manage Member</span>
-                        </Button>
-                    </Link>
-                    {/* <Link> */}
                         <Button
                             onClick={() => onOpen("addMember")}
                             variant={'default'}
@@ -100,7 +91,6 @@ export function MemberDataTable<TData, TValue>({
                             className="items-center gap-1">
                             <PlusCircle size={15} /> <span>Add New Member</span>
                         </Button>
-                    {/* </Link> */}
                 </div>
             </div>
             <div className="rounded-md border">

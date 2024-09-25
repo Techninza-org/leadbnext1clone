@@ -29,6 +29,9 @@ import { ArrowDown, ArrowUp, PlusIcon, X } from "lucide-react";
 import { useMutation, useQuery } from "graphql-hooks";
 import { deptQueries } from "@/lib/graphql/dept/queries";
 import { DeptMutation } from "@/lib/graphql/dept/mutation";
+import { LOGIN_USER } from "@/lib/graphql/user/mutations";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/lib/atom/userAtom";
 
 // Define the schema
 const DepartmentSchema = z.object({
@@ -50,15 +53,24 @@ const UpdateDepartmentFieldsModal = () => {
     const [filteredDeptFields, setFilteredDeptFields] = useState([]);
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { deptName, deptId, depId } = modalData;
-    
-    
+    const userInfo = useAtomValue(userAtom)
+
     const { toast } = useToast();
     const [updateDepartmentFields] = useMutation(DeptMutation.UPDATE_DEPT);
     const isModalOpen = isOpen && type === "updateDepartmentFields";
-    
+
 
     const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
         variables: { deptId },
+        skip: !userInfo?.token || !deptId,
+        refetchAfterMutations: [
+            {
+                mutation: DeptMutation.UPDATE_DEPT,
+            },
+            {
+                mutation: LOGIN_USER,
+            },
+        ],
     });
 
     useEffect(() => {

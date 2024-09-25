@@ -1,4 +1,6 @@
 "use client";
+import { useCompany } from "@/components/providers/CompanyProvider";
+import { useSubscription } from "@/components/providers/SubscriptionProvider";
 import {
     Table,
     TableBody,
@@ -14,19 +16,11 @@ import { useState } from "react";
 interface Dept {
     id: string;
     name: string;
-  }
+}
 
 export const SettingsTable = () => {
-    const [departs, setDeparts] = useState([])
-    const { data: plans, loading: planLoading } = useQuery(userQueries.GET_PLANS);
-    console.log(plans?.getPlans);
-    const { data: depts, loading: deptLoading } = useQuery(userQueries.GET_DEPT_FIELDS, {
-        onSuccess: ({ data }) => {
-            setDeparts(data?.getDeptWFields[0]?.deptFields)
-        }
-    });
-
-    if(planLoading || deptLoading) return <div>Loading...</div>
+    const { plans } = useSubscription()
+    const {departments} = useCompany()
 
     return (
         // <RootTable columns={SettingsCols} data={rootInfo ?? []} />
@@ -41,7 +35,7 @@ export const SettingsTable = () => {
                 </TableHeader>
                 <TableBody>
                     {
-                        plans?.getPlans?.map((plan: any) => (
+                        plans?.map((plan: any) => (
                             <TableRow
                                 key={plan.id}
                             >
@@ -49,7 +43,7 @@ export const SettingsTable = () => {
                                 <TableCell>{plan.price}</TableCell>
                                 <TableCell>
                                     {plan.defaultAllowedDeptsIds.map((deptId: string) => {
-                                        const dept = departs?.find((d: Dept) => d.id === deptId);
+                                        const dept = departments?.find((d: Dept) => d.id === deptId);
                                         //@ts-ignore
                                         return dept ? dept.name : 'Unknown Dept';
                                     }).join(', ')}

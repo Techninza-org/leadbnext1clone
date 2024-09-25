@@ -5,9 +5,9 @@ import { userAtom } from '@/lib/atom/userAtom'
 import { useAtomValue } from 'jotai'
 
 const RootDepts = () => {
-    const user = useAtomValue(userAtom)
+    // const user = useAtomValue(userAtom)
   return (
-    <CompanyDepartmentsRoot id={String(user?.companyId)} />
+    <CompanyDepartmentsRoot />
   )
 }
 
