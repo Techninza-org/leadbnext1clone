@@ -21,7 +21,35 @@ const CREATE_OR_UPDATE_GLOBAL_DEPTS = `
   }
 `;
 
+const GET_BROADCAST_FORM = `
+  query GetBroadcastForm {
+    broadcastForm {
+       id
+       name
+       order
+       subCategories{
+        id
+        name
+        options{
+            id
+            name
+            values{
+                id
+                name
+                values{
+                    id
+                    name
+                }
+            }
+        }
+       }
+    }
+  }
+`;
+
+
 export const DeptMutation = {
   UPDATE_DEPT,
-  CREATE_OR_UPDATE_GLOBAL_DEPTS
+  CREATE_OR_UPDATE_GLOBAL_DEPTS,
+  GET_BROADCAST_FORM
 };

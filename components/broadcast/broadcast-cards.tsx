@@ -22,13 +22,13 @@ import { LOGIN_USER } from '@/lib/graphql/user/mutations'
 import { Card } from '../ui/card'
 
 const BroadcastCards = () => {
-    const { onOpen } = useModal();
     const [selectedCategory, setSelectedCategory] = React.useState('All')
     const user = useAtomValue(userAtom)
+
+    const { onOpen } = useModal();
     const { toast } = useToast();
+
     const [deleteBroadcast] = useMutation(companyMutation.DELETE_BROADCAST);
-    console.log(user?.role?.name, 'role');
-    
 
     const { loading, error, data } = useQuery(companyQueries.GET_BROADCASTS, {
         skip: !user?.token,
@@ -36,6 +36,15 @@ const BroadcastCards = () => {
             {
                 mutation: companyMutation.DELETE_BROADCAST
             },
+            {
+                mutation: LOGIN_USER
+            },
+        ]
+    });
+
+    const { loading: addCardBtnLoading, data: broadcasteForm } = useQuery(companyQueries.GET_BROADCAST_FORM, {
+        skip: !user?.token,
+        refetchAfterMutations: [
             {
                 mutation: LOGIN_USER
             },
@@ -99,7 +108,7 @@ const BroadcastCards = () => {
                         <SelectItem value="Message">Message</SelectItem>
                     </SelectContent>
                 </Select>
-            { (user?.role?.name === 'Manager' || user?.role?.name === 'Root') &&  <Button size={'sm'} onClick={() => onOpen('createBroadcast')}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
+                {(user?.role?.name === 'Manager' || user?.role?.name === 'Root') && <Button size={'sm'} disabled={addCardBtnLoading} onClick={() => onOpen('createBroadcast', { broadcastForm: broadcasteForm?.broadcastForm })}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 
@@ -108,7 +117,7 @@ const BroadcastCards = () => {
                         <div className='flex float-end p-4'>
                             <X onClick={() => handleDelete(broadcast.id)} size={20} color='red' className='cursor-pointer' />
                         </div>
-                        <div className=" cursor-pointer p-4 flex" onClick={() => onOpen('broadcastDetails', {broadcastId: broadcast.id})}>
+                        <div className=" cursor-pointer p-4 flex" onClick={() => onOpen('broadcastDetails', { broadcastId: broadcast.id })}>
                             <div className="flex-shrink-0 w-1/3 pr-4">
                                 <img src={broadcast.imgURL[0].url} alt="broadcast" className="w-full h-32 object-cover rounded-lg" />
                             </div>

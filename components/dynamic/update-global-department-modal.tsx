@@ -49,10 +49,26 @@ const DepartmentSchema = z.object({
 const UpdateGlobalDepartmentFieldsModal = () => {
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { dept } = modalData;
-    
+
     const { toast } = useToast();
     const [createDept] = useMutation(DeptMutation.CREATE_OR_UPDATE_GLOBAL_DEPTS);
     const isModalOpen = isOpen && type === "updateGlobalDepartmentFields";
+
+
+    // {
+    //     "id": "66f654c1bd39c4b2900d57ac",
+    //     "name": "Category",
+    //     "order": 1,
+    //     "subCategory": [
+    //         {
+    //             "name": "SubCategory",
+    //             "options": [
+    //                 "option_1",
+    //                 "option_2"
+    //             ]
+    //         }
+    //     ]
+    // },
 
     const form = useForm({
         resolver: zodResolver(DepartmentSchema),
@@ -81,14 +97,12 @@ const UpdateGlobalDepartmentFieldsModal = () => {
 
     const onSubmit = async (values: any) => {
         const { deptFields } = values;
-        console.log(deptFields, 'deptFields');
-
         try {
             const { data, error } = await createDept({
                 variables: {
                     input: {
                         name: 'Sale Department',
-                        subDeptName: dept.name,  
+                        subDeptName: dept.name,
                         order: 4,
                         deptFields: deptFields,
                     }
@@ -146,7 +160,6 @@ const UpdateGlobalDepartmentFieldsModal = () => {
         }
     };
 
-
     return (
         <>
             <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -159,24 +172,29 @@ const UpdateGlobalDepartmentFieldsModal = () => {
                     </DialogHeader>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            {dept?.subDeptFields?.map((inputfield, index) => (
+                            {dept?.map((inputfield, index) => (
                                 <div key={inputfield.name} className="mb-4 border p-4 rounded-md">
                                     <div className="">
                                         <div className="grid grid-cols-8 gap-2">
                                             <div className="col-span-3">
                                                 <FormField
                                                     control={form.control}
-                                                    name={`deptFields.${index}.name`}
+                                                    name="email"
                                                     render={({ field }) => (
                                                         <FormItem>
-                                                            {/* <FormLabel>Field Name</FormLabel> */}
-                                                            <FormControl>
-                                                                <Input
-                                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                                    placeholder="Field Name"
-                                                                    {...field}
-                                                                />
-                                                            </FormControl>
+                                                            <FormLabel>Email</FormLabel>
+                                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                                <FormControl>
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select a verified email to display" />
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent>
+                                                                    <SelectItem value="m@example.com">m@example.com</SelectItem>
+                                                                    <SelectItem value="m@google.com">m@google.com</SelectItem>
+                                                                    <SelectItem value="m@support.com">m@support.com</SelectItem>
+                                                                </SelectContent>
+                                                            </Select>
                                                             <FormMessage />
                                                         </FormItem>
                                                     )}

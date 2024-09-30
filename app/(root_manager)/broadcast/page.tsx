@@ -1,8 +1,5 @@
-import { BroadcastForm } from "@/components/broadcast";
 import BroadcastCards from "@/components/broadcast/broadcast-cards";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useModal } from "@/hooks/use-modal-store";
 
 export default function BroadcastPage() {
     return (
@@ -14,7 +11,6 @@ export default function BroadcastPage() {
             </CardHeader>
             <CardContent>
                 <BroadcastCards />
-                {/* <BroadcastForm /> */}
             </CardContent>
         </Card>
     );

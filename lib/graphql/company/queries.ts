@@ -75,10 +75,37 @@ const GET_BROADCAST_BY_ID = `
   }
 `;
 
+const GET_BROADCAST_FORM = `
+  query GetBroadcastForm {
+    broadcastForm {
+       id
+       name
+       order
+       subCategories{
+        name
+        options{
+            name
+            order
+            type
+            values{
+                id
+                name
+                values{
+                    id
+                    name
+                }
+            }
+        }
+       }
+    }
+}
+`;
+
 export const companyQueries = {
   GET_ALL_ROLES,
   GET_COMPANY_DEPT_FIELDS,
   GET_COMPANY_SUBSCRIPTION,
   GET_BROADCASTS,
-  GET_BROADCAST_BY_ID
+  GET_BROADCAST_BY_ID,
+  GET_BROADCAST_FORM
 }

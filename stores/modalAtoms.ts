@@ -1,9 +1,9 @@
 import { z } from "zod";
 import { atom } from "jotai";
 import { createLeadSchema, leadSchema } from "@/types/lead";
-import { CompanyDeptFieldSchema} from "@/types/company";
+import { CompanyDeptFieldSchema } from "@/types/company";
 
-export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead" | "bidForm" | "createBroadcast" | "finacerBidApproval" | 'viewLeadInfo' | "addMember" | "enquiryDetails" | "updateDepartmentFields" | "broadcastDetails" | "updateGlobalDepartmentFields";
+export type ModalType = "paymentGateway" | "addLead" | "assignLead" | "submitLead" | "bidForm" | "createBroadcast" | "finacerBidApproval" | 'viewLeadInfo' | "addMember" | "enquiryDetails" | "updateDepartmentFields" | "broadcastDetails" | "updateGlobalDepartmentFields" | "updateGlobalBroadcastForm";
 export interface ModalData {
     customerId?: string;
 
@@ -15,6 +15,7 @@ export interface ModalData {
     depId?: string;
     dept?: any;
     broadcastId?: string;
+    broadcastForm?: any;
 
     apiUrl?: string;
     query?: Record<string, any>;

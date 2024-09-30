@@ -10,6 +10,8 @@ import { leadMutation } from '@/lib/graphql/lead/mutation';
 import { LOGIN_USER, UPDATE_USER_COMPANY } from '@/lib/graphql/user/mutations';
 import { deptQueries } from '@/lib/graphql/dept/queries';
 import { leadQueries } from '@/lib/graphql/lead/queries';
+import { companyQueries } from '@/lib/graphql/company/queries';
+import { DeptMutation } from '@/lib/graphql/dept/mutation';
 
 type CompanyContextType = {
     companyDeptMembers: z.infer<typeof createCompanyMemberSchema>[] | null;
@@ -17,6 +19,7 @@ type CompanyContextType = {
     members: any;
     companyDeptFields: any;
     leadRangeData: any;
+    braodcasteForm: any;
     departments: any;
 };
 
@@ -33,9 +36,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [members, setMembers] = useState<any>([])
     const [leadRangeData, setLeadRangeData] = React.useState<any>([])
     const [departments, setDepartments] = useState([])
-
-
-
+    const [braodcasteForm, setBroadcastForm] = useState([])
 
     const { skip, variables } = {
         skip: ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || ""),
@@ -107,13 +108,26 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         ],
         onSuccess: ({ data }) => {
             // if (data?.getCompanyDepts?.[0]?.companyDeptForms.length > 0) {
-                setDepartments((data?.getDeptWFields[0]?.deptFields))
+            setDepartments((data?.getDeptWFields[0]?.deptFields))
             // };
         },
     })
 
+    const { } = useQuery(DeptMutation.GET_BROADCAST_FORM, {
+        skip: !userInfo?.token,
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER
+            },
+        ],
+        onSuccess: ({ data }) => {
+            setBroadcastForm(data?.broadcastForm)
+        },
+    }
+    )
+
     return (
-        <CompanyContext.Provider value={{ departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields }}>
+        <CompanyContext.Provider value={{ braodcasteForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields }}>
             {children}
         </CompanyContext.Provider>
     );

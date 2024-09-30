@@ -5,7 +5,7 @@ import { useModal } from '@/hooks/use-modal-store';
 import { BroadcastForm } from '../broadcast';
 
 const CreateBroadcastModal = () => {
-    const { isOpen, onClose, type } = useModal();
+    const { isOpen, onClose, type, data: {broadcastForm} } = useModal();
     const isModalOpen = isOpen && type === "createBroadcast";
     const handleClose = () => {
         onClose();
@@ -13,12 +13,12 @@ const CreateBroadcastModal = () => {
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="text-black max-w-screen-sm">
-                <DialogHeader className="pt-8 px-6">
+                <DialogHeader>
                     <DialogTitle className="text-2xl text-center font-bold">
                         Broadcast
                     </DialogTitle>
                 </DialogHeader>
-                <BroadcastForm />
+                <BroadcastForm broadcastFormStructure={broadcastForm} />
             </DialogContent>
         </Dialog>
 
