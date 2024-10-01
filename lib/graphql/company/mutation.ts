@@ -24,10 +24,36 @@ mutation deleteBroadcast($broadcastId: ID!) {
     deleteBroadcast(broadcastId: $broadcastId) {
         id
     }
-}
+}`;
+
+const UPDATE_BROADCAST_FORM = `
+  mutation UpdateBroadcastForm($input: CreateBroadcastInput!) {
+    updateBroadcastForm(input: $input) {
+      id
+      name
+      order
+      subCategories {
+        name
+        order
+        options {
+          name
+          type
+          order
+          values {
+            name
+            values {
+              name
+            }
+          }
+        }
+      }
+    }
+  }
 `;
+
 
 export const companyMutation = {
     UPDATE_COMPANY_SUBSCRIPTION,
-    DELETE_BROADCAST
+    DELETE_BROADCAST,
+    UPDATE_BROADCAST_FORM,
 }

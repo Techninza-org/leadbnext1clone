@@ -20,10 +20,14 @@ import { companyMutation } from '@/lib/graphql/company/mutation'
 import { useToast } from '../ui/use-toast'
 import { LOGIN_USER } from '@/lib/graphql/user/mutations'
 import { Card } from '../ui/card'
+import { useCompany } from '../providers/CompanyProvider'
 
 const BroadcastCards = () => {
     const [selectedCategory, setSelectedCategory] = React.useState('All')
     const user = useAtomValue(userAtom)
+
+    const { braodcasteForm } = useCompany()
+    console.log(braodcasteForm, "braodcasteForm")
 
     const { onOpen } = useModal();
     const { toast } = useToast();
@@ -42,14 +46,7 @@ const BroadcastCards = () => {
         ]
     });
 
-    const { loading: addCardBtnLoading, data: broadcasteForm } = useQuery(companyQueries.GET_BROADCAST_FORM, {
-        skip: !user?.token,
-        refetchAfterMutations: [
-            {
-                mutation: LOGIN_USER
-            },
-        ]
-    });
+
 
     const filteredData = data?.getBroadcasts?.filter((broadcast: any) => {
         if (selectedCategory === 'All') return true
@@ -108,7 +105,7 @@ const BroadcastCards = () => {
                         <SelectItem value="Message">Message</SelectItem>
                     </SelectContent>
                 </Select>
-                {(user?.role?.name === 'Manager' || user?.role?.name === 'Root') && <Button size={'sm'} disabled={addCardBtnLoading} onClick={() => onOpen('createBroadcast', { broadcastForm: broadcasteForm?.broadcastForm })}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
+                {(user?.role?.name === 'Manager' || user?.role?.name === 'Root') && <Button size={'sm'} onClick={() => onOpen('createBroadcast', { broadcastForm: braodcasteForm })}> <PlusCircle size={15} className='mr-2' /> Add New Card</Button>}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
 

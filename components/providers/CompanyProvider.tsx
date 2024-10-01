@@ -121,10 +121,26 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             },
         ],
         onSuccess: ({ data }) => {
-            setBroadcastForm(data?.broadcastForm)
+            if (data?.broadcastForm) {
+                setBroadcastForm(data?.broadcastForm)
+            }
         },
     }
     )
+
+    const { loading: addCardBtnLoading, data: broadcasteForm } = useQuery(companyQueries.GET_BROADCAST_FORM, {
+        skip: !userInfo?.token,
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER
+            },
+        ],
+        onSuccess: ({ data }) => {
+            if (data?.getBroadcastForm){
+                setBroadcastForm(data?.getBroadcastForm)
+            }
+        }
+    });
 
     return (
         <CompanyContext.Provider value={{ braodcasteForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields }}>
