@@ -118,7 +118,7 @@ const UpdateDepartmentFieldsModal = () => {
             const { data, error } = await updateDepartmentFields({
                 variables: {
                     input: {
-                        companyDeptId: depId,
+                        companyDeptId: userInfo?.deptId || "",
                         name: deptName,  //form name
                         order: 4,
                         subDeptFields: deptFields,
