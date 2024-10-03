@@ -1,9 +1,9 @@
 const UPDATE_DEPT = `
-mutation CreateNUpdateCompanyDeptForm($input: CompanyDeptFormInput!) {
+mutation CreateNUpdateCompanyDeptForm($input: CreateDeptFormInput!) {
     createNUpdateCompanyDeptForm(input: $input) {
       id
-    name
-}
+      name
+    }
 }
 `;
 
