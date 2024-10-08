@@ -8,6 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { PlusIcon, X, ChevronDown, Save } from "lucide-react"
 import { useToast } from "@/components/ui/use-toast"
+import { useMutation } from 'graphql-hooks'
+import { companyMutation } from '@/lib/graphql/company/mutation'
 
 type OptionValue = {
     id: string
@@ -74,12 +76,15 @@ const UpdateGlobalBroadcastModal = () => {
     const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
 
     //mutation workds
+    const [updateBroadcastForm] = useMutation(companyMutation.UPDATE_BROADCAST_FORM);
 
     useEffect(() => {
         setForms(dept || [])
     }, [dept])
 
-    const selectedForm = forms.find(form => form.id === selectedFormId) || forms[0]
+    if (!isModalOpen) return null
+
+    const selectedForm = forms?.find(form => form.id === selectedFormId) || forms[0]
 
     const handleSelectChange = (subCategoryIndex: number, optionIndex: number, selectedValue: string) => {
         setSelectedOptions(prev => ({
@@ -218,9 +223,14 @@ const UpdateGlobalBroadcastModal = () => {
         }))
     }
 
-    const handleSave = () => {
-        // Here you would typically send the data to your backend
+    const handleSave = async () => {
         console.log("Saving forms:", JSON.stringify(forms, null, 2))
+        const response = await updateBroadcastForm({
+            variables: {
+                input: forms, // Input is passed here
+            },
+        });
+        console.log(response)
         toast({
             title: "Forms Saved",
             description: "Your changes have been successfully saved.",

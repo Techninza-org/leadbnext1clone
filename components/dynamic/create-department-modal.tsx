@@ -32,6 +32,7 @@ import { DeptMutation } from "@/lib/graphql/dept/mutation";
 import { LOGIN_USER } from "@/lib/graphql/user/mutations";
 import { useAtomValue } from "jotai";
 import { userAtom } from "@/lib/atom/userAtom";
+import { companyMutation } from "@/lib/graphql/company/mutation";
 
 // Define the schema
 const DepartmentSchema = z.object({
