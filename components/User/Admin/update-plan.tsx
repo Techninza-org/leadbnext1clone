@@ -61,7 +61,7 @@ export const CompanyPlan = ({ row }: { row: any }) => {
     return (
         <Combobox
             options={options}
-            placeholder={isPlanHas ? sub.plan.name : "No plan exist" || "Select Plan"}
+            placeholder={isPlanHas ? sub.plan.name : "No plan exist"}
             value={selectedPlan}
             onChange={(value) => {
                 setSelectedPlan(value)

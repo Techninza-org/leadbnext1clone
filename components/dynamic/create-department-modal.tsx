@@ -33,16 +33,18 @@ import { LOGIN_USER } from "@/lib/graphql/user/mutations";
 import { useAtomValue } from "jotai";
 import { userAtom } from "@/lib/atom/userAtom";
 import { companyMutation } from "@/lib/graphql/company/mutation";
+import { MultiSelect } from "../multi-select-new";
 
 // Define the schema
 const DepartmentSchema = z.object({
     deptFields: z.array(z.object({
         name: z.string().min(1, "Field name is required"),
         fieldType: z.string().min(1, "Field type is required"),
+        ddOptionId: z.any().optional(),
         order: z.number().int().min(1, "Field order is required"),
         options: z.object({
             label: z.string(),
-            value: z.string(),
+            value: z.any(),
         }).array().default([]),
         isRequired: z.boolean(),
         isDisabled: z.boolean(),
@@ -62,7 +64,7 @@ const UpdateDepartmentFieldsModal = () => {
 
 
     const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId },
+        variables: { deptId  },
         skip: !userInfo?.token || !deptId,
         refetchAfterMutations: [
             {
@@ -119,7 +121,7 @@ const UpdateDepartmentFieldsModal = () => {
             const { data, error } = await updateDepartmentFields({
                 variables: {
                     input: {
-                        companyDeptId: userInfo?.deptId || "",
+                        companyDeptId: deptId || "",
                         name: deptName,  //form name
                         order: 4,
                         subDeptFields: deptFields,
@@ -178,6 +180,10 @@ const UpdateDepartmentFieldsModal = () => {
         }
     };
 
+    const dependenciesOptionsDropdown = filteredDeptFields?.[0]?.subDeptFields?.filter(x => x.fieldType === "SELECT").map((field) => ({
+        label: field.name,
+        value: field.name,
+    }));
 
     return (
         <>
@@ -243,6 +249,7 @@ const UpdateDepartmentFieldsModal = () => {
                                                                     <SelectItem value="SELECT">Select</SelectItem>
                                                                     <SelectItem value="RADIO">Radio</SelectItem>
                                                                     <SelectItem value="DROPDOWN">Dropdown</SelectItem>
+                                                                    <SelectItem value="DD">Dependent Dropdown</SelectItem>
                                                                     <SelectItem value="CHECKBOX">Checkbox</SelectItem>
                                                                     <SelectItem value="IMAGE">Image</SelectItem>
                                                                     <SelectItem value="TEXTAREA">Textarea</SelectItem>
@@ -313,23 +320,23 @@ const UpdateDepartmentFieldsModal = () => {
                                             />
                                         </div>
                                     </div>
-                                    {['SELECT', 'RADIO', 'DROPDOWN', 'CHECKBOX'].includes(form.getValues(`deptFields.${index}.fieldType`)) && (
-                                        <div className="mt-4 w-1/2">
+                                    {['SELECT', 'RADIO', 'CHECKBOX'].includes(form.getValues(`deptFields.${index}.fieldType`)) && (
+                                        <div key={index} className="mt-4 w-1/2">
                                             <FormLabel className="mr-2">Options</FormLabel>
                                             {form.getValues(`deptFields.${index}.options`)?.map((_option: any, optIndex: React.Key | null | undefined) => (
                                                 <div key={optIndex} className="flex items-center mb-2 mt-2">
                                                     <Controller
                                                         name={`deptFields.${index}.options.${optIndex}.value`}
                                                         control={form.control}
-                                                        render={({ field }) => (
+                                                        render={({ field: inputField }) => (
                                                             <Input
                                                                 placeholder="Value"
                                                                 className="mr-2"
-                                                                {...field}
+                                                                value={typeof _option === 'object' ? _option.label || _option.value : _option}
                                                                 onChange={(e) => {
                                                                     const value = e.target.value;
-                                                                    field.onChange(value);
-                                                                    form.setValue(`deptFields.${index}.options.${optIndex}.label`, value);
+                                                                    inputField.onChange(value);
+                                                                    handleOptionChange(index, optIndex, value);
                                                                 }}
                                                             />
                                                         )}
@@ -351,8 +358,8 @@ const UpdateDepartmentFieldsModal = () => {
                                             <Button
                                                 type="button"
                                                 onClick={() => {
-                                                    const options = form.getValues(`deptFields.${index}.options`);
-                                                    options.push({ value: '' });
+                                                    const options = form.getValues(`deptFields.${index}.options`) || [];
+                                                    options.push({ label: '', value: '' });
                                                     form.setValue(`deptFields.${index}.options`, [...options]);
                                                     form.trigger();
                                                 }}
@@ -361,6 +368,115 @@ const UpdateDepartmentFieldsModal = () => {
                                                 <PlusIcon size={15} />
                                                 Add Option
                                             </Button>
+                                        </div>
+                                    )
+                                    }
+                                    {['DD'].includes(form.getValues(`deptFields.${index}.fieldType`)) && (
+                                        <div key={index} className="mt-4 w-1/2">
+                                            <div>
+                                                <MultiSelect
+                                                    options={dependenciesOptionsDropdown}
+                                                    onValueChange={(value) => {
+                                                        form.setValue(`deptFields.${index}.ddOptionId`, value?.[0] ?? "")
+                                                    }}
+                                                    defaultValue={[dependenciesOptionsDropdown?.find(x => x.value === form.watch(`deptFields.${index}.ddOptionId`))?.label] ?? []}
+                                                    placeholder="Select dependencies"
+                                                    variant="inverted"
+                                                    maxCount={1}
+                                                />
+                                                {form.watch(`deptFields.${index}.ddOptionId`) && (
+                                                    <div className="mt-4">
+                                                        <FormLabel className="mr-2 block">Select Values from Linked Field</FormLabel>
+                                                        <Controller
+                                                            name={`deptFields.${index}.linkedFieldValues`}
+                                                            control={form.control}
+                                                            render={({ field }) => (
+                                                                <Select
+                                                                    onValueChange={(value) => {
+                                                                        field.onChange(value)
+                                                                        const options = form.getValues(`deptFields.${index}.options`) || []
+                                                                        if (!options.find(x => x.label === value)) {
+                                                                            options.push({ label: value, value: [] })
+                                                                            form.setValue(`deptFields.${index}.options`, options)
+                                                                        }
+                                                                    }}
+                                                                    value={field.value}
+                                                                >
+                                                                    <SelectTrigger className="w-full">
+                                                                        <SelectValue placeholder="Select values" />
+                                                                    </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {filteredDeptFields?.[0]?.subDeptFields
+                                                                            .find((subField) => subField.name === form.watch(`deptFields.${index}.ddOptionId`))
+                                                                            ?.options.map((option, optIndex) => (
+                                                                                <SelectItem key={optIndex} value={option.value}>
+                                                                                    {option.label}
+                                                                                </SelectItem>
+                                                                            ))}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            )}
+                                                        />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            <FormLabel className="mr-2 mt-4 block">Options</FormLabel>
+                                            {(() => {
+                                                const selectedOption = form.getValues(`deptFields.${index}.options`)?.find(x => x.label === form.getValues(`deptFields.${index}.linkedFieldValues`))
+                                                const nestedOptions = selectedOption?.value || []
+
+                                                return (
+                                                    <>
+                                                        {nestedOptions.map((nestedOption, nestedIndex) => (
+                                                            <div key={nestedIndex} className="flex items-center mb-2">
+                                                                <Controller
+                                                                    name={`deptFields.${index}.options.${form.getValues(`deptFields.${index}.options`)?.findIndex(x => x.label === form.getValues(`deptFields.${index}.linkedFieldValues`))}.value.${nestedIndex}.label`}
+                                                                    control={form.control}
+                                                                    render={({ field }) => (
+                                                                        <Input
+                                                                            placeholder="Nested Value"
+                                                                            className="mr-2"
+                                                                            {...field}
+                                                                        />
+                                                                    )}
+                                                                />
+                                                                <Button
+                                                                    type="button"
+                                                                    variant={'ghost'}
+                                                                    onClick={() => {
+                                                                        const optionIndex = form.watch(`deptFields.${index}.options`)?.findIndex(x => x.label === form.watch(`deptFields.${index}.linkedFieldValues`))
+                                                                        if (optionIndex !== undefined && optionIndex !== -1) {
+                                                                            const updatedNestedOptions = [...form.watch(`deptFields.${index}.options.${optionIndex}.value`)]
+                                                                            updatedNestedOptions.splice(nestedIndex, 1)
+                                                                            form.setValue(`deptFields.${index}.options.${optionIndex}.value`, updatedNestedOptions)
+                                                                        }
+                                                                    }}
+                                                                >
+                                                                    <X size={20} color="red" />
+                                                                </Button>
+                                                            </div>
+                                                        ))}
+                                                        {form.watch(`deptFields.${index}.linkedFieldValues`) && (
+                                                            <Button
+                                                                type="button"
+                                                                onClick={() => {
+                                                                    const optionIndex = form.watch(`deptFields.${index}.options`)?.findIndex(x => x.label === form.watch(`deptFields.${index}.linkedFieldValues`))
+                                                                    if (optionIndex !== undefined && optionIndex !== -1) {
+                                                                        const updatedNestedOptions = [...(form.watch(`deptFields.${index}.options.${optionIndex}.value`) || [])]
+                                                                        updatedNestedOptions.push({ label: '', value: '' })
+                                                                        form.setValue(`deptFields.${index}.options.${optionIndex}.value`, updatedNestedOptions)
+                                                                        form.trigger(`deptFields.${index}.options.${optionIndex}.value`)
+                                                                    }
+                                                                }}
+                                                                className="mt-2 bg-blue-500 text-white"
+                                                            >
+                                                                <PlusIcon size={15} />
+                                                                Add Nested Option
+                                                            </Button>
+                                                        )}
+                                                    </>
+                                                )
+                                            })()}
                                         </div>
                                     )}
                                 </div>

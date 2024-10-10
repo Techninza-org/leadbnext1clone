@@ -31,6 +31,7 @@ const GET_COMPANY_DEPT_FIELDS = `
         subDeptFields { 
           name
           fieldType
+          ddOptionId
           options {
               label
               value

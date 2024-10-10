@@ -224,13 +224,11 @@ const UpdateGlobalBroadcastModal = () => {
     }
 
     const handleSave = async () => {
-        console.log("Saving forms:", JSON.stringify(forms, null, 2))
         const response = await updateBroadcastForm({
             variables: {
                 input: forms, // Input is passed here
             },
         });
-        console.log(response)
         toast({
             title: "Forms Saved",
             description: "Your changes have been successfully saved.",

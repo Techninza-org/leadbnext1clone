@@ -27,7 +27,6 @@ const BroadcastCards = () => {
     const user = useAtomValue(userAtom)
 
     const { braodcasteForm } = useCompany()
-    console.log(braodcasteForm, "braodcasteForm")
 
     const { onOpen } = useModal();
     const { toast } = useToast();
