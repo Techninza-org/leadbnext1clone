@@ -64,7 +64,7 @@ const UpdateDepartmentFieldsModal = () => {
 
 
     const { data, loading, error } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId  },
+        variables: { deptId },
         skip: !userInfo?.token || !deptId,
         refetchAfterMutations: [
             {
@@ -375,16 +375,27 @@ const UpdateDepartmentFieldsModal = () => {
                                     {['DD'].includes(form.getValues(`deptFields.${index}.fieldType`)) && (
                                         <div key={index} className="mt-4 w-1/2">
                                             <div>
-                                                <MultiSelect
-                                                    options={dependenciesOptionsDropdown}
+                                                <Select
+                                                    defaultValue={dependenciesOptionsDropdown?.find(x => x.value === form.watch(`deptFields.${index}.ddOptionId`))?.label}
                                                     onValueChange={(value) => {
-                                                        form.setValue(`deptFields.${index}.ddOptionId`, value?.[0] ?? "")
+                                                        console.log(value, 'value')
+                                                        form.setValue(`deptFields.${index}.ddOptionId`, value ?? "")
                                                     }}
-                                                    defaultValue={[dependenciesOptionsDropdown?.find(x => x.value === form.watch(`deptFields.${index}.ddOptionId`))?.label] ?? []}
-                                                    placeholder="Select dependencies"
-                                                    variant="inverted"
-                                                    maxCount={1}
-                                                />
+                                                >
+                                                    <SelectTrigger className="w-[250px]">
+                                                        <SelectValue placeholder="Theme" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {
+                                                            dependenciesOptionsDropdown?.map((option, optIndex) => (
+                                                                <SelectItem key={optIndex} value={option.value}>
+                                                                    {option.label || option.value}
+                                                                </SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+
                                                 {form.watch(`deptFields.${index}.ddOptionId`) && (
                                                     <div className="mt-4">
                                                         <FormLabel className="mr-2 block">Select Values from Linked Field</FormLabel>
