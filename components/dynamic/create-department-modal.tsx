@@ -116,6 +116,7 @@ const UpdateDepartmentFieldsModal = () => {
 
     const onSubmit = async (values: any) => {
         const { deptFields } = values;
+        console.log(deptFields, "deptFields")
 
         try {
             const { data, error } = await updateDepartmentFields({
@@ -410,7 +411,7 @@ const UpdateDepartmentFieldsModal = () => {
                                                                             .find((subField) => subField.name === form.watch(`deptFields.${index}.ddOptionId`))
                                                                             ?.options.map((option, optIndex) => (
                                                                                 <SelectItem key={optIndex} value={option.value}>
-                                                                                    {option.label}
+                                                                                    {option.label || option.value}
                                                                                 </SelectItem>
                                                                             ))}
                                                                     </SelectContent>
