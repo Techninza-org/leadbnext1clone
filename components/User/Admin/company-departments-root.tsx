@@ -6,6 +6,7 @@ import { deptQueries } from '@/lib/graphql/dept/queries'
 import { LOGIN_USER } from '@/lib/graphql/user/mutations'
 import { useQuery } from 'graphql-hooks'
 import { useAtomValue } from 'jotai'
+import Link from 'next/link'
 import { useEffect, useState } from 'react';
 
 const CompanyDepartmentsRoot = () => {
@@ -48,11 +49,9 @@ const CompanyDepartmentsRoot = () => {
       </CardHeader>
       <CardContent className="grid grid-cols-2 gap-8">
         {departments?.map((dept: any) => (
-          <Card key={dept.id} onClick={() => onOpen("updateDepartmentFields", { deptName: dept.name, deptId: deptId, depId: userInfo?.companyId })}>
-            <CardContent className="grid place-content-center p-6 hover:bg-slate-200 cursor-pointer hover:rounded-md">
+          <Link className='p-6 border rounded-md text-center shadow' href={`/departments/form/${dept.name}/${deptId}/${userInfo?.companyId}`} key={dept.id}>
               <CardTitle>{dept.name}</CardTitle>
-            </CardContent>
-          </Card>
+          </Link>
         ))}
       </CardContent>
     </Card>
