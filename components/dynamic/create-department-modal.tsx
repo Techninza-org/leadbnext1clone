@@ -28,7 +28,6 @@ const DepartmentSchema = z.object({
         order: z.number().int().min(1, "Field order is required"),
         options: z.array(z.object({
             label: z.string(),
-            // fieldType: z.string(),
             value: z.any(),
         })).default([]),
         isRequired: z.boolean(),
@@ -40,8 +39,8 @@ const fieldTypes = [
     { value: "INPUT", label: "Input" },
     { value: "SELECT", label: "Select" },
     { value: "RADIO", label: "Radio" },
-    { value: "DROPDOWN", label: "Dropdown" },
-    { value: "DD", label: "Dependent Dropdown" },
+    { value: "DD_IMG", label: "Dependent Dropdown (Image)" },
+    { value: "DD", label: "Dependent Dropdown (Select)" },
     { value: "CHECKBOX", label: "Checkbox" },
     { value: "IMAGE", label: "Image" },
     { value: "TEXTAREA", label: "Textarea" },
@@ -80,10 +79,9 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         }
     }, [filteredDeptFields, form])
 
-    // console.log(form.formState.errors, "formState.errors")
     const onSubmit = useCallback(async (values) => {
-        try {
         // console.log(JSON.stringify(values.deptFields, null, 2), "values.deptFields")
+        try {
             const { data, error } = await updateDepartmentFields({
                 variables: {
                     input: {
@@ -187,7 +185,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
             )
         }
 
-        if (fieldType === 'DD') {
+        if (fieldType === 'DD' || fieldType === 'DD_IMG') {
             return (
                 <div className="mt-4">
                     <FormLabel className="mr-2">Dependent On</FormLabel>
