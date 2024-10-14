@@ -37,7 +37,6 @@ export const ModalProvider = () => {
       <EnquiryDetailsModal />
       <CreateBroadcastModal />
       <BroadcastDetailsModal />
-      <UpdateGlobalDepartmentFieldsModal />
       <UpdateGlobalBroadcastModal />
     </>
   );

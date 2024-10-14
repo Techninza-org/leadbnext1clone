@@ -5,6 +5,7 @@ import { useToast } from '@/components/ui/use-toast'
 import { useModal } from '@/hooks/use-modal-store'
 import { userAtom } from '@/lib/atom/userAtom'
 import { useAtomValue } from 'jotai'
+import Link from 'next/link'
 import React from 'react'
 
 const Departments = () => {
@@ -17,17 +18,13 @@ const Departments = () => {
         <CardHeader>
           <CardTitle className="font-bold">Departments</CardTitle>
         </CardHeader>
-        <CardContent className='grid grid-cols-2 gap-8'>
-          {
-            departments?.map((dept: any) => (
-              <Card key={dept.id} onClick={() => onOpen("updateGlobalDepartmentFields", { dept: dept })}>
-                <CardContent className='grid place-content-center p-6 hover:bg-slate-200 cursor-pointer hover:rounded-md'>
-                  <CardTitle>{dept.name}</CardTitle>
-                </CardContent>
-              </Card>
-            ))
-          }
-        </CardContent>
+        <CardContent className="grid grid-cols-2 gap-8">
+        {departments?.map((dept: any) => (
+          <Link className='p-6 border rounded-md text-center shadow' href={`/admin/depts/${dept.name}`} key={dept.id}>
+              <CardTitle>{dept.name}</CardTitle>
+          </Link>
+        ))}
+      </CardContent>
       </Card>
       <Card className='my-3'>
         <CardHeader>
