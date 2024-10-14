@@ -28,7 +28,7 @@ const DepartmentSchema = z.object({
         order: z.number().int().min(1, "Field order is required"),
         options: z.array(z.object({
             label: z.string(),
-            fieldType: z.string(),
+            // fieldType: z.string(),
             value: z.any(),
         })).default([]),
         isRequired: z.boolean(),
@@ -80,6 +80,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         }
     }, [filteredDeptFields, form])
 
+    // console.log(form.formState.errors, "formState.errors")
     const onSubmit = useCallback(async (values) => {
         try {
         // console.log(JSON.stringify(values.deptFields, null, 2), "values.deptFields")
