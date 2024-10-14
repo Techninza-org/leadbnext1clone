@@ -1,118 +1,95 @@
-//@ts-nocheck
+// @ts-nocheck
 "use client"
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog";
-import { useModal } from '@/hooks/use-modal-store';
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useToast } from '../ui/use-toast';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
-import { useForm, useFieldArray, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Checkbox } from "../ui/checkbox";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select"
-import { ArrowDown, ArrowUp, PlusIcon, X } from "lucide-react";
-import { useManualQuery, useMutation, useQuery } from "graphql-hooks";
-import { deptQueries } from "@/lib/graphql/dept/queries";
-import { DeptMutation } from "@/lib/graphql/dept/mutation";
-import { LOGIN_USER } from "@/lib/graphql/user/mutations";
-import { useAtomValue } from "jotai";
-import { userAtom } from "@/lib/atom/userAtom";
-import { companyMutation } from "@/lib/graphql/company/mutation";
-import { MultiSelect } from "../multi-select-new";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { useParams } from "next/navigation";
+import { useForm, useFieldArray, Controller } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
+import { useAtomValue } from "jotai"
+import { useQuery, useMutation } from "graphql-hooks"
+import { ArrowDown, ArrowUp, PlusIcon, X } from "lucide-react"
 
-// Define the schema
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { useToast } from '@/components/ui/use-toast'
+
+import { deptQueries } from "@/lib/graphql/dept/queries"
+import { DeptMutation } from "@/lib/graphql/dept/mutation"
+import { userAtom } from "@/lib/atom/userAtom"
+
 const DepartmentSchema = z.object({
     deptFields: z.array(z.object({
         name: z.string().min(1, "Field name is required"),
         fieldType: z.string().min(1, "Field type is required"),
         ddOptionId: z.any().optional(),
         order: z.number().int().min(1, "Field order is required"),
-        options: z.object({
+        options: z.array(z.object({
             label: z.string(),
+            fieldType: z.string(),
             value: z.any(),
-        }).array().default([]),
+        })).default([]),
         isRequired: z.boolean(),
         isDisabled: z.boolean(),
     })).default([]),
-});
+})
 
+const fieldTypes = [
+    { value: "INPUT", label: "Input" },
+    { value: "SELECT", label: "Select" },
+    { value: "RADIO", label: "Radio" },
+    { value: "DROPDOWN", label: "Dropdown" },
+    { value: "DD", label: "Dependent Dropdown" },
+    { value: "CHECKBOX", label: "Checkbox" },
+    { value: "IMAGE", label: "Image" },
+    { value: "TEXTAREA", label: "Textarea" },
+    { value: "DATE", label: "Date" },
+]
 
-const UpdateDepartmentFieldsModal = ({ deptName, deptId, companyId }) => {
-    const [deptFields, setDeptFields] = useState([]);
-    const userInfo = useAtomValue(userAtom);
+const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     const [currIdx, setCurrIdx] = useState(0)
-
-    const { toast } = useToast();
-    const [updateDepartmentFields] = useMutation(DeptMutation.UPDATE_DEPT);
-
-    const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId },
-        skip: !userInfo?.token || !deptId,
-        onSuccess: ({ data }) => {
-            setDeptFields(data.getCompanyDeptFields);
-        },
-        refetchAfterMutations: [
-            { mutation: DeptMutation.UPDATE_DEPT },
-            { mutation: LOGIN_USER },
-        ],
-    });
-
-    const filteredDeptFields = useMemo(() => {
-        return deptFields.filter((field) => String(field.name) === String(deptName));
-    }, [deptFields, deptName]);
+    const userInfo = useAtomValue(userAtom)
+    const { toast } = useToast()
+    const [updateDepartmentFields] = useMutation(DeptMutation.UPDATE_DEPT)
 
     const form = useForm({
         resolver: zodResolver(DepartmentSchema),
-        defaultValues: {
-            deptFields: [],
-        },
-    });
+        defaultValues: { deptFields: [] },
+    })
 
     const { fields, append, remove, update } = useFieldArray({
         control: form.control,
         name: "deptFields",
-    });
+    })
 
-    useEffect(() => {
-        if (data?.getCompanyDeptFields) {
-            setDeptFields(data.getCompanyDeptFields);
-        }
-    }, [data]);
+    const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+        variables: { deptId },
+        skip: !userInfo?.token || !deptId,
+    })
+
+    const filteredDeptFields = useMemo(() =>
+        data?.getCompanyDeptFields?.filter(field => String(field.name) === String(deptName)) || [],
+        [data, deptName])
 
     useEffect(() => {
         if (filteredDeptFields.length > 0) {
-            const sortedSubDeptFields = filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || [];
-            form.reset({ deptFields: sortedSubDeptFields });
+            const sortedSubDeptFields = filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || []
+            form.reset({ deptFields: sortedSubDeptFields })
         }
-    }, [filteredDeptFields, form]);
+    }, [filteredDeptFields, form])
 
     const onSubmit = useCallback(async (values) => {
-        const { deptFields } = values;
         try {
+        // console.log(JSON.stringify(values.deptFields, null, 2), "values.deptFields")
             const { data, error } = await updateDepartmentFields({
                 variables: {
                     input: {
                         companyDeptId: deptId || "",
                         name: deptName,
                         order: 4,
-                        subDeptFields: deptFields,
+                        subDeptFields: values.deptFields,
                     }
                 },
             });
@@ -135,218 +112,347 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId, companyId }) => {
         } catch (error) {
             console.error(error);
         }
-    }, [deptId, deptName, updateDepartmentFields, toast]);
-
-    const moveField = useCallback((index, direction) => {
-        const newIndex = index + direction;
-        if (newIndex < 0 || newIndex >= fields.length) return;
-
-        const updatedFields = [...fields];
-        const [removed] = updatedFields.splice(index, 1);
-        updatedFields.splice(newIndex, 0, removed);
-
-        update(index, updatedFields);
-
-        const updatedDeptFields = updatedFields.map((field, idx) => ({
-            ...field,
-            order: idx + 1,
-        }));
-        form.setValue('deptFields', updatedDeptFields);
-    }, [fields, update, form]);
+    }, [])
 
     const handleSelectChange = useCallback((value, index) => {
+        form.setValue(`deptFields.${index}.fieldType`, value)
         if (['SELECT', 'RADIO', 'DROPDOWN', 'CHECKBOX'].includes(value)) {
-            form.setValue(`deptFields.${index}.fieldType`, value);
-            const currentOptions = form.getValues(`deptFields.${index}.options`) || [];
+            const currentOptions = form.getValues(`deptFields.${index}.options`) || []
             if (currentOptions.length === 0) {
-                form.setValue(`deptFields.${index}.options`, []);
+                form.setValue(`deptFields.${index}.options`, [])
             }
-        } else {
-            form.setValue(`deptFields.${index}.fieldType`, value);
         }
-    }, [form]);
+    }, [form])
 
-    const dependenciesOptionsDropdown = useMemo(() => {
-        return filteredDeptFields[0]?.subDeptFields
-            ?.filter(x => ['SELECT', 'DD'].includes(x.fieldType))
-            .map((field) => ({
-                label: field.name,
-                value: field.name,
-            })) || [];
-    }, [filteredDeptFields]);
+    const moveField = useCallback((index, direction) => {
+        const newIndex = index + direction
+        if (newIndex < 0 || newIndex >= fields.length) return
 
-    const handleDivClick = (index) => {
-        setCurrIdx(index)
-    }
+        const updatedFields = fields.map((field, idx) => ({
+            ...field,
+            order: idx === index ? newIndex + 1 : idx === newIndex ? index + 1 : idx + 1,
+        }))
+
+        updatedFields.splice(newIndex, 0, updatedFields.splice(index, 1)[0])
+        form.setValue('deptFields', updatedFields)
+    }, [fields, form])
+
+    const renderFieldOptions = useCallback(() => {
+        const fieldType = form.watch(`deptFields.${currIdx}.fieldType`)
+
+        if (['SELECT', 'RADIO', 'CHECKBOX'].includes(fieldType)) {
+            return (
+                <div className="mt-4">
+                    <FormLabel className="mr-2">Options</FormLabel>
+                    {form.watch(`deptFields.${currIdx}.options`)?.map((option, optIndex) => (
+                        <div key={optIndex} className="flex items-center mb-2 mt-2">
+                            <Input
+                                placeholder="Value"
+                                className="mr-2"
+                                value={option.label || option.value}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    const options = form.getValues(`deptFields.${currIdx}.options`)
+                                    options[optIndex] = { label: value, value }
+                                    form.setValue(`deptFields.${currIdx}.options`, options)
+                                }}
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => {
+                                    const options = form.getValues(`deptFields.${currIdx}.options`)
+                                    options.splice(optIndex, 1)
+                                    form.setValue(`deptFields.${currIdx}.options`, options)
+                                }}
+                            >
+                                <X size={20} color="red" />
+                            </Button>
+                        </div>
+                    ))}
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            const options = form.getValues(`deptFields.${currIdx}.options`) || []
+                            options.push({ label: '', value: '' })
+                            form.setValue(`deptFields.${currIdx}.options`, options)
+                        }}
+                        className="mt-2 bg-blue-500 text-white"
+                    >
+                        <PlusIcon size={15} />
+                        Add Option
+                    </Button>
+                </div>
+            )
+        }
+
+        if (fieldType === 'DD') {
+            return (
+                <div className="mt-4">
+                    <FormLabel className="mr-2">Dependent On</FormLabel>
+                    <Select
+                        onValueChange={(value) => form.setValue(`deptFields.${currIdx}.ddOptionId`, value)}
+                        value={form.watch(`deptFields.${currIdx}.ddOptionId`) || undefined}
+                    >
+                        <SelectTrigger className="w-[250px]">
+                            <SelectValue placeholder="Select dependency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {form.watch('deptFields').filter(x => ["SELECT", "DD"].includes(x.fieldType)).map((field, index) => (
+                                field.name !== form.watch(`deptFields.${currIdx}.name`) && <SelectItem key={index} value={field.name}>
+                                    {field.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    {form.watch(`deptFields.${currIdx}.ddOptionId`) && (
+                        <div className="mt-4">
+                            <FormLabel className="mr-2 block">Select Values from Linked Field</FormLabel>
+                            <Controller
+                                name={`deptFields.${currIdx}.linkedFieldValues`}
+                                control={form.control}
+                                render={({ field }) => (
+                                    <Select
+                                        onValueChange={(value) => {
+                                            field.onChange(value)
+                                            const options = form.getValues(`deptFields.${currIdx}.options`) || []
+                                            if (!options.find(x => x.label === value)) {
+                                                options.push({ label: value, value: [] })
+                                                form.setValue(`deptFields.${currIdx}.options`, options)
+                                            }
+                                        }}
+                                        value={field.value || undefined}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select values" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {(() => {
+                                                const selectedParent = filteredDeptFields[0]?.subDeptFields.find(
+                                                    (subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`)
+                                                )
+                                                if (selectedParent?.fieldType === "SELECT") {
+                                                    return selectedParent.options.map((option, optIndex) => (
+                                                        option.label && <SelectItem key={`${option.label}-${optIndex}`} value={option.label}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))
+                                                }
+                                                if (selectedParent?.fieldType === 'DD') {
+                                                    return selectedParent.options.flatMap((pOption) =>
+                                                        pOption.value.map((option, optIndex) => (
+                                                            option.label && <SelectItem key={`${option.label}-${optIndex}`} value={option.label}>
+                                                                {option.label}
+                                                            </SelectItem>
+                                                        ))
+                                                    )
+                                                }
+                                                return null
+                                            })()}
+                                        </SelectContent>
+                                    </Select>
+                                )}
+                            />
+                        </div>
+                    )}
+
+                    <FormLabel className="mr-2 mt-4 block">Options</FormLabel>
+                    {form.watch(`deptFields.${currIdx}.options`)?.find(x => x.label === form.watch(`deptFields.${currIdx}.linkedFieldValues`))?.value.map((nestedOption, nestedIndex) => (
+                        <div key={nestedIndex} className="flex items-center mb-2">
+                            <Input
+                                placeholder="Nested Value"
+                                className="mr-2"
+                                value={nestedOption.label}
+                                onChange={(e) => {
+                                    const value = e.target.value
+                                    const options = form.getValues(`deptFields.${currIdx}.options`)
+                                    const optionIndex = options.findIndex(x => x.label === form.getValues(`deptFields.${currIdx}.linkedFieldValues`))
+                                    options[optionIndex].value[nestedIndex] = { label: value, value }
+                                    form.setValue(`deptFields.${currIdx}.options`, options)
+                                }}
+                            />
+                            <Button
+                                type="button"
+                                variant="ghost"
+                                onClick={() => {
+                                    const options = form.getValues(`deptFields.${currIdx}.options`)
+                                    const optionIndex = options.findIndex(x => x.label === form.getValues(`deptFields.${currIdx}.linkedFieldValues`))
+                                    options[optionIndex].value.splice(nestedIndex, 1)
+                                    form.setValue(`deptFields.${currIdx}.options`, options)
+                                }}
+                            >
+                                <X size={20} color="red" />
+                            </Button>
+                        </div>
+                    ))}
+                    {form.watch(`deptFields.${currIdx}.linkedFieldValues`) && (
+                        <Button
+                            type="button"
+                            onClick={() => {
+                                const options = form.getValues(`deptFields.${currIdx}.options`)
+                                const optionIndex = options.findIndex(x => x.label === form.getValues(`deptFields.${currIdx}.linkedFieldValues`))
+                                options[optionIndex].value.push({ label: '', value: '' })
+                                form.setValue(`deptFields.${currIdx}.options`, options)
+                            }}
+                            className="mt-2 bg-blue-500 text-white"
+                        >
+                            <PlusIcon size={15} />
+                            Add Nested Option
+                        </Button>
+                    )}
+                </div>
+            )
+        }
+
+        return null
+    }, [currIdx, form, filteredDeptFields])
 
     return (
         <Form {...form}>
             <Card className="grid grid-cols-3 gap-2">
                 <Card className="col-span-2">
                     <CardHeader>
-                        <CardTitle className="text-2xl text-center font-bold">
-                            {/* @ts-ignore */}
-                            {filteredDeptFields[0]?.name || ''}
-                        </CardTitle>
+                        <CardTitle className="text-2xl text-center font-bold">Form Builder  {filteredDeptFields[0]?.name || ''}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            {fields.map((inputfield, index) => (
+                            {fields.map((field, index) => (
                                 <div
-                                    key={inputfield.id}
+                                    key={field.id}
                                     className={`mb-4 border p-4 rounded-md ${currIdx === index ? 'bg-blue-50' : ''}`}
-                                    onClick={() => handleDivClick(index)}
+                                    onClick={() => setCurrIdx(index)}
                                 >
-                                    <div className="">
-                                        <div className="grid grid-cols-8 gap-2">
-                                            <div className="col-span-3">
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`deptFields.${index}.name`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
+                                    <div className="grid grid-cols-8 gap-2">
+                                        <div className="col-span-3">
+                                            <FormField
+                                                control={form.control}
+                                                name={`deptFields.${index}.name`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormControl>
+                                                            <Input
+                                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                                placeholder="Field Name"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </div>
+                                        <div className="col-span-3">
+                                            <FormField
+                                                control={form.control}
+                                                name={`deptFields.${index}.fieldType`}
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <Select
+                                                            onValueChange={(value) => {
+                                                                field.onChange(value)
+                                                                handleSelectChange(value, index)
+                                                                form.trigger()
+                                                                setCurrIdx(index)
+                                                            }}
+                                                            value={field.value || ""}
+                                                        >
                                                             <FormControl>
-                                                                <Input
-                                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                                    placeholder="Field Name"
-                                                                    {...field}
-                                                                    onFocus={() => handleDivClick(index)}
-                                                                />
+                                                                <SelectTrigger className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
+                                                                    <SelectValue placeholder="Select Field Type" />
+                                                                </SelectTrigger>
                                                             </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </div>
-                                            <div className="col-span-3">
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`deptFields.${index}.fieldType`}
-                                                    render={({ field }) => (
-                                                        <FormItem>
-                                                            <Select
-                                                                onValueChange={(value) => {
-                                                                    field.onChange(value);
-                                                                    handleSelectChange(value, index);
-                                                                    form.trigger();
-                                                                    handleDivClick(index)
-                                                                }}
-                                                                value={field.value}
-                                                            >
-                                                                <FormControl>
-                                                                    <SelectTrigger
-                                                                        className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                                    >
-                                                                        <SelectValue placeholder="Select Field Type" />
-                                                                    </SelectTrigger>
-                                                                </FormControl>
-                                                                <SelectContent
-                                                                    className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                                >
-                                                                    <SelectItem value="INPUT">Input</SelectItem>
-                                                                    <SelectItem value="SELECT">Select</SelectItem>
-                                                                    <SelectItem value="RADIO">Radio</SelectItem>
-                                                                    <SelectItem value="DROPDOWN">Dropdown</SelectItem>
-                                                                    <SelectItem value="DD">Dependent Dropdown</SelectItem>
-                                                                    <SelectItem value="CHECKBOX">Checkbox</SelectItem>
-                                                                    <SelectItem value="IMAGE">Image</SelectItem>
-                                                                    <SelectItem value="TEXTAREA">Textarea</SelectItem>
-                                                                    <SelectItem value="DATE">Date</SelectItem>
-                                                                </SelectContent>
-                                                            </Select>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            </div>
-                                            <div className="flex gap-2 col-span-2">
-                                                <Button
-                                                    type="button"
-                                                    variant="default"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        moveField(index, -1);
-                                                    }}
-                                                    disabled={index === 0}
-                                                >
-                                                    <ArrowUp size={15} />
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="default"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        moveField(index, 1);
-                                                    }}
-                                                    disabled={index === fields.length - 1}
-                                                >
-                                                    <ArrowDown size={15} />
-                                                </Button>
-                                                <Button
-                                                    type="button"
-                                                    variant="ghost"
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        remove(index);
-                                                    }}
-                                                >
-                                                    <X color="red" size={20} />
-                                                </Button>
-                                            </div>
-                                        </div>
-                                        <div className="flex gap-8">
-                                            <FormField
-                                                control={form.control}
-                                                name={`deptFields.${index}.isRequired`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="mr-4">Required</FormLabel>
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                {...field}
-                                                                checked={field.value}
-                                                                onCheckedChange={field.onChange}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name={`deptFields.${index}.isDisabled`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel className="mr-4">Disabled</FormLabel>
-                                                        <FormControl>
-                                                            <Checkbox
-                                                                {...field}
-                                                                checked={field.value}
-                                                                onCheckedChange={field.onChange}
-                                                            />
-                                                        </FormControl>
+                                                            <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
+                                                                {fieldTypes.map(type => (
+                                                                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+
                                                         <FormMessage />
                                                     </FormItem>
                                                 )}
                                             />
                                         </div>
+                                        <div className="flex gap-2 col-span-2">
+                                            <Button
+                                                type="button"
+                                                variant="default"
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    moveField(index, -1)
+                                                }}
+                                                disabled={index === 0}
+                                            >
+                                                <ArrowUp size={15} />
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="default"
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    moveField(index, 1)
+                                                }}
+                                                disabled={index === fields.length - 1}
+                                            >
+                                                <ArrowDown size={15} />
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                    remove(index)
+                                                }}
+                                            >
+                                                <X color="red" size={20} />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-8 mt-2">
+                                        <FormField
+                                            control={form.control}
+                                            name={`deptFields.${index}.isRequired`}
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">Required</FormLabel>
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={form.control}
+                                            name={`deptFields.${index}.isDisabled`}
+                                            render={({ field }) => (
+                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                    <FormControl>
+                                                        <Checkbox
+                                                            checked={field.value}
+                                                            onCheckedChange={field.onChange}
+                                                        />
+                                                    </FormControl>
+                                                    <FormLabel className="font-normal">Disabled</FormLabel>
+                                                </FormItem>
+                                            )}
+                                        />
                                     </div>
                                 </div>
                             ))}
                             <Button
                                 type="button"
-                                onClick={() => append({ name: '', fieldType: '', order: fields.length + 1, isRequired: true, isDisabled: false })}
+                                onClick={() => append({ name: '', fieldType: '', order: fields.length + 1, isRequired: true, isDisabled: false, ddOptionId: null })}
                                 className="mt-4 bg-blue-500 text-white"
                             >
                                 Add Field
                             </Button>
                             <div className="mt-6 flex justify-end">
-                                <Button type="button" className="mr-2 bg-gray-500 text-white">
-                                    Cancel
-                                </Button>
-                                <Button type="submit" variant={'default'} className="text-white">
-                                    Submit
-                                </Button>
+                                <Button type="button" className="mr-2 bg-gray-500 text-white">Cancel</Button>
+                                <Button type="submit" variant="default" className="text-white">Submit</Button>
                             </div>
                         </form>
                     </CardContent>
@@ -354,185 +460,15 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId, companyId }) => {
 
                 <Card className="col-span-1">
                     <CardHeader>
-                        <CardTitle className="text-2xl text-center font-bold"></CardTitle>
+                        <CardTitle className="text-2xl text-center font-bold">Field Options</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        {['SELECT', 'RADIO', 'CHECKBOX'].includes(form.getValues(`deptFields.${currIdx}.fieldType`)) && (
-                            <div key={currIdx} className="mt-4 w-1/2">
-                                <FormLabel className="mr-2">Options</FormLabel>
-                                {form.getValues(`deptFields.${currIdx}.options`)?.map((_option: any, optIndex: React.Key | null | undefined) => (
-                                    <div key={optIndex} className="flex items-center mb-2 mt-2">
-                                        <Controller
-                                            name={`deptFields.${currIdx}.options.${optIndex}.value`}
-                                            control={form.control}
-                                            render={({ field: inputField }) => (
-                                                <Input
-                                                    placeholder="Value"
-                                                    className="mr-2"
-                                                    value={typeof _option === 'object' ? _option.label || _option.value : _option}
-                                                    onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        inputField.onChange(value);
-                                                        handleOptionChange(index, optIndex, value);
-                                                    }}
-                                                />
-                                            )}
-                                        />
-                                        <Button
-                                            type="button"
-                                            variant={'ghost'}
-                                            onClick={() => {
-                                                const options = form.getValues(`deptFields.${currIdx}.options`);
-                                                options.splice(optIndex, 1);
-                                                form.setValue(`deptFields.${currIdx}.options`, [...options]);
-                                                form.trigger();
-                                            }}
-                                        >
-                                            <X size={20} color="red" />
-                                        </Button>
-                                    </div>
-                                ))}
-                                <Button
-                                    type="button"
-                                    onClick={() => {
-                                        const options = form.getValues(`deptFields.${currIdx}.options`) || [];
-                                        options.push({ label: '', value: '' });
-                                        form.setValue(`deptFields.${currIdx}.options`, [...options]);
-                                        form.trigger();
-                                    }}
-                                    className="mt-2 bg-blue-500 text-white"
-                                >
-                                    <PlusIcon size={15} />
-                                    Add Option
-                                </Button>
-                            </div>
-                        )
-                        }
-                        {['DD'].includes(form.getValues(`deptFields.${currIdx}.fieldType`)) && (
-                            <div key={currIdx} className="mt-4 w-1/2">
-                                <div>
-                                    <Select
-                                        defaultValue={dependenciesOptionsDropdown?.find(x => x.value === form.watch(`deptFields.${currIdx}.ddOptionId`))?.label}
-                                        onValueChange={(value) => {
-                                            console.log(value, 'value')
-                                            form.setValue(`deptFields.${currIdx}.ddOptionId`, value ?? "")
-                                        }}
-                                    >
-                                        <SelectTrigger className="w-[250px]">
-                                            <SelectValue placeholder="Select" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {
-                                                dependenciesOptionsDropdown?.map((option, optIndex) => (
-                                                    <SelectItem key={optIndex} value={option.value}>
-                                                        {option.label || option.value}
-                                                    </SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
-
-                                    {form.watch(`deptFields.${currIdx}.ddOptionId`) && (
-                                        <div className="mt-4">
-                                            <FormLabel className="mr-2 block">Select Values from Linked Field</FormLabel>
-                                            <Controller
-                                                name={`deptFields.${currIdx}.linkedFieldValues`}
-                                                control={form.control}
-                                                render={({ field }) => (
-                                                    <Select
-                                                        onValueChange={(value) => {
-                                                            field.onChange(value)
-                                                            const options = form.getValues(`deptFields.${currIdx}.options`) || []
-                                                            console.log(options)
-                                                            if (!options.find(x => x.label === value)) {
-                                                                options.push({ label: value, value: [] })
-                                                                form.setValue(`deptFields.${currIdx}.options`, options)
-                                                            }
-                                                        }}
-                                                        value={field.value}
-                                                    >
-                                                        <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="Select values" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            {filteredDeptFields?.[0]?.subDeptFields
-                                                                .find((subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`))
-                                                                ?.options.map((option, optIndex) => (
-                                                                    <SelectItem key={optIndex} value={option.label || option.value}>
-                                                                        {option.label || option.value}
-                                                                    </SelectItem>
-                                                                ))}
-                                                        </SelectContent>
-                                                    </Select>
-                                                )}
-                                            />
-                                        </div>
-                                    )}
-                                </div>
-                                <FormLabel className="mr-2 mt-4 block">Options</FormLabel>
-                                {(() => {
-                                    const selectedOption = form.getValues(`deptFields.${currIdx}.options`)?.find(x => x.label === form.getValues(`deptFields.${currIdx}.linkedFieldValues`))
-                                    const nestedOptions = selectedOption?.value || []
-
-                                    return (
-                                        <>
-                                            {nestedOptions.map((nestedOption, nestedIndex) => (
-                                                <div key={nestedIndex} className="flex items-center mb-2">
-                                                    <Controller
-                                                        name={`deptFields.${currIdx}.options.${form.getValues(`deptFields.${currIdx}.options`)?.findIndex(x => x.label === form.getValues(`deptFields.${currIdx}.linkedFieldValues`))}.value.${nestedIndex}.label`}
-                                                        control={form.control}
-                                                        render={({ field }) => (
-                                                            <Input
-                                                                placeholder="Nested Value"
-                                                                className="mr-2"
-                                                                {...field}
-                                                            />
-                                                        )}
-                                                    />
-                                                    <Button
-                                                        type="button"
-                                                        variant={'ghost'}
-                                                        onClick={() => {
-                                                            const optionIndex = form.watch(`deptFields.${currIdx}.options`)?.findIndex(x => x.label === form.watch(`deptFields.${currIdx}.linkedFieldValues`))
-                                                            if (optionIndex !== undefined && optionIndex !== -1) {
-                                                                const updatedNestedOptions = [...form.watch(`deptFields.${currIdx}.options.${optionIndex}.value`)]
-                                                                updatedNestedOptions.splice(nestedIndex, 1)
-                                                                form.setValue(`deptFields.${currIdx}.options.${optionIndex}.value`, updatedNestedOptions)
-                                                            }
-                                                        }}
-                                                    >
-                                                        <X size={20} color="red" />
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                            {form.watch(`deptFields.${currIdx}.linkedFieldValues`) && (
-                                                <Button
-                                                    type="button"
-                                                    onClick={() => {
-                                                        const optionIndex = form.watch(`deptFields.${currIdx}.options`)?.findIndex(x => x.label === form.watch(`deptFields.${currIdx}.linkedFieldValues`))
-                                                        if (optionIndex !== undefined && optionIndex !== -1) {
-                                                            const updatedNestedOptions = [...(form.watch(`deptFields.${currIdx}.options.${optionIndex}.value`) || [])]
-                                                            updatedNestedOptions.push({ label: '', value: '' })
-                                                            form.setValue(`deptFields.${currIdx}.options.${optionIndex}.value`, updatedNestedOptions)
-                                                            form.trigger(`deptFields.${currIdx}.options.${optionIndex}.value`)
-                                                        }
-                                                    }}
-                                                    className="mt-2 bg-blue-500 text-white"
-                                                >
-                                                    <PlusIcon size={15} />
-                                                    Add Nested Option
-                                                </Button>
-                                            )}
-                                        </>
-                                    )
-                                })()}
-                            </div>
-                        )}
+                        {renderFieldOptions()}
                     </CardContent>
                 </Card>
             </Card>
         </Form>
-    );
-};
+    )
+}
 
-export default UpdateDepartmentFieldsModal;
+export default UpdateDepartmentFieldsModal
