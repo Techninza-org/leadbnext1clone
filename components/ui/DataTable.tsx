@@ -142,61 +142,6 @@ export function DataTable<TData, TValue>({
     <div className="space-y-4">
       <div className="flex justify-between">
         <DataTableToolbar table={table} setFilter={setFilter} />
-        <div className="flex gap-2 items-center">
-          {
-            userRole === "manager" && (
-              <Button
-                onClick={() => onOpen("assignLead", { leads: selectedRows })}
-                variant={'default'}
-                size={"sm"}
-                className="items-center gap-1"
-                disabled={!selectedRows.length}
-              >
-                Assign Lead
-              </Button>
-            )
-          }
-          <div>
-            <Button
-              variant="default"
-              color="primary"
-              size={"sm"}
-              className="items-center gap-1"
-              onClick={() => handleFileDownload("lead.csv")}
-            >
-              <DownloadIcon size={15} /> <span>Download Sample</span>
-            </Button>
-          </div>
-          <div>
-            <input
-              type="file"
-              accept=".csv"
-              className="hidden"
-              ref={fileInputRef}
-              id="csv-upload"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileChange({ target: { files: Array.from(event.target.files || []) } })}
-            />
-            <label htmlFor="csv-upload">
-              <Button
-                variant="default"
-                color="primary"
-                size={"sm"}
-                className="items-center gap-1"
-                onClick={handleButtonClick}
-              >
-                <UploadIcon size={15} /> <span>Upload Leads</span>
-              </Button>
-            </label>
-
-          </div>
-          <Button
-            onClick={() => onOpen("addLead")}
-            variant={'default'}
-            size={"sm"}
-            className="items-center gap-1">
-            <PlusCircle size={15} /> <span>Add New Lead</span>
-          </Button>
-        </div>
       </div>
       <div className="rounded-md border">
         <Table>

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useAtomValue } from "jotai"
 import { useQuery, useMutation } from "graphql-hooks"
-import { ArrowDown, ArrowUp, PlusIcon, X } from "lucide-react"
+import { ArrowDown, ArrowUp, Check, ChevronsUpDownIcon, PlusIcon, X } from "lucide-react"
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -19,6 +19,9 @@ import { useToast } from '@/components/ui/use-toast'
 import { deptQueries } from "@/lib/graphql/dept/queries"
 import { DeptMutation } from "@/lib/graphql/dept/mutation"
 import { userAtom } from "@/lib/atom/userAtom"
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command'
+import { cn } from '@/lib/utils'
 
 const DepartmentSchema = z.object({
     deptFields: z.array(z.object({
@@ -46,6 +49,20 @@ const fieldTypes = [
     { value: "TEXTAREA", label: "Textarea" },
     { value: "DATE", label: "Date" },
 ]
+
+
+const languages = [
+    { label: "English", value: "en" },
+    { label: "French", value: "fr" },
+    { label: "German", value: "de" },
+    { label: "Spanish", value: "es" },
+    { label: "Portuguese", value: "pt" },
+    { label: "Russian", value: "ru" },
+    { label: "Japanese", value: "ja" },
+    { label: "Korean", value: "ko" },
+    { label: "Chinese", value: "zh" },
+] as const
+
 
 const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     const [currIdx, setCurrIdx] = useState(0)
@@ -212,45 +229,94 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                                 name={`deptFields.${currIdx}.linkedFieldValues`}
                                 control={form.control}
                                 render={({ field }) => (
-                                    <Select
-                                        onValueChange={(value) => {
-                                            field.onChange(value)
-                                            const options = form.getValues(`deptFields.${currIdx}.options`) || []
-                                            if (!options.find(x => x.label === value)) {
-                                                options.push({ label: value, value: [] })
-                                                form.setValue(`deptFields.${currIdx}.options`, options)
-                                            }
-                                        }}
-                                        value={field.value || undefined}
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select values" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {(() => {
-                                                const selectedParent = filteredDeptFields[0]?.subDeptFields.find(
-                                                    (subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`)
-                                                )
-                                                if (selectedParent?.fieldType === "SELECT") {
-                                                    return selectedParent.options.map((option, optIndex) => (
-                                                        option.label && <SelectItem key={`${option.label}-${optIndex}`} value={option.label}>
-                                                            {option.label}
-                                                        </SelectItem>
-                                                    ))
-                                                }
-                                                if (selectedParent?.fieldType === 'DD') {
-                                                    return selectedParent.options.flatMap((pOption) =>
-                                                        pOption.value.map((option, optIndex) => (
-                                                            option.label && <SelectItem key={`${option.label}-${optIndex}`} value={option.label}>
-                                                                {option.label}
-                                                            </SelectItem>
-                                                        ))
-                                                    )
-                                                }
-                                                return null
-                                            })()}
-                                        </SelectContent>
-                                    </Select>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    className={cn(
+                                                        "w-[250px] justify-between",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value || "Select values"}
+                                                    <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[250px] p-0">
+                                            <Command>
+                                                <CommandInput placeholder="Search language..." />
+                                                <CommandList>
+                                                    <CommandEmpty>No language found.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {(() => {
+                                                            const selectedParent = filteredDeptFields[0]?.subDeptFields.find(
+                                                                (subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`)
+                                                            )
+                                                            if (selectedParent?.fieldType === "SELECT") {
+                                                                return selectedParent.options.map((option, optIndex) => (
+                                                                    option.label && <CommandItem
+                                                                        key={`${option.label}-${optIndex}`}
+                                                                        value={option.label}
+                                                                        onSelect={(value) => {
+                                                                            field.onChange(value)
+                                                                            const options = form.getValues(`deptFields.${currIdx}.options`) || []
+                                                                            if (!options.find(x => x.label === value)) {
+                                                                                options.push({ label: value, value: [] })
+                                                                                form.setValue(`deptFields.${currIdx}.options`, options)
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <Check
+                                                                            className={cn(
+                                                                                "mr-2 h-4 w-4",
+                                                                                option.value === field.value
+                                                                                    ? "opacity-100"
+                                                                                    : "opacity-0"
+                                                                            )}
+                                                                        />
+                                                                        {option.label}
+                                                                    </CommandItem>
+                                                                ))
+                                                            }
+                                                            if (selectedParent?.fieldType === 'DD') {
+                                                                return selectedParent.options.flatMap((pOption) =>
+                                                                    pOption.value.map((option, optIndex) => (
+                                                                        option.label && <CommandItem
+                                                                            key={`${option.label}-${optIndex}`}
+                                                                            value={option.label}
+                                                                            onSelect={(value) => {
+                                                                                field.onChange(value)
+                                                                                const options = form.getValues(`deptFields.${currIdx}.options`) || []
+                                                                                if (!options.find(x => x.label === value)) {
+                                                                                    options.push({ label: value, value: [] })
+                                                                                    form.setValue(`deptFields.${currIdx}.options`, options)
+                                                                                }
+                                                                            }}
+                                                                        >
+                                                                            <Check
+                                                                                className={cn(
+                                                                                    "mr-2 h-4 w-4",
+                                                                                    option.value === field.value
+                                                                                        ? "opacity-100"
+                                                                                        : "opacity-0"
+                                                                                )}
+                                                                            />
+                                                                            {option.label}
+                                                                        </CommandItem>
+                                                                    ))
+                                                                )
+                                                            }
+                                                            return null
+                                                        })()}
+
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
                                 )}
                             />
                         </div>

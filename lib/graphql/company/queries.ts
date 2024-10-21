@@ -102,11 +102,48 @@ const GET_BROADCAST_FORM = `
 }
 `;
 
+const GET_COMPANY_XCHANGER_BIDS_QUERY= `
+  query GetCompanyXchangerBids {
+    getCompanyXchangerBids {
+      id
+      bidAmount
+      isApproved
+      description
+      Member {
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+` 
+
+const GET_FOLLOWUP = `
+  query GetFollowUps {
+    getFollowUps {
+      id
+      nextFollowUpDate
+      remark
+      customerResponse
+      rating
+      leadId
+      followUpById
+      followUpBy{
+        name
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`
+
 export const companyQueries = {
   GET_ALL_ROLES,
+  GET_FOLLOWUP,
   GET_COMPANY_DEPT_FIELDS,
   GET_COMPANY_SUBSCRIPTION,
   GET_BROADCASTS,
   GET_BROADCAST_BY_ID,
-  GET_BROADCAST_FORM
+  GET_BROADCAST_FORM,
+  GET_COMPANY_XCHANGER_BIDS_QUERY
 }

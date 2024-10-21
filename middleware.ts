@@ -34,6 +34,8 @@ export async function middleware(request: NextRequest) {
   
   const rootManagerPaths = [
     '/dashboard',
+    '/follow-up',
+    '/bids',
     '/leads',
     '/members',
     '/leads/transfered',

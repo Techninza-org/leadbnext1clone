@@ -21,6 +21,16 @@ export const ROOT_NAV_LINKS = [
         icon: Pencil,
         href: "/departments",
     },
+    {
+        title: "Follow Up",
+        icon: Pencil,
+        href: "/follow-up",
+    },
+    {
+        title: "Bids",
+        icon: Pencil,
+        href: "/bids",
+    },
     // {
     //     title: "Assign Lead",
     //     icon: ShoppingCart,

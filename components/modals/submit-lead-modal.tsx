@@ -52,6 +52,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { CalendarDaysIcon } from "lucide-react"
 import { format } from "date-fns"
+import { MultiSelect } from "../multi-select-new"
 
 export const SubmitLeadModal = () => {
 
@@ -120,7 +121,7 @@ export const SubmitLeadModal = () => {
                 uploadedFiles = uploadData.files;
 
                 const formDataWithUrls = fields?.subDeptFields.map((field: any) => {
-                    if (field.fieldType === 'IMAGE') {
+                    if (field.fieldType === 'IMAGE' || field.fieldType === 'DD_IMG') {
                         const uploadedFilesForField = uploadedFiles?.filter((file: any) => file.fieldname === field.name);
                         if (uploadedFilesForField && uploadedFilesForField.length > 0) {
                             const urls = uploadedFilesForField.map((file: any) => file.url);
@@ -207,7 +208,6 @@ export const SubmitLeadModal = () => {
 
     const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
 
-
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
             <DialogContent className="text-black max-w-screen-sm">
@@ -275,6 +275,124 @@ export const SubmitLeadModal = () => {
                                             </FormItem>
                                         )}
                                     />
+                                );
+                            }
+                            if (cfield.fieldType === 'DD') {
+                                const options = cfield.options.flatMap((pOption: any) => {
+                                    if (form.watch(cfield.ddOptionId)?.includes(pOption.label)) {
+                                        return pOption.value.map((option: any, optIndex: any) => ({
+                                            label: option.label,
+                                            value: option.value || option.label
+                                        }))
+                                    }
+                                    return []
+                                })
+
+                                return (
+                                    <FormField
+                                        key={cfield.id}
+                                        control={form.control}
+                                        name={cfield.name}
+                                        rules={validationRules}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="text-primary">{cfield.name}</FormLabel>
+                                                <MultiSelect
+                                                    disabled={!form.watch(cfield.ddOptionId)}
+                                                    options={options}
+                                                    onValueChange={field.onChange}
+                                                    defaultValue={field.value}
+                                                    placeholder={cfield.name}
+                                                    variant="secondary"
+                                                    maxCount={3}
+                                                />
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                );
+                            }
+                            if (cfield.fieldType === 'DD_IMG') {
+                                const options = cfield.options.flatMap((pOption: any) => {
+                                    if (form.watch(cfield.ddOptionId)?.includes(pOption.label)) {
+                                        return pOption.value.map((option: any, optIndex: any) => ({
+                                            label: option.label,
+                                            value: option.value || option.label
+                                        }))
+                                    }
+                                    return []
+                                })
+
+                                const allLabels = cfield.options.flatMap((pOption: any) => pOption.label);
+                                const isChildExist = sortedFields.some((x: any) => allLabels.includes(x.name));
+                                // console.log(isChildExist)
+                                return (
+                                    <>
+                                        <FormField
+                                            key={cfield.id}
+                                            control={form.control}
+                                            name={cfield.name}
+                                            rules={validationRules}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel className="text-primary">{cfield.name}</FormLabel>
+                                                    <MultiSelect
+                                                        disabled={!form.watch(cfield.ddOptionId)}
+                                                        options={options}
+                                                        onValueChange={field.onChange}
+                                                        defaultValue={field.value}
+                                                        placeholder={cfield.name}
+                                                        variant="secondary"
+                                                        maxCount={3}
+                                                    />
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+
+                                        {!isChildExist && form.watch(cfield.name)?.map((selectedField: any) => <FormField
+                                            key={cfield.id}
+                                            control={form.control}
+                                            name={selectedField}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{selectedField}</FormLabel>
+                                                    <FileUploader
+                                                        key={cfield.id}
+                                                        value={fileStates[selectedField]}
+                                                        fieldName={selectedField}
+                                                        onValueChange={(files) => handleFileChange(selectedField, files)}
+                                                        dropzoneOptions={dropzone}
+                                                        imgLimit={cfield?.imgLimit}
+                                                    >
+                                                        <FileInput>
+                                                            <div className="flex items-center justify-center h-32 border bg-background rounded-md">
+                                                                <p className="text-gray-400">Drop files here</p>
+                                                            </div>
+                                                        </FileInput>
+                                                        <FileUploaderContent className="flex items-center flex-row gap-2">
+                                                            {fileStates[selectedField]?.map((file, i) => (
+                                                                <FileUploaderItem
+                                                                    key={i}
+                                                                    index={i}
+                                                                    className="size-20 p-0 rounded-md overflow-hidden"
+                                                                    aria-roledescription={`file ${i + 1} containing ${selectedField}`}
+                                                                >
+                                                                    <Image
+                                                                        src={URL.createObjectURL(file)}
+                                                                        alt={file.name}
+                                                                        height={80}
+                                                                        width={80}
+                                                                        className="size-20 p-0"
+                                                                    />
+                                                                </FileUploaderItem>
+                                                            ))}
+                                                        </FileUploaderContent>
+                                                    </FileUploader>
+                                                </FormItem>
+                                            )}
+                                        />)}
+                                    </>
                                 );
                             }
                             if (cfield.fieldType === 'RADIO') {
