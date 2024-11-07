@@ -203,6 +203,8 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         }
 
         if (fieldType === 'DD' || fieldType === 'DD_IMG') {
+            const grandParentElem = form.watch('deptFields').find((item) => item.name === (form.watch('deptFields').find(x => x.name == form.watch(`deptFields.${currIdx}.ddOptionId`))).ddOptionId)
+
             return (
                 <div className="mt-4">
                     <FormLabel className="mr-2">Dependent On</FormLabel>
@@ -221,6 +223,34 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                             ))}
                         </SelectContent>
                     </Select>
+
+                    {form.watch(`deptFields.${currIdx}.ddOptionId`) && grandParentElem && (
+                        <div className="mt-4">
+                            <FormLabel className="mr-2">Grand Parent</FormLabel>
+                            <Select
+                                onValueChange={(value) => form.setValue(`deptFields.${currIdx}.grandParentId`, value)}
+                                value={form.watch(`deptFields.${currIdx}.grandParentId`) || undefined}
+                            >
+                                <SelectTrigger className="w-[250px]">
+                                    <SelectValue placeholder="Select grand parent" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {
+                                        grandParentElem?.fieldType === "DD" ? grandParentElem.options.flatMap((pOption) => (
+                                            pOption.value.map((option, optIndex) => (
+                                                option.label && <SelectItem key={optIndex} value={option.label}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            )))) : grandParentElem?.options.map((option, optIndex) => (
+                                                <SelectItem key={optIndex} value={option.label}>
+                                                    {option.label}
+                                                </SelectItem>
+                                            ))
+                                    }
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     {form.watch(`deptFields.${currIdx}.ddOptionId`) && (
                         <div className="mt-4">
@@ -282,7 +312,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                                                                 ))
                                                             }
                                                             if (selectedParent?.fieldType === 'DD') {
-                                                                return selectedParent.options.flatMap((pOption) =>
+                                                                return selectedParent.options.filter((x => x.label === form.watch(`deptFields.${currIdx}.grandParentId`))).flatMap((pOption) =>
                                                                     pOption.value.map((option, optIndex) => (
                                                                         option.label && <CommandItem
                                                                             key={`${option.label}-${optIndex}`}

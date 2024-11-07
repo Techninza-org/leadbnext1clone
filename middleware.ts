@@ -35,6 +35,10 @@ export async function middleware(request: NextRequest) {
   const rootManagerPaths = [
     '/dashboard',
     '/follow-up',
+    '/xchange-customer-list',
+    '/xchange-list',
+    '/lead-imgs',
+    '/pay-receipt',
     '/bids',
     '/leads',
     '/members',

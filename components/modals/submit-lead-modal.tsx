@@ -131,6 +131,16 @@ export const SubmitLeadModal = () => {
                     return field;
                 });
 
+                console.log({
+                    deptId: user?.deptId,
+                    leadId: lead?.id || "",
+                    callStatus: "SUCCESS",
+                    paymentStatus: "PENDING",
+                    feedback: formatFormData((formDataWithUrls as CallData[]), data),
+                    submitType: "updateLead",
+                    formName: fields?.name || ""
+                })
+
                 const { data: resData, loading, error } = await submitFeedback({
                     variables: {
                         deptId: user?.deptId,
@@ -139,6 +149,7 @@ export const SubmitLeadModal = () => {
                         paymentStatus: "PENDING",
                         feedback: formatFormData((formDataWithUrls as CallData[]), data),
                         submitType: "updateLead",
+                        formName: fields?.name || ""
                     },
                 });
 

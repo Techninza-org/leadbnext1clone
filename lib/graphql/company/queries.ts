@@ -102,7 +102,7 @@ const GET_BROADCAST_FORM = `
 }
 `;
 
-const GET_COMPANY_XCHANGER_BIDS_QUERY= `
+const GET_COMPANY_XCHANGER_BIDS_QUERY = `
   query GetCompanyXchangerBids {
     getCompanyXchangerBids {
       id
@@ -112,11 +112,14 @@ const GET_COMPANY_XCHANGER_BIDS_QUERY= `
       Member {
         name
       }
+      lead {
+        name
+      }
       createdAt
       updatedAt
     }
   }
-` 
+`
 
 const GET_FOLLOWUP = `
   query GetFollowUps {
@@ -137,7 +140,38 @@ const GET_FOLLOWUP = `
   }
 `
 
+const XCHANGE_CUSTOMER_LIST = `
+    query XChangerCustomerList {
+      xChangerCustomerList {
+        data
+      }
+    }
+`
+const GET_XCHANGE_LEAD_IMGS = `
+    query GetExchangeLeadImgs {
+      getExchangeLeadImgs {
+        data
+      }
+    }
+`
+const GET_LEADS_PHOTOS = `
+    query GetLeadPhotos {
+      getLeadPhotos {
+        data
+      }
+    }
+`
+
+const GET_PAYMENT_LIST = `
+    query PaymentList {
+      paymentList {
+        data
+      }
+    }
+`
+
 export const companyQueries = {
+  XCHANGE_CUSTOMER_LIST,
   GET_ALL_ROLES,
   GET_FOLLOWUP,
   GET_COMPANY_DEPT_FIELDS,
@@ -145,5 +179,8 @@ export const companyQueries = {
   GET_BROADCASTS,
   GET_BROADCAST_BY_ID,
   GET_BROADCAST_FORM,
-  GET_COMPANY_XCHANGER_BIDS_QUERY
+  GET_COMPANY_XCHANGER_BIDS_QUERY,
+  GET_XCHANGE_LEAD_IMGS,
+  GET_LEADS_PHOTOS,
+  GET_PAYMENT_LIST,
 }

@@ -108,6 +108,7 @@ export const leadBidsSchema = z.object({
     id: z.string(),
     description: z.string().optional(),
     bidAmount: z.number(),
+    lead: leadSchema, 
     Member: loggedUserSchema,
 });
 

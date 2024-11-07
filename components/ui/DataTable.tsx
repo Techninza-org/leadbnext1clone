@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import XLSX from "xlsx"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -28,17 +27,8 @@ import {
 
 import { DataTablePagination } from "./table-pagination"
 import { DataTableToolbar } from "./table-toolbar"
-import { Button } from "./button"
-import { DownloadIcon, PlusCircle, UploadIcon } from "lucide-react"
-import { useModal } from "@/hooks/use-modal-store"
-import { useAtom, useAtomValue } from "jotai"
-import { userAtom } from "@/lib/atom/userAtom"
-import csvtojson from 'csvtojson';
-import { useLead } from "../providers/LeadProvider"
-import { useMutation } from "graphql-hooks"
-import { leadMutation } from "@/lib/graphql/lead/mutation"
-import { format, parse } from "date-fns"
-import { handleFileDownload } from "@/lib/utils"
+import { DatePickerWithRange } from "../DatePickerWithRange"
+import { DateRange } from "react-day-picker"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -50,6 +40,16 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [filteredData, setFilteredData] = React.useState<any[]>(data)
+  const defaultToDate = new Date();
+  const defaultFromDate = new Date();
+  defaultFromDate.setDate(defaultToDate.getDate() - 10);
+
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: defaultFromDate,
+    to: defaultToDate,
+  })
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -57,17 +57,11 @@ export function DataTable<TData, TValue>({
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
-
-  // Custom global filter
   const [filter, setFilter] = React.useState<string>("")
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const { handleCreateLead, handleCreateBulkLead } = useLead()
-  const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
-  const [userInfo] = useAtom(userAtom)
 
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     state: {
       sorting,
@@ -90,58 +84,31 @@ export function DataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
-  const selectedRows = table.getFilteredSelectedRowModel().rows.map((row: any) => row.original)
 
-  const { onOpen } = useModal()
+  React.useEffect(() => {
+    if ((!date?.from || !date?.to) || date.from === date.to) return;
 
-  const userRole = useAtomValue(userAtom)?.role?.name?.toLowerCase()
+    const filteredByDate = data.filter((row) => {
+      // @ts-ignore
+      const createdAtTimestamp = parseInt(row.createdAt);
+      const fromTimestamp = date?.from?.getTime() ?? 0;
+      const toTimestamp = date?.to?.getTime() ?? 0;
 
-  const handleFileChange = async (event: { target: { files: any[] } }) => {
-    const file = event.target.files[0];
-    if (file) {
-      try {
-        const formData = new FormData();
-        formData.append('leads', file);
-
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/bulk-upload-lead`, {
-          method: 'POST',
-          body: formData,
-          headers: {
-            'Authorization': `x-lead-token ${userInfo?.token || ''}`,
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error('Error uploading CSV file');
-        }
-        const contentType = response.headers.get('Content-Type');
-
-        if (contentType && contentType.includes('text/csv')) {
-          const blob = await response.blob();
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'error_report.csv';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-        } else {
-          const result = await response.json();
-        }
-      } catch (error) {
-        console.error('Error parsing CSV:', error);
+      if (date?.from && date?.to) {
+        return createdAtTimestamp >= fromTimestamp && createdAtTimestamp <= toTimestamp;
       }
-    }
-  };
+      return false;
+    });
 
-  const handleButtonClick = () => {
-    fileInputRef.current?.click();
-  };
+    setFilteredData(filteredByDate);
+  }, [data, date]);
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <DataTableToolbar table={table} setFilter={setFilter} />
+        <DataTableToolbar table={table} data={data} setFilter={setFilter} />
+        <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
+
       </div>
       <div className="rounded-md border">
         <Table>

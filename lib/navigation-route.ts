@@ -31,6 +31,21 @@ export const ROOT_NAV_LINKS = [
         icon: Pencil,
         href: "/bids",
     },
+    {
+        title: "Exchange Customers",
+        icon: Pencil,
+        href: "/xchange-customer-list",
+    },
+    {
+        title: "Images",
+        icon: Pencil,
+        href: "/lead-imgs",
+    },
+    {
+        title: "Payments",
+        icon: Pencil,
+        href: "/pay-receipt",
+    },
     // {
     //     title: "Assign Lead",
     //     icon: ShoppingCart,

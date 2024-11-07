@@ -29,6 +29,17 @@ export const BidsColDefs: ColumnDef<z.infer<typeof leadBidsSchema>>[] = [
         enableHiding: false,
     },
     {
+        header: 'Customer Name',
+        accessorKey: 'lead',
+        cell: ({ row }) => {
+            const rowData = row.original;
+            
+            return (
+                <div className="capitalize">{rowData.lead.name}</div>
+            )
+        }
+    },
+    {
         header: 'Bid Amount',
         accessorKey: 'bidAmount',
         cell: ({ row }) => {

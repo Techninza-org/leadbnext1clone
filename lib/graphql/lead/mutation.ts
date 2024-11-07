@@ -77,6 +77,7 @@ const SUBMIT_LEAD = `
     $feedback: [FeedbackInput!]!
     $urls: [String]
     $submitType: String
+    $formName: String
   ) {
     submitFeedback(
       nextFollowUpDate: $nextFollowUpDate,
@@ -87,6 +88,7 @@ const SUBMIT_LEAD = `
       feedback: $feedback
       urls: $urls
       submitType: $submitType
+      formName: $formName
     ) {
       message
     }
