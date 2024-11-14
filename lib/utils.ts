@@ -25,6 +25,14 @@ export const formatFormData = (backendData: CallData[], formData: CallData) => {
       };
     }
 
+    if (field.fieldType === "DD_IMG") {
+      return {
+        name: field.name,
+        fieldType: field.fieldType,
+        value: Array.isArray(field.value) ? field.value : [field.value]
+      };
+    }
+
     return {
       name: field.name,
       fieldType: field.fieldType,

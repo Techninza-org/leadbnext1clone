@@ -36,7 +36,7 @@ interface DataTableProps<TData, TValue> {
 }
 
 
-export function DataTable<TData, TValue>({
+export function FollowUpBidDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -86,15 +86,17 @@ export function DataTable<TData, TValue>({
   
   React.useEffect(() => {
     if (!date?.from || !date?.to || date.from.getTime() === date.to.getTime()) return;
-    const fromUTC = Date.UTC(date.from.getFullYear(), date.from.getMonth(), date.from.getDate(), 0, 0, 0, 0); 
-    const toUTC = Date.UTC(date.to.getFullYear(), date.to.getMonth(), date.to.getDate(), 23, 59, 59, 999);
-    const filteredByDate = data.filter((row) => {
-      // @ts-ignore
-      const createdAtTimestamp = new Date(row.createdAt).getTime();
-      return createdAtTimestamp >= fromUTC && createdAtTimestamp <= toUTC;
+    const fromTimestamp = date.from.setHours(0, 0, 0, 0);
+    const toTimestamp = date.to.setHours(23, 59, 59, 999);
+
+    const filteredByDate = data.filter((row: any) => {
+      const createdAtTimestamp = new Date(parseInt(row.createdAt)).getTime();
+      console.log(createdAtTimestamp , fromTimestamp , createdAtTimestamp , toTimestamp)
+      return createdAtTimestamp >= fromTimestamp && createdAtTimestamp <= toTimestamp;
     });
     setFilteredData(filteredByDate);
   }, [data, date]);
+
   
   
 

@@ -39,6 +39,7 @@ export async function middleware(request: NextRequest) {
     '/xchange-list',
     '/lead-imgs',
     '/pay-receipt',
+    '/prospect',
     '/bids',
     '/leads',
     '/members',

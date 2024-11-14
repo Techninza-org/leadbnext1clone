@@ -138,7 +138,6 @@ const APPROVED_LEAD_MUTATION = `
     ) {
       id
       name
-      isLeadApproved
     }
   }
 `;

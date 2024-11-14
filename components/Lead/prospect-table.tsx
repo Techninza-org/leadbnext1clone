@@ -1,11 +1,11 @@
 "use client";
 import { useState } from "react";
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 
 import { DataTable } from "@/components/ui/DataTable"
-import { leads } from "@/lib/atom/leadAtom";
+import { leads, prospects } from "@/lib/atom/leadAtom";
 
-import { LeadColDefs } from "./lead-table-col";
+import { LeadColDefs, ProspectColDefs } from "./lead-table-col";
 import {
     Select,
     SelectContent,
@@ -18,8 +18,8 @@ import {
 import { Button } from "../ui/button";
 import { DataTableLead } from "../ui/display-lead-table";
 
-export const LeadTable = () => {
-    const [leadInfo] = useAtom(leads)
+export const ProspectTable = () => {
+    const prospectInfo = useAtomValue(prospects)
     const [selectedRole, setSelectedRole] = useState<string | null>(null);
     const [showUnassigned, setShowUnassigned] = useState<boolean>(false);
 
@@ -66,7 +66,7 @@ export const LeadTable = () => {
                 <Button size={"sm"} className="items-center ml-2" onClick={() => setShowUnassigned((prev) => !prev)}>{showUnassigned ? 'Show All': 'Show Unassigned'}</Button>
             </div> */}
             {/* @ts-ignore */}
-            <DataTableLead columns={LeadColDefs} data={leadInfo || []} />
+            <DataTableLead columns={ProspectColDefs} data={prospectInfo || []} />
         </>
     )
 }

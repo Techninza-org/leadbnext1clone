@@ -21,22 +21,26 @@ export const LeadImagesTable = () => {
         ]
     })
 
-    const xchangerListData = data?.getLeadPhotos.data?.rows
+    const xchangerListData = data?.getLeadPhotos?.data?.rows
 
-    const CustomerDefs = xchangerListData?.map((rowData: any) => {
-        const columns = Object.keys(rowData)
-            .filter((key) => key !== "fieldType" && key !== "name")
-            .map((colName) => ({
-                header: colName,
-                accessorKey: colName,
-                cell: ({ row }: { row: any }) => {
-                    const cellValue = row.original[colName];
-                        return <div className="capitalize">{renderContent(cellValue)}</div>;
-                },
-            }));
+    const uniqueHeaders = new Set<string>();
     
-        return columns;
-    }).flat(); 
+    xchangerListData?.forEach((rowData: any) => {
+        Object.keys(rowData).forEach((colName) => {
+            if (colName !== "fieldType" && colName !== "name") {
+                uniqueHeaders.add(colName);
+            }
+        });
+    });
+
+    const CustomerDefs = Array.from(uniqueHeaders).map((colName) => ({
+        header: colName,
+        accessorKey: colName,
+        cell: ({ row }: { row: any }) => {
+            const cellValue = row.original[colName];
+            return <div className="capitalize">{renderContent(cellValue)}</div>;
+        },
+    }));
 
     return (
         <DataTable data={data?.getLeadPhotos?.data?.rows || []} columns={CustomerDefs as any || []} />

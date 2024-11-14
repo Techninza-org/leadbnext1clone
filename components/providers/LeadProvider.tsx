@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { useToast } from '@/components/ui/use-toast';
 
 import { leadSchema } from '@/types/lead';
-import { leads } from '@/lib/atom/leadAtom';
+import { leads, prospects } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
 import { userAtom } from '@/lib/atom/userAtom';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
@@ -27,11 +27,29 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
     const userInfo = useAtomValue(userAtom)
     const { toast } = useToast()
     const setLeads = useSetAtom(leads)
+    const setProspect = useSetAtom(prospects)
 
     const { loading } = useQuery(leadQueries.GET_COMPANY_LEADS, {
         variables: { companyId: userInfo?.companyId },
         onSuccess: ({ data }) => {
-            setLeads(data.getCompanyLeads.lead)
+            setLeads(data.getCompanyLeads.lead.filter((x: any) => x.isLeadApproved === true))
+        },
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER,
+            },
+            {
+                mutation: leadMutation.LEAD_ASSIGN_TO,
+            },
+            {
+                mutation: leadMutation.CREATE_LEAD,
+            }
+        ]
+    });
+
+    const { } = useQuery(leadQueries.GET_PROSPECT_LEADS, {
+        onSuccess: ({ data }) => {
+            setProspect(data.getCompanyProspects)
         },
         refetchAfterMutations: [
             {

@@ -7,15 +7,30 @@ import { companyQueries } from "@/lib/graphql/company/queries";
 import { leadQueries } from "@/lib/graphql/lead/queries";
 import { LOGIN_USER } from "@/lib/graphql/user/mutations";
 
-export const renderContent = (text: string): JSX.Element => {
+export const renderContent = (content: string | string[]): JSX.Element => {
     const urlPattern = /^(https?:\/\/(?:localhost|\d{1,3}(?:\.\d{1,3}){3}|\w+)(?::\d+)?(?:\/[^\s]*)?)$/i;
 
-    if (urlPattern.test(text)) {
-        return <img src={text} alt="Content" width="100" />;
+    if (Array.isArray(content)) {
+        return (
+            <div className="flex gap-2">
+                {content.map((url, index) => (
+                    urlPattern.test(url) ? (
+                        <img className="h-20 w-20 rounded-md" key={index} src={url} alt={`Content ${index + 1}`} width="100" />
+                    ) : (
+                        <span key={index}>{url}</span>
+                    )
+                ))}
+            </div>
+        );
     } else {
-        return <>{text}</>;
+        return urlPattern.test(content) ? (
+            <img src={content} alt="Content" width="100" />
+        ) : (
+            <>{content}</>
+        );
     }
 };
+
 
 export const PaymentTable = () => {
 
@@ -29,25 +44,27 @@ export const PaymentTable = () => {
             }
         ]
     })
+    const xchangerListData = data?.paymentList?.data?.rows;
 
-    const xchangerListData = data?.paymentList?.data?.rows
+    const uniqueHeaders = new Set<string>();
+    
+    xchangerListData?.forEach((rowData: any) => {
+        Object.keys(rowData).forEach((colName) => {
+            if (colName !== "fieldType" && colName !== "name") {
+                uniqueHeaders.add(colName);
+            }
+        });
+    });
 
-
-    const CustomerDefs = xchangerListData?.map((rowData: any) => {
-        const columns = Object.keys(rowData)
-            .filter((key) => key !== "fieldType" && key !== "name")
-            .map((colName) => ({
-                header: colName,
-                accessorKey: colName,
-                cell: ({ row }: { row: any }) => {
-                    const cellValue = row.original[colName];
-                    return <div className="capitalize">{renderContent(cellValue)}</div>;
-                },
-            }));
-
-        return columns;
-    }).flat();
-
+    const CustomerDefs = Array.from(uniqueHeaders).map((colName) => ({
+        header: colName,
+        accessorKey: colName,
+        cell: ({ row }: { row: any }) => {
+            const cellValue = row.original[colName];
+            return <div className="capitalize">{renderContent(cellValue)}</div>;
+        },
+    }));
+    
     return (
         <DataTable data={data?.paymentList?.data?.rows || []} columns={CustomerDefs as any || []} />
     )

@@ -122,7 +122,15 @@ export const SubmitLeadModal = () => {
 
                 const formDataWithUrls = fields?.subDeptFields.map((field: any) => {
                     if (field.fieldType === 'IMAGE' || field.fieldType === 'DD_IMG') {
-                        const uploadedFilesForField = uploadedFiles?.filter((file: any) => file.fieldname === field.name);
+                        const uploadedFilesForField = uploadedFiles?.filter((file: any) => {
+                            if (field.fieldType === 'DD_IMG') {
+                                return field.options.find((r: any) => {
+                                    return r.value.find((c: any) => c.label === file.fieldname)
+                                })
+                            }
+                            return file.fieldname === field.name
+                        });
+                        console.log(uploadedFilesForField, 'uploadedFilesForField')
                         if (uploadedFilesForField && uploadedFilesForField.length > 0) {
                             const urls = uploadedFilesForField.map((file: any) => file.url);
                             return { ...field, value: urls }; // Always return an array of URLs
@@ -130,16 +138,6 @@ export const SubmitLeadModal = () => {
                     }
                     return field;
                 });
-
-                console.log({
-                    deptId: user?.deptId,
-                    leadId: lead?.id || "",
-                    callStatus: "SUCCESS",
-                    paymentStatus: "PENDING",
-                    feedback: formatFormData((formDataWithUrls as CallData[]), data),
-                    submitType: "updateLead",
-                    formName: fields?.name || ""
-                })
 
                 const { data: resData, loading, error } = await submitFeedback({
                     variables: {

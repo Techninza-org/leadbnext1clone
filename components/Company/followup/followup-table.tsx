@@ -6,6 +6,7 @@ import { companyQueries } from "@/lib/graphql/company/queries";
 import { BidsColDefs } from "./followup-col";
 import { leadQueries } from "@/lib/graphql/lead/queries";
 import { LOGIN_USER } from "@/lib/graphql/user/mutations";
+import { FollowUpBidDataTable } from "@/components/ui/followupBIdDataTable";
 
 export const FollowupTable = () => {
 
@@ -21,6 +22,6 @@ export const FollowupTable = () => {
     })
 
     return (
-        <DataTable data={data?.getFollowUps || []} columns={BidsColDefs} />
+        <FollowUpBidDataTable data={data?.getFollowUps || []} columns={BidsColDefs} />
     )
 }

@@ -203,26 +203,10 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         }
 
         if (fieldType === 'DD' || fieldType === 'DD_IMG') {
-            const grandParentElem = form.watch('deptFields').find((item) => item.name === (form.watch('deptFields').find(x => x.name == form.watch(`deptFields.${currIdx}.ddOptionId`))).ddOptionId)
+            const grandParentElem = form.watch('deptFields').find((item) => item.name === (form.watch('deptFields').find(x => x.name == form.watch(`deptFields.${currIdx}.ddOptionId`)))?.ddOptionId)
 
             return (
                 <div className="mt-4">
-                    <FormLabel className="mr-2">Dependent On</FormLabel>
-                    <Select
-                        onValueChange={(value) => form.setValue(`deptFields.${currIdx}.ddOptionId`, value)}
-                        value={form.watch(`deptFields.${currIdx}.ddOptionId`) || undefined}
-                    >
-                        <SelectTrigger className="w-[250px]">
-                            <SelectValue placeholder="Select dependency" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {form.watch('deptFields').filter(x => ["SELECT", "DD"].includes(x.fieldType)).map((field, index) => (
-                                field.name !== form.watch(`deptFields.${currIdx}.name`) && <SelectItem key={index} value={field.name}>
-                                    {field.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
 
                     {form.watch(`deptFields.${currIdx}.ddOptionId`) && grandParentElem && (
                         <div className="mt-4">
@@ -251,6 +235,23 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                             </Select>
                         </div>
                     )}
+
+                    <FormLabel className="mr-2">Dependent On</FormLabel>
+                    <Select
+                        onValueChange={(value) => form.setValue(`deptFields.${currIdx}.ddOptionId`, value)}
+                        value={form.watch(`deptFields.${currIdx}.ddOptionId`) || undefined}
+                    >
+                        <SelectTrigger className="w-[250px]">
+                            <SelectValue placeholder="Select dependency" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {form.watch('deptFields').filter(x => ["SELECT", "DD"].includes(x.fieldType)).map((field, index) => (
+                                field.name !== form.watch(`deptFields.${currIdx}.name`) && <SelectItem key={index} value={field.name}>
+                                    {field.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
 
                     {form.watch(`deptFields.${currIdx}.ddOptionId`) && (
                         <div className="mt-4">

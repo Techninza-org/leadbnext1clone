@@ -12,6 +12,11 @@ export const ROOT_NAV_LINKS = [
         href: "/leads",
     },
     {
+        title: "Prospects",
+        icon: FileTextIcon,
+        href: "/prospect",
+    },
+    {
         title: "Members",
         icon: UsersRoundIcon,
         href: "/members",
@@ -32,12 +37,12 @@ export const ROOT_NAV_LINKS = [
         href: "/bids",
     },
     {
-        title: "Exchange Customers",
+        title: "Exchange Vehicle Images",
         icon: Pencil,
         href: "/xchange-customer-list",
     },
     {
-        title: "Images",
+        title: "Exchange Document",
         icon: Pencil,
         href: "/lead-imgs",
     },

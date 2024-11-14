@@ -7,6 +7,7 @@ import { BidsColDefs } from "./bids-col";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { leadQueries } from "@/lib/graphql/lead/queries";
 import { LOGIN_USER } from "@/lib/graphql/user/mutations";
+import { FollowUpBidDataTable } from "@/components/ui/followupBIdDataTable";
 
 export const BidsTable = () => {
 
@@ -27,7 +28,7 @@ export const BidsTable = () => {
                 <CardTitle className="font-bold">Bids</CardTitle>
             </CardHeader>
             <CardContent>
-                <DataTable data={data?.getCompanyXchangerBids || []} columns={BidsColDefs} />
+                <FollowUpBidDataTable data={data?.getCompanyXchangerBids || []} columns={BidsColDefs} />
             </CardContent>
         </Card>
     )

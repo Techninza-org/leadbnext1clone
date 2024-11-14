@@ -11,7 +11,7 @@ export default function LeadsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold">Prospects</CardTitle>
+        <CardTitle className="font-bold">Lead</CardTitle>
       </CardHeader>
       <CardContent>
         <LeadTable />

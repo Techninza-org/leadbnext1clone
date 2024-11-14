@@ -20,7 +20,7 @@ export const ExchangeCustomerTable = () => {
         ]
     })
 
-    const xchangerListData = data?.xChangerCustomerList.data?.rows
+    const xchangerListData = data?.xChangerCustomerList?.data?.rows
 
     const CustomerDefs = xchangerListData?.map((rowData: any) => {
         const columns = Object.keys(rowData)

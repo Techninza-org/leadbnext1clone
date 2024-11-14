@@ -60,6 +60,21 @@ const GET_COMPANY_LEADS = `
   }
 `;
 
+const GET_PROSPECT_LEADS = `
+  query GetCompanyProspects {
+    getCompanyProspects {
+         id
+        name
+        email
+        callStatus
+        paymentStatus
+        phone
+        address
+        city
+    }
+  }
+`;
+
 const GET_ASSIGNED_LEADS = `
 query getAssignedLeads($userId: String!) {
     getAssignedLeads(userId: $userId) {
@@ -214,6 +229,7 @@ const GET_FOLLOWUP = `
 
 export const leadQueries = {
   GET_COMPANY_LEADS,
+  GET_PROSPECT_LEADS,
   GET_ASSIGNED_LEADS,
   GET_LEAD_BIDS_QUERY,
   GET_LAST_MONTH_ALL_LEADS,
