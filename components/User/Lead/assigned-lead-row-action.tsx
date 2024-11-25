@@ -50,9 +50,8 @@ export function AssignedLeadTableRowActions<TData>({
 
   const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
     variables: { deptId: null },
+    skip: !user,
   })
-
-  console.log(data, "data")
 
   const { onOpen } = useModal()
   return (
@@ -68,47 +67,26 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+          ["root", "telecaller"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
             <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
               {field.name}
             </DropdownMenuItem>
           ))
         }
         {
-          !["exchangemanager", "financer", "root"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
-            <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
-              {field.name}
-            </DropdownMenuItem>
-          ))
-        }
-        {
-          user?.role.name.toLowerCase().split(" ").join("") === "exchangemanager" && (
+          ["exchangemanager", "root"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && (
             <DropdownMenuItem onClick={() => onOpen("bidForm", { lead })}>
               Enter Bid
             </DropdownMenuItem>
           )
         }
         {
-          user?.role.name.toLowerCase()?.split(" ").join("") === "financer" && (
+          ["financer"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && (
             <DropdownMenuItem onClick={() => onOpen("finacerBidApproval", { lead })}>
               View/Approved Bid
             </DropdownMenuItem>
           )
         }
-        {/* <DropdownMenuSeparator /> */}
-        {/* <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub> */}
-        {/* <DropdownMenuSeparator /> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )

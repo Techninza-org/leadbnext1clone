@@ -159,18 +159,15 @@ export function DataTableLead<TData, TValue>({
         </div>
 
         <div className="flex gap-2 items-center">
-          
-              <Button
-                onClick={() => onOpen("assignLead", { leads: selectedRows })}
-                variant={'default'}
-                size={"sm"}
-                className="items-center gap-1"
-                disabled={!selectedRows.length}
-              >
-                Assign Lead
-              </Button>
-            
-          
+          <Button
+            onClick={() => onOpen("assignLead", { leads: selectedRows })}
+            variant={'default'}
+            size={"sm"}
+            className="items-center gap-1"
+            disabled={!selectedRows.length}
+          >
+            Assign Lead
+          </Button>
           <div>
             <Button
               variant="default"

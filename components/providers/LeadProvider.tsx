@@ -29,43 +29,51 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
     const setLeads = useSetAtom(leads)
     const setProspect = useSetAtom(prospects)
 
-    const { loading } = useQuery(leadQueries.GET_COMPANY_LEADS, {
-        variables: { companyId: userInfo?.companyId },
-        onSuccess: ({ data }) => {
-            setLeads(data.getCompanyLeads.lead.filter((x: any) => x.isLeadApproved === true))
+    const { loading: leadsLoading } = useQuery(
+        leadQueries.GET_COMPANY_LEADS,
+        {
+            variables: { companyId: userInfo?.companyId },
+            skip: !userInfo,
+            onSuccess: ({ data }) => {
+                setLeads(data.getCompanyLeads.lead.filter((x: any) => x.isLeadApproved === true));
+            },
+            refetchAfterMutations: [
+                {
+                    mutation: LOGIN_USER,
+                },
+                {
+                    mutation: leadMutation.LEAD_ASSIGN_TO,
+                },
+                {
+                    mutation: leadMutation.CREATE_LEAD,
+                },
+                {
+                    mutation: leadMutation.APPROVED_LEAD_MUTATION,
+                },
+            ],
         },
-        refetchAfterMutations: [
-            {
-                mutation: LOGIN_USER,
-            },
-            {
-                mutation: leadMutation.LEAD_ASSIGN_TO,
-            },
-            {
-                mutation: leadMutation.CREATE_LEAD,
-            },
-            {
-                mutation: leadMutation.APPROVED_LEAD_MUTATION,
-            }
-        ]
-    });
+    );
 
-    const { } = useQuery(leadQueries.GET_PROSPECT_LEADS, {
-        onSuccess: ({ data }) => {
-            setProspect(data.getCompanyProspects)
+    const { loading: prospectsLoading } = useQuery(
+        leadQueries.GET_PROSPECT_LEADS,
+        {
+            onSuccess: ({ data }) => {
+                setProspect(data.getCompanyProspects);
+            },
+            skip: !userInfo,
+            refetchAfterMutations: [
+                {
+                    mutation: LOGIN_USER,
+                },
+                {
+                    mutation: leadMutation.LEAD_ASSIGN_TO,
+                },
+                {
+                    mutation: leadMutation.CREATE_LEAD,
+                },
+            ],
         },
-        refetchAfterMutations: [
-            {
-                mutation: LOGIN_USER,
-            },
-            {
-                mutation: leadMutation.LEAD_ASSIGN_TO,
-            },
-            {
-                mutation: leadMutation.CREATE_LEAD,
-            }
-        ]
-    });
+    );
 
     const handleCreateLead = async ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => {
 
