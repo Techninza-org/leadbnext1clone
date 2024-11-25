@@ -8,7 +8,7 @@ const GET_ALL_ROLES = `
 `;
 
 const GET_COMPANY_DEPT_FIELDS = `
-  query GetCompanyDeptFields($deptId: String!) {
+  query GetCompanyDeptFields($deptId: String) {
     getCompanyDeptFields(deptId: $deptId) {
       id
       name

@@ -9,10 +9,6 @@ mutation createLead(
   $city: String!, 
   $state: String!, 
   $zip: String!, 
-  $rating: Int, 
-  $vehicleDate: String!, 
-  $vehicleModel: String!, 
-  $vehicleName: String!
   $department: String
 ) {
   createLead(
@@ -26,10 +22,6 @@ mutation createLead(
       city: $city,
       state: $state,
       zip: $zip,
-      rating: $rating,
-      vehicleDate: $vehicleDate,
-      vehicleModel: $vehicleModel,
-      vehicleName: $vehicleName,
       department: $department
     }
   ) {
@@ -46,7 +38,7 @@ const LEAD_ASSIGN_TO = `
   mutation leadAssignTo(
     $leadIds: [String!]!
     $userIds: [String!]!
-    $deptId: String!
+    $deptId: String
     $companyId: String!
     $description: String
   ) {

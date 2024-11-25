@@ -74,3 +74,44 @@ export function formatCurrencyForIndia(amount: number): string {
 
   return formatter.format(amount);
 }
+
+interface ParsedData {
+  [key: string]: string | number;
+}
+
+export const parseCSVToJson = async (file: File) => {
+  const fileContent = await file.text();
+  const lines = fileContent.split("\n").map(line => line.trim());
+
+  if (lines.length === 0) {
+    throw new Error("The CSV file is empty.");
+  }
+
+  const headers = lines[0].split(",").map(header => header.trim());
+
+  const jsonData: ParsedData[] = lines.slice(1).map(line => {
+    const values = line.split(",").map(value => value.trim());
+    const row: ParsedData = {};
+
+    headers.forEach((header, index) => {
+      row[header] = isNaN(Number(values[index])) ? values[index] : Number(values[index]);
+    });
+
+    return row;
+  });
+
+  return {jsonData, headers};
+};
+
+export const generateCSV = (data: any): void => {
+  const header = data?.map((item: any) => item.name).join(",") + "\n";
+
+  const blob = new Blob([header], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "headers.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};

@@ -7,6 +7,15 @@ mutation CreateNUpdateCompanyDeptForm($input: CreateDeptFormInput!) {
 }
 `;
 
+const UPDATE_DEPT_OPT = `
+mutation createNUpdateCompanyDeptOptForm($input: CreateDeptFormInput!) {
+    createNUpdateCompanyDeptOptForm(input: $input) {
+      id
+      name
+    }
+}
+`;
+
 const CREATE_OR_UPDATE_GLOBAL_DEPTS = ` 
   mutation createDept($input: CreateDeptInput!) {
     createDept(input: $input) {
@@ -51,5 +60,6 @@ const GET_BROADCAST_FORM = `
 export const DeptMutation = {
   UPDATE_DEPT,
   CREATE_OR_UPDATE_GLOBAL_DEPTS,
-  GET_BROADCAST_FORM
+  GET_BROADCAST_FORM,
+  UPDATE_DEPT_OPT
 };

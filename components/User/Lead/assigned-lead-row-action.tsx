@@ -26,6 +26,7 @@ import { userAtom } from "@/lib/atom/userAtom"
 import { useAtomValue } from "jotai"
 import { CompanyDeptFieldSchema } from "@/types/company"
 import { LOGIN_USER } from "@/lib/graphql/user/mutations"
+import { deptQueries } from "@/lib/graphql/dept/queries"
 
 
 interface DataTableRowActionsProps<TData> {
@@ -37,18 +38,23 @@ export function AssignedLeadTableRowActions<TData>({
 }: DataTableRowActionsProps<TData>) {
   const user = useAtomValue(userAtom)
 
-  const { loading, error, data } = useQuery(companyQueries.GET_COMPANY_DEPT_FIELDS, {
-    skip: !user?.token || !user?.deptId,
-    variables: { deptId: user?.deptId },
-    refetchAfterMutations: [
-      {
-          mutation: LOGIN_USER,
-      },
-  ],
-  });
+  // const { loading, error, data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+  //   skip: !user?.token || !user?.deptId,
+  //   variables: { deptId: user?.deptId },
+  //   refetchAfterMutations: [
+  //     {
+  //       mutation: LOGIN_USER,
+  //     },
+  //   ],
+  // });
+
+  const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
+    variables: { deptId: null },
+  })
+
+  console.log(data, "data")
 
   const { onOpen } = useModal()
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -62,7 +68,14 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          !["exchangemanager","financer"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+          data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+            <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
+              {field.name}
+            </DropdownMenuItem>
+          ))
+        }
+        {
+          !["exchangemanager", "financer", "root"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
             <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
               {field.name}
             </DropdownMenuItem>

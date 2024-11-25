@@ -63,7 +63,7 @@ const GET_COMPANY_LEADS = `
 const GET_PROSPECT_LEADS = `
   query GetCompanyProspects {
     getCompanyProspects {
-         id
+        id
         name
         email
         callStatus
@@ -71,6 +71,8 @@ const GET_PROSPECT_LEADS = `
         phone
         address
         city
+        state
+        isLeadConverted
     }
   }
 `;

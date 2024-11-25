@@ -256,6 +256,52 @@ export const SubmitLeadModal = () => {
                                     />
                                 )
                             }
+                            if (cfield.fieldType === 'CURRENCY') {
+                                return (
+                                    <FormField
+                                        key={cfield.id}
+                                        control={form.control}
+                                        name={cfield.name}
+                                        rules={validationRules}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="font-semibold text-primary dark:text-secondary/70">{cfield.name}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        className="bg-zinc-100/50 placeholder:capitalize border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                        placeholder={cfield.name}
+                                                        disabled={isDisabled}
+                                                        {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )
+                            }
+                            if (cfield.fieldType === 'PHONE') {
+                                return (
+                                    <FormField
+                                        key={cfield.id}
+                                        control={form.control}
+                                        name={cfield.name}
+                                        rules={validationRules}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel className="font-semibold text-primary dark:text-secondary/70">{cfield.name}</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder={cfield.name}
+                                                        disabled={isDisabled}
+                                                        {...field} />
+
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )
+                            }
                             if (cfield.fieldType === 'SELECT') {
                                 return (
                                     <FormField

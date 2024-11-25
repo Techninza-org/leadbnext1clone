@@ -13,6 +13,7 @@ import CreateBroadcastModal from "../modals/create-broadcast-modal";
 import BroadcastDetailsModal from "../modals/broadcast-details-modal";
 import UpdateGlobalDepartmentFieldsModal from "../dynamic/update-global-department-modal";
 import UpdateGlobalBroadcastModal from "../dynamic/update-global-broadcast-modal";
+import { UploadProspectModal } from "../modals/upload-prospect-modal";
 
 
 export const ModalProvider = () => {
@@ -38,6 +39,7 @@ export const ModalProvider = () => {
       <CreateBroadcastModal />
       <BroadcastDetailsModal />
       <UpdateGlobalBroadcastModal />
+      <UploadProspectModal />
     </>
   );
 };

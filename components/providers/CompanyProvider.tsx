@@ -21,6 +21,7 @@ type CompanyContextType = {
     leadRangeData: any;
     braodcasteForm: any;
     departments: any;
+    optForms: any;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -36,6 +37,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [members, setMembers] = useState<any>([])
     const [leadRangeData, setLeadRangeData] = React.useState<any>([])
     const [departments, setDepartments] = useState([])
+    const [optForms, setOptForms] = useState([])
     const [braodcasteForm, setBroadcastForm] = useState([])
 
     const { skip, variables } = {
@@ -107,9 +109,20 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             },
         ],
         onSuccess: ({ data }) => {
-            // if (data?.getCompanyDepts?.[0]?.companyDeptForms.length > 0) {
             setDepartments((data?.getDeptWFields[0]?.deptFields))
-            // };
+        },
+    })
+
+    const { error: dpetError } = useQuery(userQueries.GET_DEPT_OPT_FIELDS, {
+        skip: !userInfo?.token,
+        variables: { deptId: userInfo?.deptId },
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER
+            },
+        ],
+        onSuccess: ({ data }) => {
+            setOptForms(data?.getCompanyDeptOptFields)
         },
     })
 
@@ -136,14 +149,14 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             },
         ],
         onSuccess: ({ data }) => {
-            if (data?.getBroadcastForm){
+            if (data?.getBroadcastForm) {
                 setBroadcastForm(data?.getBroadcastForm)
             }
         }
     });
 
     return (
-        <CompanyContext.Provider value={{ braodcasteForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields }}>
+        <CompanyContext.Provider value={{ braodcasteForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields, optForms }}>
             {children}
         </CompanyContext.Provider>
     );

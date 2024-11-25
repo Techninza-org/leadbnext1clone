@@ -34,6 +34,7 @@ export const leadSchema = createLeadSchema.extend({
     paymentStatus: z.string(),
     createdAt: z.any(),
     isLeadApproved: z.boolean(),
+    isLeadConverted: z.boolean(), // prospect only
     LeadMember: z.array(z.object({
         Member: loggedUserSchema,
     })),

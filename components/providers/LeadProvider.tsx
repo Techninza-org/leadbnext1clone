@@ -43,6 +43,9 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             },
             {
                 mutation: leadMutation.CREATE_LEAD,
+            },
+            {
+                mutation: leadMutation.APPROVED_LEAD_MUTATION,
             }
         ]
     });

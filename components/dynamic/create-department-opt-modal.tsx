@@ -23,6 +23,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command'
 import { cn, parseCSVToJson } from '@/lib/utils'
 import { ScrollArea } from '../ui/scroll-area'
+import { useCompany } from '../providers/CompanyProvider'
+import { fieldTypes } from './create-department-modal'
 
 const DepartmentSchema = z.object({
     deptFields: z.array(z.object({
@@ -39,40 +41,12 @@ const DepartmentSchema = z.object({
     })).default([]),
 })
 
-export const fieldTypes = [
-    { value: "INPUT", label: "Input" },
-    { value: "CURRENCY", label: "Currency" },
-    { value: "PHONE", label: "Phone" },
-    { value: "TAG", label: "TAG" },
-    { value: "SELECT", label: "Select" },
-    { value: "RADIO", label: "Radio" },
-    { value: "DD_IMG", label: "Dependent Dropdown (Image)" },
-    { value: "DD", label: "Dependent Dropdown (Select)" },
-    { value: "CHECKBOX", label: "Checkbox" },
-    { value: "IMAGE", label: "Image" },
-    { value: "TEXTAREA", label: "Textarea" },
-    { value: "DATE", label: "Date" },
-]
-
-
-const languages = [
-    { label: "English", value: "en" },
-    { label: "French", value: "fr" },
-    { label: "German", value: "de" },
-    { label: "Spanish", value: "es" },
-    { label: "Portuguese", value: "pt" },
-    { label: "Russian", value: "ru" },
-    { label: "Japanese", value: "ja" },
-    { label: "Korean", value: "ko" },
-    { label: "Chinese", value: "zh" },
-] as const
-
-
-const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
+const UpdateDepartmentOptFieldsModal = ({ deptName, companyId }) => {
     const [currIdx, setCurrIdx] = useState(0)
     const userInfo = useAtomValue(userAtom)
     const [currentOptionsIndx, setCurrentOptionsIndx] = useState(0)
     const { toast } = useToast()
+    const { optForms } = useCompany()
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [jsonData, setJsonData] = useState<ParsedData[] | null>(null);
@@ -81,7 +55,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     const [searchTerm, setSearchTerm] = useState('')
     const [editingIndex, setEditingIndex] = useState(null);
 
-    const [updateDepartmentFields] = useMutation(DeptMutation.UPDATE_DEPT)
+    const [updateDepartmentOptFields] = useMutation(DeptMutation.UPDATE_DEPT_OPT)
 
     const form = useForm({
         resolver: zodResolver(DepartmentSchema),
@@ -93,14 +67,10 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         name: "deptFields",
     })
 
-    const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-        variables: { deptId },
-        skip: !userInfo?.token || !deptId,
-    })
 
     const filteredDeptFields = useMemo(() =>
-        data?.getCompanyDeptFields?.filter(field => String(field.name) === String(deptName)) || [],
-        [data, deptName])
+        optForms?.filter(field => String(field.name) === String(deptName)) || [],
+        [optForms, deptName])
 
     useEffect(() => {
         if (filteredDeptFields.length > 0) {
@@ -111,10 +81,10 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
 
     const onSubmit = useCallback(async (values) => {
         try {
-            const { data, error } = await updateDepartmentFields({
+            const { data, error } = await updateDepartmentOptFields({
                 variables: {
                     input: {
-                        companyDeptId: deptId || "",
+                        companyId: userInfo?.companyId || "",
                         name: deptName,
                         order: 4,
                         subDeptFields: values.deptFields,
@@ -143,8 +113,10 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     }, [])
 
     const handleSelectChange = useCallback((value, index) => {
+        console.log(value, index, "value, index");
+        
         form.setValue(`deptFields.${index}.fieldType`, value)
-        if (['SELECT', 'RADIO', 'DROPDOWN', 'CHECKBOX', 'TAG'].includes(value)) {
+        if (['SELECT', 'RADIO', 'DROPDOWN', 'CHECKBOX'].includes(value)) {
             const currentOptions = form.getValues(`deptFields.${index}.options`) || []
             if (currentOptions.length === 0) {
                 form.setValue(`deptFields.${index}.options`, [])
@@ -194,7 +166,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     const renderFieldOptions = useCallback(() => {
         const fieldType = form.watch(`deptFields.${currIdx}.fieldType`)
 
-        if (['SELECT', 'RADIO', 'CHECKBOX', 'TAG'].includes(fieldType)) {
+        if (['SELECT', 'RADIO', 'CHECKBOX'].includes(fieldTypes)) {
             // console.log(, "form.watch(`deptFields.${currIdx}.options`)")
             return (
                 <div className="mt-4">
@@ -367,7 +339,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                                                             const selectedParent = filteredDeptFields[0]?.subDeptFields.find(
                                                                 (subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`)
                                                             )
-                                                            if ( ["SELECT", "TAG"].includes(selectedParent?.fieldType)) {
+                                                            if (selectedParent?.fieldType === "SELECT") {
                                                                 return selectedParent.options.map((option, optIndex) => (
                                                                     option.label && <CommandItem
                                                                         key={`${option.label}-${optIndex}`}
@@ -731,4 +703,4 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     )
 }
 
-export default UpdateDepartmentFieldsModal
+export default UpdateDepartmentOptFieldsModal

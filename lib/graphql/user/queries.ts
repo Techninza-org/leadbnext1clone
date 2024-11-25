@@ -104,11 +104,36 @@ const GET_DEPT_FIELDS = `
   }
 `;
 
+const GET_DEPT_OPT_FIELDS = `
+  query GetCompanyDeptOptFields {
+      getCompanyDeptOptFields{
+         id
+         name
+        
+          subDeptFields {
+            id
+            name
+            fieldType
+            ddOptionId
+            options {
+              label
+              value
+            }
+            isDisabled
+            isRequired
+            imgLimit
+            order
+          }
+      }
+  }
+`;
+
 export const userQueries = {
   GET_COMPANY_DEPT_MEMBERS,
   GET_COMPANIES,
   GET_MEMBERS,
   GET_MEMBER_LOCATION,
   GET_PLANS,
-  GET_DEPT_FIELDS
+  GET_DEPT_FIELDS,
+  GET_DEPT_OPT_FIELDS
 };

@@ -32,7 +32,7 @@ export default function LoginPage() {
           </p>
         </CardFooter>
       </Card>
-      <div className="relative">
+      {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -45,7 +45,7 @@ export default function LoginPage() {
       <Button variant="outline" className="w-full mx-auto" type="button">
         <Mail className="mr-2" />
         <span>Continue with Email</span>
-      </Button>
+      </Button> */}
     </div>
   );
 }

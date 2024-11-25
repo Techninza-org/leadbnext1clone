@@ -38,6 +38,7 @@ import { useModal } from "@/hooks/use-modal-store"
 import { Button } from "./button"
 import { DownloadIcon, PlusCircle, UploadIcon } from "lucide-react"
 import { handleFileDownload } from "@/lib/utils"
+import { useCompany } from "../providers/CompanyProvider"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -50,6 +51,7 @@ export function DataTableLead<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const [filteredData, setFilteredData] = React.useState<any[]>(data)
+  const { optForms } = useCompany()
   const defaultToDate = new Date();
   const defaultFromDate = new Date();
   defaultFromDate.setDate(defaultToDate.getDate() - 10);
@@ -146,18 +148,18 @@ export function DataTableLead<TData, TValue>({
     fileInputRef.current?.click();
   };
 
+  const addProspectForm = optForms.find((x: any) => x.name === "Prospect")
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-       <div className="flex gap-3">
-       <DataTableToolbar table={table} data={data} setFilter={setFilter} />
-       {/* <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} /> */}
-       </div>
+        <div className="flex gap-3">
+          <DataTableToolbar table={table} data={data} setFilter={setFilter} />
+          {/* <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} /> */}
+        </div>
 
         <div className="flex gap-2 items-center">
-          {
-            userRole === "manager" && (
+          
               <Button
                 onClick={() => onOpen("assignLead", { leads: selectedRows })}
                 variant={'default'}
@@ -167,8 +169,8 @@ export function DataTableLead<TData, TValue>({
               >
                 Assign Lead
               </Button>
-            )
-          }
+            
+          
           <div>
             <Button
               variant="default"
@@ -195,7 +197,7 @@ export function DataTableLead<TData, TValue>({
                 color="primary"
                 size={"sm"}
                 className="items-center gap-1"
-                onClick={handleButtonClick}
+                onClick={() => onOpen("uploadPrspectModal", { fields: addProspectForm })}
               >
                 <UploadIcon size={15} /> <span>Upload Prospects</span>
               </Button>
@@ -203,7 +205,7 @@ export function DataTableLead<TData, TValue>({
 
           </div>
           <Button
-            onClick={() => onOpen("addLead")}
+            onClick={() => onOpen("addLead", { fields: addProspectForm })}
             variant={'default'}
             size={"sm"}
             className="items-center gap-1">

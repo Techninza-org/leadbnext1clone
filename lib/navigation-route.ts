@@ -7,14 +7,14 @@ export const ROOT_NAV_LINKS = [
         href: "/dashboard",
     },
     {
-        title: "Leads",
-        icon: FileTextIcon,
-        href: "/leads",
-    },
-    {
         title: "Prospects",
         icon: FileTextIcon,
         href: "/prospect",
+    },
+    {
+        title: "Leads",
+        icon: FileTextIcon,
+        href: "/leads",
     },
     {
         title: "Members",
@@ -22,7 +22,7 @@ export const ROOT_NAV_LINKS = [
         href: "/members",
     },
     {
-        title: "Departments",
+        title: "Form Builder",
         icon: Pencil,
         href: "/departments",
     },

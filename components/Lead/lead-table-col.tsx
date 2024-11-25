@@ -4,13 +4,16 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { leadSchema } from "@/types/lead";
 import { Button } from "../ui/button";
-import ActionTooltip from "../action-tooltip";
-import { MANAGER } from "@/lib/role-constant";
 import { useModal } from "@/hooks/use-modal-store";
 import { Switch } from "../ui/switch";
 import { useMutation } from "graphql-hooks";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
 import HoverCardToolTip from "../hover-card-tooltip";
+import { AssignedLeadTableRowActions } from "../User/Lead/assigned-lead-row-action";
+import { useToast } from "../ui/use-toast";
+import { useEffect } from "react";
+import { useAtomValue } from "jotai";
+import { userAtom } from "@/lib/atom/userAtom";
 
 export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -96,22 +99,26 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: '',
         cell: ({ row }) => {
             const rowData = row?.original;
-            const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
-            const approved = rowData?.isLeadApproved
-
             return (
-                <Button
-                    size={'sm'}
-                    variant={assigneeName ? "secondary" : "destructive"}
-                    className="text-xs p-2  capitalize"
-                >
-                    {/* {approved ? assigneeName : "Not Assigned"} */}
-                    { assigneeName || "Not Assigned"}
-                </Button>
+                <AssigneeName lead={rowData} />
             );
         }
     },
 ];
+
+const AssigneeName = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+    const userInfo = useAtomValue(userAtom)
+    const assigneeName = lead?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
+    return (
+        <Button
+            size={'sm'}
+            variant={assigneeName ? "secondary" : "destructive"}
+            className="text-xs p-2  capitalize"
+        >
+            {userInfo?.name !== assigneeName ? assigneeName : "Not Assigned"}
+        </Button>
+    )
+}
 
 export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -193,7 +200,7 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         }
     },
     {
-        header: 'Assigned',
+        header: 'Action',
         accessorKey: '',
         cell: ({ row }) => {
             const rowData = row?.original;
@@ -201,28 +208,10 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             const approved = rowData?.isLeadApproved
 
             return (
-                <Button
-                    size={'sm'}
-                    variant={assigneeName ? "secondary" : "destructive"}
-                    className="text-xs p-2  capitalize"
-                >
-                    {/* {approved ? assigneeName : "Not Assigned"} */}
-                    { assigneeName || "Not Assigned"}
-                </Button>
+                <AssignedLeadTableRowActions lead={row.original} />
             );
         }
     },
-    {
-        header: 'Converted To Lead',
-        accessorKey: '',
-        cell: ({ row }) => {
-            const rowData = row?.original;
-
-            return (
-                <LeadApprovedAction lead={rowData} />
-            );
-        }
-    }
 ];
 
 const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
@@ -237,15 +226,35 @@ const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
     )
 }
 
-const LeadApprovedAction = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
-    const [appvedLead, { loading }] = useMutation(leadMutation.APPROVED_LEAD_MUTATION)
+export const LeadApprovedAction = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+    const { toast } = useToast()
+    const [appvedLead, { loading, data, error }] = useMutation(leadMutation.APPROVED_LEAD_MUTATION)
+    useEffect(() => {
+        if (data?.appvedLead) {
+            toast({
+                title: "Transfer Successfully!"
+            })
+        }
+        if (error) {
+            toast({
+                title: "Error",
+                variant: "destructive"
+            })
+
+        }
+    }, [data, error, toast])
 
     return (
-        <Switch id="isLeadApproved" checked={lead.isLeadApproved} onCheckedChange={async (value: any) => await appvedLead({
-            variables: {
-                leadId: lead.id,
-                status: value
-            }
-        })} />
+        <Button
+            className="bg-green-700"
+            size={'sm'}
+            onClick={async (value: any) => await appvedLead({
+                variables: {
+                    leadId: lead.id,
+                    status: true
+                }
+            })}>
+            Transfer
+        </Button>
     )
 }
