@@ -3,12 +3,9 @@ mutation createLead(
   $companyId: String!, 
   $name: String!, 
   $email: String!, 
-  $address: String!, 
   $alternatePhone: String, 
   $phone: String!, 
-  $city: String!, 
-  $state: String!, 
-  $zip: String!, 
+  $remark: String!, 
   $department: String
 ) {
   createLead(
@@ -16,12 +13,39 @@ mutation createLead(
       companyId: $companyId,
       name: $name,
       email: $email,
-      address: $address,
       alternatePhone: $alternatePhone,
       phone: $phone,
-      city: $city,
-      state: $state,
-      zip: $zip,
+      remark: $remark,
+      department: $department
+    }
+  ) {
+    lead {
+      id
+      name
+      vehicleName
+    }
+  }
+}
+`;
+
+const CREATE_PROSPECT = `
+mutation createProspect(
+  $companyId: String!, 
+  $name: String!, 
+  $email: String!, 
+  $alternatePhone: String, 
+  $phone: String!, 
+  $remark: String!, 
+  $department: String
+) {
+  createProspect(
+    input: {
+      companyId: $companyId,
+      name: $name,
+      email: $email,
+      alternatePhone: $alternatePhone,
+      phone: $phone,
+      remark: $remark,
       department: $department
     }
   ) {
@@ -173,6 +197,7 @@ const UPDATE_FOLLOWUP = `
 
 export const leadMutation = {
   CREATE_LEAD,
+  CREATE_PROSPECT,
   LEAD_ASSIGN_TO,
   SUBMIT_LEAD,
   SUBMIT_BID_MUTATION,

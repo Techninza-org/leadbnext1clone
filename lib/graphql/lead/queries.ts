@@ -7,10 +7,6 @@ const GET_COMPANY_LEADS = `
         email
         phone
         alternatePhone
-        address
-        city
-        state
-        zip
         vehicleDate
         vehicleName
         vehicleModel
@@ -69,9 +65,6 @@ const GET_PROSPECT_LEADS = `
         callStatus
         paymentStatus
         phone
-        address
-        city
-        state
         isLeadConverted
     }
   }

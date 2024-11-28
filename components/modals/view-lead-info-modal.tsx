@@ -119,6 +119,21 @@ export const ViewLeadInfoModal = () => {
         </div>
     )
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.altKey && event.key.toLowerCase() === 's') {
+                event.preventDefault();
+                setIsEditing(prev => !prev);
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
 
     return (
 
@@ -136,13 +151,22 @@ export const ViewLeadInfoModal = () => {
                             <div className="flex items-center space-x-4">
                                 {
                                     isEditing ? (
-                                        <Button variant="outline" size="sm" onClick={() => setIsEditing(false)}>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setIsEditing(false)}
+                                            aria-label="Save changes (Alt + S)"
+                                        >
                                             <Edit2Icon className="mr-2 h-4 w-4" />
                                             Save
                                         </Button>
-
                                     ) : (
-                                        <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setIsEditing(true)}
+                                            aria-label="Edit lead information (Alt + S)"
+                                        >
                                             <Edit2Icon className="mr-2 h-4 w-4" />
                                             Edit
                                         </Button>

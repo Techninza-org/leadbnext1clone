@@ -109,6 +109,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             },
         ],
         onSuccess: ({ data }) => {
+            // why it is using ???
             setDepartments((data?.getDeptWFields[0]?.deptFields))
         },
     })

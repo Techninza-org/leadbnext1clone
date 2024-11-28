@@ -4,14 +4,6 @@ import { useForm } from 'react-hook-form';
 import { userAtom } from '@/lib/atom/userAtom';
 import { useAtom, useAtomValue } from 'jotai';
 import {
-    MultiSelector,
-    MultiSelectorContent,
-    MultiSelectorInput,
-    MultiSelectorItem,
-    MultiSelectorList,
-    MultiSelectorTrigger,
-} from "@/components/multiselect-input";
-import {
     Dialog,
     DialogContent,
     DialogHeader,
@@ -39,8 +31,8 @@ import { generateCSV, parseCSVToJson } from '@/lib/utils';
 import { UploadIcon } from 'lucide-react';
 import React, { useState } from 'react';
 import { ScrollArea } from '../ui/scroll-area';
-import Image from 'next/image';
 import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from '../file-uploader';
+import Image from 'next/image';
 import { DropzoneOptions } from 'react-dropzone';
 
 const dropzone = {
@@ -53,17 +45,18 @@ const dropzone = {
 } satisfies DropzoneOptions;
 
 
-export const UploadProspectModal = () => {
+export const UploadLeadModal = () => {
 
     const userInfo = useAtomValue(userAtom)
     const [uploadedCSVHeaders, setUploadedCSVHeaders] = useState<string[]>([])
     const [uploadCSVData, setUploadCSVData] = useState<any[]>()
     const [fileStates, setFileStates] = useState<{ [key: string]: File[] | null }>({});
 
+
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { leads, fields } = modalData;
 
-    const isModalOpen = isOpen && type === "uploadPrspectModal";
+    const isModalOpen = isOpen && type === "uploadLeadModal";
 
     const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
         if (field.isRequired) {
@@ -82,7 +75,7 @@ export const UploadProspectModal = () => {
     });
 
     const updateCsvKeys = (csvData: any, formDataMapping: any) => {
-        const updatedJsonData = csvData?.map((row: any) => {
+        const updatedJsonData = csvData.map((row: any) => {
             const newRow: any = {};
             Object.entries(formDataMapping).forEach(([formKey, csvKey]: any) => {
                 newRow[formKey] = row[csvKey];
@@ -120,11 +113,10 @@ export const UploadProspectModal = () => {
 
     const onSubmit = async (data: any) => {
         const updatedCSVData = wrapFieldsInDynamicFieldValueArray(sortedFields || [], updateCsvKeys(uploadCSVData, data))
-        const filterCSVData = updatedCSVData.filter(x => !!x.email)
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/bulk-upload-prospect`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/bulk-upload-lead`, {
                 method: 'POST',
-                body: JSON.stringify(filterCSVData),
+                body: JSON.stringify(updatedCSVData),
                 headers: {
                     "Content-Type": "application/json",
                     'Authorization': `x-lead-token ${userInfo?.token || ''}`,
@@ -148,7 +140,6 @@ export const UploadProspectModal = () => {
                 document.body.removeChild(a);
             } else {
                 const result = await response.json();
-                handleClose();
             }
         } catch (error) {
             console.error('Error parsing CSV:', error);
@@ -180,7 +171,7 @@ export const UploadProspectModal = () => {
             <DialogContent className="text-black max-w-screen-md">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="flex justify-between text-2xl text-center font-bold">
-                        <div>Upload Prospects</div>
+                        <div>Upload Lead</div>
 
 
                     </DialogTitle>
@@ -286,13 +277,12 @@ export const UploadProspectModal = () => {
                                             </FormItem>
                                         )}
                                     />
-
                                     <FormField
                                         control={form.control}
-                                        name="remark"
+                                        name="address"
                                         render={({ field }) => (
                                             <FormItem>
-                                                <FormLabel>Remark</FormLabel>
+                                                <FormLabel>Email</FormLabel>
                                                 <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>
@@ -311,7 +301,78 @@ export const UploadProspectModal = () => {
                                             </FormItem>
                                         )}
                                     />
-
+                                    <FormField
+                                        control={form.control}
+                                        name="city"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder={`Select`} />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {
+                                                            uploadedCSVHeaders.map((item, i) => (
+                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="zip"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder={`Select`} />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {
+                                                            uploadedCSVHeaders.map((item, i) => (
+                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="state"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Email</FormLabel>
+                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder={`Select`} />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {
+                                                            uploadedCSVHeaders.map((item, i) => (
+                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                     {sortedFields?.map((cfield: any) => {
                                         //  const isRequired = cfield.isRequired;
                                         const isDisabled = cfield.isDisabled;
@@ -392,10 +453,9 @@ export const UploadProspectModal = () => {
                                     variant="default"
                                     color="primary"
                                     size={"sm"}
-                                    type='button'
                                     className="items-center gap-1"
                                     // @ts-ignore
-                                    onClick={() => generateCSV([{ name: "Name" }, { name: "Phone" }, { name: "Email" }, ...sortedFields, { name: "Remark" }], "Prospect")}
+                                    onClick={() => generateCSV([{ name: "Name" }, { name: "Phone" }, { name: "Email" }, { name: "Address" }, ...sortedFields], "lead")}
                                 >
                                     <UploadIcon size={15} /> <span>Sample Lead</span>
                                 </Button>

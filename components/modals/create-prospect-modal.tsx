@@ -60,10 +60,10 @@ import { PhoneInput } from '../ui/phone-input';
 import { RsInput } from '../ui/currency-input';
 import { DateTimePicker } from '../date-time-picker';
 
-export const CreateLeadModal = () => {
+export const CreateProspectModal = () => {
     const { isOpen, onClose, type, data } = useModal();
     const { lead, fields } = data;
-    const isModalOpen = isOpen && type === "addLead";
+    const isModalOpen = isOpen && type === "addProspect";
 
 
     return (
@@ -75,7 +75,7 @@ export const CreateLeadModal = () => {
                     </DialogTitle>
                 </DialogHeader>
 
-                <LeadForm
+                <ProspectForm
                     fields={fields}
                     onClose={onClose}
                 />
@@ -86,7 +86,7 @@ export const CreateLeadModal = () => {
 }
 
 
-export const LeadForm = ({ fields, onClose }: {
+export const ProspectForm = ({ fields, onClose }: {
     fields: any,
     onClose: any,
 }) => {
@@ -98,7 +98,7 @@ export const LeadForm = ({ fields, onClose }: {
 
     const [fileStates, setFileStates] = useState<{ [key: string]: File[] | null }>({});
 
-    const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
+    const [createProspect, { loading }] = useMutation(leadMutation.CREATE_PROSPECT);
 
     const { loading: deptLoading, error: deptError, data: deptData } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
         variables: { companyId: userInfo?.companyId },
@@ -128,7 +128,6 @@ export const LeadForm = ({ fields, onClose }: {
     });
 
     const isLoading = form.formState.isSubmitting || loading;
-    // try {
     const dropzone = {
         accept: {
             "image/*": [".jpg", ".jpeg", ".png"],
@@ -179,18 +178,15 @@ export const LeadForm = ({ fields, onClose }: {
                     return field;
                 });
 
-                const { data: resData, error } = await createLead({
+                const { data: resData, error } = await createProspect({
                     variables: {
                         companyId: userInfo?.companyId || "",
                         name: data.name,
                         email: data.email,
                         phone: data.phone,
                         alternatePhone: data.alternatePhone,
-                        address: data.address,
-                        city: data.city,
-                        state: data.state,
-                        zip: data.zip,
                         department: data.department,
+                        remark: data.remark,
                         dynamicFieldValues: formatFormData((formDataWithUrls as CallData[]), data),
                     }
                 });
@@ -207,23 +203,20 @@ export const LeadForm = ({ fields, onClose }: {
 
                 toast({
                     variant: "default",
-                    title: "Lead Submitted Successfully!",
+                    title: "Prospect Created Successfully!",
                 });
                 handleClose();
             } else {
                 // No files to upload, directly proceed with GraphQL mutation
-                const { data: resData, error } = await createLead({
+                const { data: resData, error } = await createProspect({
                     variables: {
                         companyId: userInfo?.companyId || "",
                         name: data.name,
                         email: data.email,
                         phone: data.phone,
                         alternatePhone: data.alternatePhone,
-                        address: data.address,
-                        city: data.city,
-                        state: data.state,
-                        zip: data.zip,
                         department: data.department,
+                        remark: data.remark,
                         dynamicFieldValues: formatFormData(fields?.subDeptFields ?? [], data),
                     },
                 });
@@ -240,7 +233,7 @@ export const LeadForm = ({ fields, onClose }: {
 
                 toast({
                     variant: "default",
-                    title: "Lead Submitted Successfully!",
+                    title: "Prospect Created Successfully!",
                 });
                 handleClose();
             }
@@ -248,14 +241,13 @@ export const LeadForm = ({ fields, onClose }: {
             console.error("Error during submission:", error);
             toast({
                 title: 'Error',
-                description: "Failed to submit lead feedback.",
+                description: "Failed to submit prospect.",
                 variant: "destructive"
             });
         }
     };
 
     const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
-
 
     const handleClose = () => {
         form.reset();
@@ -335,6 +327,23 @@ export const LeadForm = ({ fields, onClose }: {
                                     <Input
                                         className="bg-zinc-100 border-0 placeholder:capitalize  dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
                                         placeholder="Alternate Phone"
+                                        disabled={isLoading}
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="remark"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Remark</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="bg-zinc-100 placeholder:capitalize  border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                        placeholder="Remark"
                                         disabled={isLoading}
                                         {...field} />
                                 </FormControl>
@@ -464,8 +473,7 @@ export const LeadForm = ({ fields, onClose }: {
                                                                     >
                                                                         {opt?.value}
                                                                     </MultiSelectorItem>
-                                                                ))
-                                                            }
+                                                                ))}
                                                         </MultiSelectorList>
                                                     </MultiSelectorContent>
                                                 </MultiSelector>

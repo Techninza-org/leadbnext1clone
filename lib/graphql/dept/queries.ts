@@ -35,6 +35,7 @@ const GET_COMPANY_DEPT_FIELDS = `
           options {
               label
               value
+              colorCode
           }
           isDisabled
           isRequired

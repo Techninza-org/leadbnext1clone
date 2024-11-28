@@ -11,6 +11,7 @@ import { useQuery } from 'graphql-hooks'
 import { leadQueries } from '@/lib/graphql/lead/queries'
 import HoverCardToolTip from '../hover-card-tooltip'
 import { format } from 'date-fns'
+import { useCompany } from '../providers/CompanyProvider'
 
 const FollowUpsData = ({ lead }: { lead: any }) => {
   const [followups, setFollowups] = React.useState([])
@@ -19,18 +20,20 @@ const FollowUpsData = ({ lead }: { lead: any }) => {
       leadId: lead?.id
     }
   })
-  
+
+  const { optForms } = useCompany()
+  const fields = optForms.find((x: any) => x.name === "Enquiry")
+
   return (
     <div className="rounded-md border mt-2">
       <Table className='text-sm'>
         <TableHeader>
-          <TableRow>
+          <TableRow className='uppercase'>
             <TableHead>WHEN CREATED</TableHead>
             <TableHead>ADDED BY</TableHead>
-            <TableHead>NEXT FOLLOWUP</TableHead>
-            <TableHead>CUSTOMER RESPONSE</TableHead>
-            <TableHead>RATING</TableHead>
-            <TableHead>REMARKS</TableHead>
+            {fields?.subDeptFields?.map((x: any) => (
+              <TableHead key={x.name}>{x.name}</TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>

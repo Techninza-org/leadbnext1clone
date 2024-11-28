@@ -148,7 +148,7 @@ export function DataTableLead<TData, TValue>({
     fileInputRef.current?.click();
   };
 
-  const addProspectForm = optForms.find((x: any) => x.name === "Prospect")
+  const addLeadForm = optForms.find((x: any) => x.name === "Lead")
 
   return (
     <div className="space-y-4">
@@ -174,39 +174,18 @@ export function DataTableLead<TData, TValue>({
               color="primary"
               size={"sm"}
               className="items-center gap-1"
-              onClick={() => handleFileDownload("lead.csv")}
+              onClick={() => onOpen("uploadLeadModal", { fields: addLeadForm })}
             >
-              <DownloadIcon size={15} /> <p>Download Sample</p>
+              <UploadIcon size={15} /> <span>Upload Lead</span>
             </Button>
-          </div>
-          <div>
-            <input
-              type="file"
-              accept=".csv"
-              className="hidden"
-              ref={fileInputRef}
-              id="csv-upload"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileChange({ target: { files: Array.from(event.target.files || []) } })}
-            />
-            <label htmlFor="csv-upload">
-              <Button
-                variant="default"
-                color="primary"
-                size={"sm"}
-                className="items-center gap-1"
-                onClick={() => onOpen("uploadPrspectModal", { fields: addProspectForm })}
-              >
-                <UploadIcon size={15} /> <span>Upload Prospects</span>
-              </Button>
-            </label>
 
           </div>
           <Button
-            onClick={() => onOpen("addLead", { fields: addProspectForm })}
+            onClick={() => onOpen("addLead", { fields: addLeadForm })}
             variant={'default'}
             size={"sm"}
             className="items-center gap-1">
-            <PlusCircle size={15} /> <span>Add New Prospect</span>
+            <PlusCircle size={15} /> <span>Add New Lead</span>
           </Button>
         </div>
 

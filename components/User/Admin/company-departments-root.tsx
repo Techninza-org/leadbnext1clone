@@ -1,5 +1,6 @@
 'use client'
 import { useCompany } from '@/components/providers/CompanyProvider'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useModal } from '@/hooks/use-modal-store'
 import { userAtom } from '@/lib/atom/userAtom'
@@ -11,12 +12,10 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react';
 
 const CompanyDepartmentsRoot = () => {
-  // const [departments, setDepartments] = useState([]);
   const [deptId, setDeptId] = useState('');
   const { onOpen } = useModal();
   const userInfo = useAtomValue(userAtom);
   const { departments, braodcasteForm, optForms } = useCompany()
-
 
   const { data, loading, error, refetch } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
     variables: {
@@ -33,7 +32,6 @@ const CompanyDepartmentsRoot = () => {
   useEffect(() => {
     if (data?.getCompanyDepts?.[0]?.companyDeptForms.length > 0) {
       setDeptId(data.getCompanyDepts[0].id);
-      // setDepartments(data?.getCompanyDepts[0]?.companyDeptForms);
     }
   }, [data])
 
@@ -49,11 +47,14 @@ const CompanyDepartmentsRoot = () => {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="font-bold">Departments Forms</CardTitle>
+          <CardTitle className="flex justify-between font-bold">
+            <div>Departments Forms</div>
+            <Button size={'sm'} onClick={()=>onOpen('addDept')}>Add Department</Button>
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-8">
-          {departments?.map((dept: any) => (
-            <Link className='p-6 border rounded-md text-center shadow'  href={`/departments/form/${dept.name}/${deptId}/${userInfo?.companyId}`} key={dept.id}>
+          {data?.getCompanyDepts[0]?.companyDeptForms?.map((dept: any) => (
+            <Link className='p-6 border rounded-md text-center shadow' href={`/departments/form/${dept.name}/${deptId}/${userInfo?.companyId}`} key={dept.id}>
               <CardTitle>{dept.name}</CardTitle>
             </Link>
           ))}
@@ -77,7 +78,7 @@ const CompanyDepartmentsRoot = () => {
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-8">
           {optForms?.map((form: any) => (
-            <Link className='p-6 border rounded-md text-center shadow' href={`/departments/optForms/${form.name}/${userInfo?.companyId}`}  key={form.id}>
+            <Link className='p-6 border rounded-md text-center shadow' href={`/departments/optForms/${form.name}/${userInfo?.companyId}`} key={form.id}>
               <CardTitle>{form.name}</CardTitle>
             </Link>
           ))}

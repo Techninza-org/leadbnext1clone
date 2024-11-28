@@ -1,5 +1,6 @@
 'use client'
 import { useCompany } from '@/components/providers/CompanyProvider'
+import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useModal } from '@/hooks/use-modal-store'
 import Link from 'next/link'
@@ -13,7 +14,10 @@ const Departments = () => {
     <>
       <Card>
         <CardHeader>
-          <CardTitle className="font-bold">Departments Forms</CardTitle>
+          <CardTitle className="font-bold">
+            <div>Departments Forms</div>
+            <Button size={'sm'}>Add Department</Button>
+          </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-8">
           {departments?.map((dept: any) => (

@@ -33,6 +33,7 @@ const DepartmentSchema = z.object({
         options: z.array(z.object({
             label: z.string(),
             value: z.any(),
+            colorCode: z.any().optional(),
         })).default([]),
         isRequired: z.boolean(),
         isDisabled: z.boolean(),
@@ -52,6 +53,7 @@ export const fieldTypes = [
     { value: "IMAGE", label: "Image" },
     { value: "TEXTAREA", label: "Textarea" },
     { value: "DATE", label: "Date" },
+    { value: "DATETIME", label: "DateTime" },
 ]
 
 
@@ -116,6 +118,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                     input: {
                         companyDeptId: deptId || "",
                         name: deptName,
+                        deptName,
                         order: 4,
                         subDeptFields: values.deptFields,
                     }
@@ -194,6 +197,97 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     const renderFieldOptions = useCallback(() => {
         const fieldType = form.watch(`deptFields.${currIdx}.fieldType`)
 
+        if (['TAG'].includes(fieldType)) {
+            return (
+                <div className="mt-4">
+                    <FormLabel className="mr-2">Options ({form.watch(`deptFields.${currIdx}.name`)}) </FormLabel>
+                    <div className="relative my-2">
+                        <Input
+                            type='text'
+                            id="options-search"
+                            placeholder="Search options..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)} // Update searchTerm on input change
+                            className="pl-10"
+                        />
+                        <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                    </div>
+
+                    <ScrollArea className='h-52 w-full'>
+                        {form.watch(`deptFields.${currIdx}.options`)
+                            ?.filter(option => option.label.toLowerCase().includes(searchTerm.toLowerCase())) // Search filter
+                            .map((option, optIndex) => (
+                                <div key={optIndex} className="flex items-center mb-2 mt-2">
+                                    <Input
+                                        placeholder="Value"
+                                        className="mr-2"
+                                        value={option.label || option.value}
+                                        disabled={editingIndex !== optIndex}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            const options = form.getValues(`deptFields.${currIdx}.options`);
+                                            options[optIndex] = { ...options[optIndex], label: value, value };
+                                            form.setValue(`deptFields.${currIdx}.options`, options);
+                                        }}
+                                    />
+                                    <Input
+                                        type="color"
+                                        className="w-10 h-10 p-1 rounded-md mr-2"
+                                        value={option.colorCode || "#000000"}
+                                        onChange={(e) => {
+                                            const colorCode = e.target.value;
+                                            const options = form.getValues(`deptFields.${currIdx}.options`);
+                                            options[optIndex] = { ...options[optIndex], colorCode };
+                                            form.setValue(`deptFields.${currIdx}.options`, options);
+                                        }}
+                                    />
+                                    {editingIndex === optIndex ? (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => setEditingIndex(null)}
+                                        >
+                                            <Check size={20} color="green" />
+                                        </Button>
+                                    ) : (
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            onClick={() => setEditingIndex(optIndex)}
+                                        >
+                                            <PencilIcon size={20} color="blue" />
+                                        </Button>
+                                    )}
+                                    <Button
+                                        type="button"
+                                        variant="ghost"
+                                        onClick={() => {
+                                            const options = form.getValues(`deptFields.${currIdx}.options`);
+                                            options.splice(optIndex, 1);
+                                            form.setValue(`deptFields.${currIdx}.options`, options);
+                                        }}
+                                    >
+                                        <X size={20} color="red" />
+                                    </Button>
+                                </div>
+                            ))}
+                    </ScrollArea>
+
+                    <Button
+                        type="button"
+                        onClick={() => {
+                            const options = form.getValues(`deptFields.${currIdx}.options`) || [];
+                            options.push({ label: '', value: '', colorCode: '#000000' });
+                            form.setValue(`deptFields.${currIdx}.options`, options);
+                        }}
+                        className="mt-2 bg-blue-500 text-white"
+                    >
+                        <PlusIcon size={15} />
+                        Add Option
+                    </Button>
+                </div>
+            );
+        }
         if (['SELECT', 'RADIO', 'CHECKBOX', 'TAG'].includes(fieldType)) {
             // console.log(, "form.watch(`deptFields.${currIdx}.options`)")
             return (
@@ -367,7 +461,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                                                             const selectedParent = filteredDeptFields[0]?.subDeptFields.find(
                                                                 (subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`)
                                                             )
-                                                            if ( ["SELECT", "TAG"].includes(selectedParent?.fieldType)) {
+                                                            if (["SELECT", "TAG"].includes(selectedParent?.fieldType)) {
                                                                 return selectedParent.options.map((option, optIndex) => (
                                                                     option.label && <CommandItem
                                                                         key={`${option.label}-${optIndex}`}

@@ -1,7 +1,6 @@
 "use client"
 
 import * as React from "react"
-import XLSX from "xlsx"
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -26,18 +25,20 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import { PlusCircle, UploadIcon } from "lucide-react"
-import { useModal } from "@/hooks/use-modal-store"
+import { DataTablePagination } from "./table-pagination"
+import { DataTableToolbar } from "./table-toolbar"
+import { DatePickerWithRange } from "../DatePickerWithRange"
+import { DateRange } from "react-day-picker"
 import { useAtom, useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
-import csvtojson from 'csvtojson';
-import { useLead } from "../providers/LeadProvider"
 import { useMutation } from "graphql-hooks"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
-import { format, parse } from "date-fns"
-import { DataTableToolbar } from "../ui/table-toolbar"
-import { DataTablePagination } from "../ui/table-pagination"
-import { Button } from "../ui/button"
+import { useLead } from "../providers/LeadProvider"
+import { useModal } from "@/hooks/use-modal-store"
+import { Button } from "./button"
+import { DownloadIcon, PlusCircle, UploadIcon } from "lucide-react"
+import { handleFileDownload } from "@/lib/utils"
+import { useCompany } from "../providers/CompanyProvider"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -45,10 +46,21 @@ interface DataTableProps<TData, TValue> {
 }
 
 
-export function ApprovedDataTable<TData, TValue>({
+export function DataTableProspect<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const [filteredData, setFilteredData] = React.useState<any[]>(data)
+  const { optForms } = useCompany()
+  const defaultToDate = new Date();
+  const defaultFromDate = new Date();
+  defaultFromDate.setDate(defaultToDate.getDate() - 10);
+
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: defaultFromDate,
+    to: defaultToDate,
+  })
+
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
@@ -56,14 +68,12 @@ export function ApprovedDataTable<TData, TValue>({
     []
   )
   const [sorting, setSorting] = React.useState<SortingState>([])
-
-  // Custom global filter
   const [filter, setFilter] = React.useState<string>("")
+
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { handleCreateLead, handleCreateBulkLead } = useLead()
   const [createLead, { loading }] = useMutation(leadMutation.CREATE_LEAD);
   const [userInfo] = useAtom(userAtom)
-
 
   const table = useReactTable({
     data,
@@ -89,6 +99,7 @@ export function ApprovedDataTable<TData, TValue>({
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
 
+
   const selectedRows = table.getFilteredSelectedRowModel().rows.map((row: any) => row.original)
 
   const { onOpen } = useModal()
@@ -99,32 +110,34 @@ export function ApprovedDataTable<TData, TValue>({
     const file = event.target.files[0];
     if (file) {
       try {
-        const fileContent = await file.text();
-            const jsonData = await csvtojson().fromString(fileContent);
-            const results = await Promise.all(jsonData.map(async (lead) => {
-              const vehicleDate = parse(lead.vehicleDate, 'dd-MM-yyyy', new Date());
-              const formattedVehicleDate = format(vehicleDate, 'dd-MM-yyyy');
-              const { data, error } = await createLead({
-                variables: {
-                    companyId: userInfo?.companyId || "",
-                    name: lead.name,
-                    email: lead.email,
-                    phone: lead.phone,
-                    // alternatePhone: lead.alternatePhone,
-                    address: lead.address,
-                    city: lead.city,
-                    state: lead.state,
-                    zip: lead.zip,
-                    vehicleDate: formattedVehicleDate,
-                    vehicleName: lead.vehicleName,
-                    vehicleModel: lead.vehicleModel,
-                }
-            });
-            
-            handleCreateBulkLead({ lead: data?.createLead, error });
+        const formData = new FormData();
+        formData.append('leads', file);
 
-            }));
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/bulk-upload-lead`, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Authorization': `x-lead-token ${userInfo?.token || ''}`,
+          },
+        });
 
+        if (!response.ok) {
+          throw new Error('Error uploading CSV file');
+        }
+        const contentType = response.headers.get('Content-Type');
+
+        if (contentType && contentType.includes('text/csv')) {
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'error_report.csv';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } else {
+          const result = await response.json();
+        }
       } catch (error) {
         console.error('Error parsing CSV:', error);
       }
@@ -135,55 +148,50 @@ export function ApprovedDataTable<TData, TValue>({
     fileInputRef.current?.click();
   };
 
+  const addProspectForm = optForms.find((x: any) => x.name === "Prospect")
+
   return (
     <div className="space-y-4">
-      {
-            userRole === "manager" && (
-              <Button
-                onClick={() => onOpen("assignLead", { leads: selectedRows })}
-                variant={'default'}
-                size={"sm"}
-                className="items-center gap-1"
-                disabled={!selectedRows.length}
-              >
-                Assign Lead
-              </Button>
-            )
-          }
-      {/* <div className="flex justify-between">
-        <DataTableToolbar table={table} setFilter={setFilter} />
+      <div className="flex justify-between">
+        <div className="flex gap-3">
+          <DataTableToolbar table={table} data={data} setFilter={setFilter} />
+          {/* <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} /> */}
+        </div>
+
         <div className="flex gap-2 items-center">
+          <Button
+            onClick={() => onOpen("assignLead", { leads: selectedRows })}
+            variant={'default'}
+            size={"sm"}
+            className="items-center gap-1"
+            disabled={!selectedRows.length}
+          >
+            Assign Lead
+          </Button>
           <div>
-            <input
-              type="file"
-              accept=".csv"
-              className="hidden"
-              ref={fileInputRef}
-              id="csv-upload"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => handleFileChange({ target: { files: Array.from(event.target.files || []) } })}
-            />
             <label htmlFor="csv-upload">
               <Button
                 variant="default"
                 color="primary"
                 size={"sm"}
                 className="items-center gap-1"
-                onClick={handleButtonClick}
+                onClick={() => onOpen("uploadPrspectModal", { fields: addProspectForm })}
               >
-                <UploadIcon size={15} /> <span>Upload Leads</span>
+                <UploadIcon size={15} /> <span>Upload Prospects</span>
               </Button>
             </label>
 
           </div>
           <Button
-            onClick={() => onOpen("addProspect")}
+            onClick={() => onOpen("addProspect", { fields: addProspectForm })}
             variant={'default'}
             size={"sm"}
             className="items-center gap-1">
-            <PlusCircle size={15} /> <span>Add New Lead</span>
+            <PlusCircle size={15} /> <span>Add New Prospect</span>
           </Button>
         </div>
-      </div> */}
+
+      </div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
