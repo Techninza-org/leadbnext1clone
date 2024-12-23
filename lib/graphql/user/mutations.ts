@@ -26,7 +26,7 @@ mutation CreateUser(
   $password: String!,
   $roleId: String!,
   $deptId: String!,
-  $companyId: String!
+  $companyId: String
 ) {
   createUser(
     name: $name,
@@ -95,7 +95,7 @@ export const CREATE_OR_UPDATE_MANAGER = `
     $password: String!,
     $memberType: String!,
     $deptId: ID!,
-    $companyId: ID!
+    $companyId: ID
   ) {
     createOrUpdateManager(
       name: $name,
