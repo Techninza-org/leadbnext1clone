@@ -17,6 +17,7 @@ import { UploadProspectModal } from "../modals/upload-prospect-modal";
 import { UploadLeadModal } from "../modals/upload-lead-modal";
 import { CreateLeadModal } from "../modals/create-lead-modal";
 import { CreateDeptFormModal } from "../modals/create-dept-form-modal";
+import { EditLeadFormValueModal } from "../modals/edit-lead-form-value-modal";
 
 
 export const ModalProvider = () => {
@@ -46,6 +47,7 @@ export const ModalProvider = () => {
       <UpdateGlobalBroadcastModal />
       <UploadProspectModal />
       <UploadLeadModal />
+      <EditLeadFormValueModal />
     </>
   );
 };

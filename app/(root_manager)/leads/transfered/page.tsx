@@ -1,4 +1,4 @@
-import { ApprovedLeadTable } from "@/components/Lead/approved-lead-table";
+// import { ApprovedLeadTable } from "@/components/Lead/approved-lead-table";
 import {
     Card,
     CardContent,
@@ -13,7 +13,7 @@ import {
           <CardTitle className="font-bold">Leads</CardTitle>
         </CardHeader>
         <CardContent>
-          <ApprovedLeadTable />
+          {/* <ApprovedLeadTable /> */}
         </CardContent>
       </Card>
     );

@@ -40,11 +40,11 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         header: 'Name',
         accessorKey: 'name',
         cell: ({ row }) => {
-            const length = row.original.LeadFeedback.length
+            const length = row.original.submittedForm.length
             return (
                 <div className="flex">
                 <ViewLeadInfo lead={row.original} />
-                {row.original.LeadFeedback[length - 1 ]?.member?.role?.name === 'Telecaller' || row.original.LeadFeedback[length - 1 ]?.member?.role?.name === 'Sales Person' && <Dot color="green" size={30} /> }
+                {row.original.submittedForm[length - 1 ]?.member?.role?.name === 'Telecaller' || row.original.submittedForm[length - 1 ]?.member?.role?.name === 'Sales Person' && <Dot color="green" size={30} /> }
                 </div>
             )
         }
@@ -111,7 +111,7 @@ export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         accessorKey: '',
         cell: ({ row }) => {
             const rowData = row?.original;
-            const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
+            const assigneeName = rowData?.leadMember?.map((leadMember: any) => leadMember?.member?.name).join(", ");
             const approved = rowData?.isLeadApproved
 
             return (

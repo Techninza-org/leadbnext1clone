@@ -148,7 +148,7 @@ export function DataTableLead<TData, TValue>({
     fileInputRef.current?.click();
   };
 
-  const addLeadForm = optForms.find((x: any) => x.name === "Lead")
+  const addLeadForm = optForms?.find((x: any) => x.name === "Lead")
 
   return (
     <div className="space-y-4">

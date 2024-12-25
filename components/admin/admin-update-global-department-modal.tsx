@@ -35,10 +35,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { useCompany } from "../providers/CompanyProvider";
 import { userAtom } from "@/lib/atom/userAtom";
 import { useAtomValue } from "jotai";
+import { useAdmin } from "../providers/AdminProvider";
 
 // Define the schema
 const DepartmentSchema = z.object({
-    deptFields: z.array(z.object({
+    adminDeptForm: z.array(z.object({
         name: z.string().min(1, "Field name is required"),
         fieldType: z.string().min(1, "Field type is required"),
         ddOptionId: z.any().optional(),
@@ -46,7 +47,7 @@ const DepartmentSchema = z.object({
         options: z.object({
             label: z.string(),
             value: z.any(),
-        }).array().default([]),
+        }).array().optional(),
         isRequired: z.boolean(),
         isDisabled: z.boolean(),
     })).default([]),
@@ -64,9 +65,9 @@ const fieldTypes = [
     { value: "DATE", label: "Date" },
 ]
 
-const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) => {
+const AdminUpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) => {
 
-    const { departments } = useCompany()
+    const { departmentsForms: departments } = useAdmin()
     const [currIdx, setCurrIdx] = useState(0)
     const userInfo = useAtomValue(userAtom)
     const { toast } = useToast()
@@ -76,13 +77,13 @@ const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) =
     const form = useForm({
         resolver: zodResolver(DepartmentSchema),
         defaultValues: {
-            deptFields: []
+            adminDeptForm: []
         },
     });
 
     const { fields, append, remove, update } = useFieldArray({
         control: form.control,
-        name: "deptFields",
+        name: "adminDeptForm",
     });
 
     const filteredDeptFields = useMemo(() =>
@@ -92,14 +93,14 @@ const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) =
     useEffect(() => {
         if (filteredDeptFields.length > 0) {
             const sortedSubDeptFields = filteredDeptFields[0]?.fields?.sort((a, b) => a.order - b.order) || []
-            form.reset({ deptFields: sortedSubDeptFields })
+            form.reset({ adminDeptForm: sortedSubDeptFields })
         }
     }, [filteredDeptFields, form])
 
     const { formState: { errors } } = form;
 
     const onSubmit = async (values: any) => {
-        const { deptFields } = values;
+        const { adminDeptForm } = values;
 
         try {
             const { data, error } = await createDept({
@@ -108,7 +109,7 @@ const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) =
                         name: 'Sale Department',
                         subDeptName: deptName,
                         order: 4,
-                        deptFields: deptFields,
+                        deptFields: adminDeptForm,
                     }
                 },
             });
@@ -155,7 +156,7 @@ const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) =
         }))
 
         updatedFields.splice(newIndex, 0, updatedFields.splice(index, 1)[0])
-        form.setValue('deptFields', updatedFields)
+        form.setValue('adminDeptForm', updatedFields)
     }, [fields, form])
 
     const renderFieldOptions = useCallback(() => {
@@ -218,7 +219,7 @@ const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) =
                             <SelectValue placeholder="Select dependency" />
                         </SelectTrigger>
                         <SelectContent>
-                            {form.watch('deptFields').filter(x => ["SELECT", "DD"].includes(x.fieldType)).map((field, index) => (
+                            {form.watch('adminDeptForm').filter(x => ["SELECT", "DD"].includes(x.fieldType)).map((field, index) => (
                                 field.name !== form.watch(`adminDeptForm.${currIdx}.name`) && <SelectItem key={index} value={field.name}>
                                     {field.name}
                                 </SelectItem>
@@ -494,4 +495,4 @@ const UpdateGlobalDepartmentFieldsModal = ({ deptName }: { deptName: string }) =
     );
 };
 
-export default UpdateGlobalDepartmentFieldsModal;
+export default AdminUpdateGlobalDepartmentFieldsModal;

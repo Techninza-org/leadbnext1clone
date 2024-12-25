@@ -1,10 +1,10 @@
+import AdminUpdateGlobalDepartmentFieldsModal from '@/components/admin/admin-update-global-department-modal';
 import React from 'react'
-import UpdateGlobalDepartmentFieldsModal from '@/components/dynamic/update-global-department-modal';
 
 const page = ({ params }: { params: { id: string } }) => {
     const { id } = params;
     return (
-        <UpdateGlobalDepartmentFieldsModal deptName={id}  />
+        <AdminUpdateGlobalDepartmentFieldsModal deptName={id} />
     )
 }
 

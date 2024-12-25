@@ -65,7 +65,7 @@ export const UploadProspectModal = () => {
 
     const isModalOpen = isOpen && type === "uploadPrspectModal";
 
-    const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
+    const validationSchema = fields?.formFields?.reduce((acc: any, field: any) => {
         if (field.isRequired) {
             acc[field.name] = { required: "Required" };
         }
@@ -73,7 +73,7 @@ export const UploadProspectModal = () => {
     }, {});
 
     const form = useForm({
-        defaultValues: fields?.subDeptFields.reduce((acc: any, field: any) => {
+        defaultValues: fields?.formFields?.reduce((acc: any, field: any) => {
             acc[field.name] = "";
             return acc;
         }, {}),
@@ -116,7 +116,7 @@ export const UploadProspectModal = () => {
     };
 
 
-    const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
+    const sortedFields = fields?.formFields?.sort((a: any, b: any) => a.order - b.order);
 
     const onSubmit = async (data: any) => {
         const updatedCSVData = wrapFieldsInDynamicFieldValueArray(sortedFields || [], updateCsvKeys(uploadCSVData, data))

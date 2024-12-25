@@ -30,7 +30,7 @@ const CompanyDepartmentsRoot = () => {
   });
 
   useEffect(() => {
-    if (data?.getCompanyDepts?.[0]?.companyDeptForms.length > 0) {
+    if (data?.getCompanyDepts?.[0]?.companyForms?.length > 0) {
       setDeptId(data.getCompanyDepts[0].id);
     }
   }, [data])
@@ -43,24 +43,54 @@ const CompanyDepartmentsRoot = () => {
 
   if (loading) return <div>Loading...</div>;
 
+  const groupFormOnCategoryName = Object?.groupBy(
+    data?.getCompanyDepts?.[0].companyForms ?? [],
+    (form: any) => form?.category?.name || "Uncategorized"
+  );
+
   return (
     <>
       <Card>
         <CardHeader>
+          <div className='ml-auto '>
+            <Button size={'sm'} onClick={() => onOpen('addDept')}>Add Department</Button>
+          </div>
+        </CardHeader>
+        <CardContent className='space-y-2'>
+          {Object.entries(groupFormOnCategoryName).map(([categoryName, forms]) => (
+            <Card key={categoryName}>
+              <CardHeader>
+                <CardTitle className="font-bold flex justify-between">
+                  <div>{categoryName}</div>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-2 gap-8">
+                {forms?.map((form) => (
+                  <Link className='p-6 border rounded-md text-center shadow' href={`/departments/form/${categoryName}/${form.name}/${deptId}/${userInfo?.companyId}`} key={form.id}>
+                    <CardTitle>{form.name}</CardTitle>
+                  </Link>
+                ))}
+              </CardContent>
+            </Card>
+          ))}
+        </CardContent>
+      </Card>
+      {/* <Card>
+        <CardHeader>
           <CardTitle className="flex justify-between font-bold">
-            <div>Departments Forms</div>
+            <div>Departments Forms (Auxiliary Forms)</div>
             <Button size={'sm'} onClick={()=>onOpen('addDept')}>Add Department</Button>
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-8">
-          {data?.getCompanyDepts[0]?.companyDeptForms?.map((dept: any) => (
+          {data?.getCompanyDepts[0]?.companyForms?.map((dept: any) => (
             <Link className='p-6 border rounded-md text-center shadow' href={`/departments/form/${dept.name}/${deptId}/${userInfo?.companyId}`} key={dept.id}>
               <CardTitle>{dept.name}</CardTitle>
             </Link>
           ))}
         </CardContent>
-      </Card>
-      <Card className='my-3'>
+      </Card> */}
+      {/* <Card className='my-3'>
         <CardHeader>
           <CardTitle className="font-bold">Broadcast</CardTitle>
         </CardHeader>
@@ -71,19 +101,8 @@ const CompanyDepartmentsRoot = () => {
             </CardContent>
           </Card>
         </CardContent>
-      </Card>
-      <Card>
-        <CardHeader>
-          <CardTitle className="font-bold">Departments Operational Forms</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-8">
-          {optForms?.map((form: any) => (
-            <Link className='p-6 border rounded-md text-center shadow' href={`/departments/optForms/${form.name}/${userInfo?.companyId}`} key={form.id}>
-              <CardTitle>{form.name}</CardTitle>
-            </Link>
-          ))}
-        </CardContent>
-      </Card>
+      </Card> */}
+
     </>
   );
 };

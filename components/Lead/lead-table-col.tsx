@@ -72,29 +72,6 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         }
     },
     {
-        header: 'Address',
-        accessorKey: 'address',
-        cell: ({ row }) => {
-            return (
-                <HoverCardToolTip label="Address">
-                    <span>{row.getValue("address")}</span>
-                </HoverCardToolTip>
-            )
-
-        }
-    },
-    {
-        header: 'City',
-        accessorKey: 'city',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("city")}</span>
-                </div>
-            )
-        }
-    },
-    {
         header: 'Assigned',
         accessorKey: '',
         cell: ({ row }) => {
@@ -107,15 +84,14 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
 ];
 
 const AssigneeName = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
-    const userInfo = useAtomValue(userAtom)
-    const assigneeName = lead?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
+    const assigneeName = lead?.leadMember?.map((leadMember: any) => leadMember?.member?.name).join(", ");
     return (
         <Button
             size={'sm'}
             variant={assigneeName ? "secondary" : "destructive"}
             className="text-xs p-2  capitalize"
         >
-            {userInfo?.name !== assigneeName ? assigneeName : "Not Assigned"}
+            { !!assigneeName ? assigneeName: "Not Assigned"}
         </Button>
     )
 }
@@ -200,13 +176,21 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         }
     },
     {
+        header: 'Department',
+        accessorKey: 'dept',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    {/* <span>{row.getValue("dept")}</span> */}
+                    <span>Sales</span>
+                </div>
+            )
+        }
+    },
+    {
         header: 'Action',
         accessorKey: '',
         cell: ({ row }) => {
-            const rowData = row?.original;
-            const assigneeName = rowData?.LeadMember?.map((leadMember) => leadMember?.Member?.name).join(", ");
-            const approved = rowData?.isLeadApproved
-
             return (
                 <AssignedLeadTableRowActions lead={row.original} />
             );

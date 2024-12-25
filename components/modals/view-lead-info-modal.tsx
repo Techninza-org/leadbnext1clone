@@ -226,7 +226,7 @@ export const ViewLeadInfoModal = () => {
                                 <Separator className="my-2" />
                             </div>
                         )}
-                        {!!lead?.LeadFeedback && lead.LeadFeedback.map(({ feedback, member, imageUrls }, index) => (
+                        {!!lead?.submittedForm && lead.submittedForm.map(({ feedback, member, imageUrls }, index) => (
                             <Fragment key={index}>
                                 {member && (
                                     <div className="flex justify-between pb-4 items-center">

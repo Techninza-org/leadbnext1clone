@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useMemo } from "react"
+import React, { useState, useMemo, useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { Form } from "@/components/ui/form"
 import { Button } from "@/components/ui/button"
@@ -20,14 +20,14 @@ import { FileUploaderField } from "../formFieldsComponents/FileUploaderField"
 import { DatePickerField } from "../formFieldsComponents/DatePickerField"
 import { formatFormData } from "@/lib/utils"
 
-export const SubmitLeadModal = () => {
+export const EditLeadFormValueModal = () => {
     const user = useAtomValue(userAtom)
     const { toast } = useToast()
     const [fileStates, setFileStates] = useState<{ [key: string]: File[] | null }>({});
     const { isOpen, onClose, type, data: modalData } = useModal();
     const { lead, fields } = modalData;
-    const isModalOpen = isOpen && type === "submitLead";
-    const [submitFeedback, { loading: feedBackLoading }] = useMutation(leadMutation.SUBMIT_LEAD);
+    const isModalOpen = isOpen && type === "editLeadFormValue";
+    const [editLeadFormValue, { loading: feedBackLoading }] = useMutation(leadMutation.EDIT_LEAD_FORM_VALUE);
 
     const formFields = useMemo(() => {
         if (Array.isArray(fields?.fields)) {
@@ -37,24 +37,24 @@ export const SubmitLeadModal = () => {
                 fields: fields?.fields
             }];
         } else {
-            const parentFields = fields?.fields?.[fields?.name] || [];
-            const childFields = fields?.fields?.[fields?.childName] || [];
+            const parentFields = fields?.field?.[fields?.name] || [];
+            const childFields = fields?.field?.[fields?.childName] || [];
             return [
                 {
                     id: fields?.id,
                     name: fields?.name,
+                    value: fields?.value,
                     fields: parentFields,
                 },
                 {
                     id: `${fields?.id}-child`,
                     name: fields?.childName,
+                    value: fields?.value,
                     fields: childFields,
                 },
             ].filter(field => field.fields.length > 0);
         }
     }, [fields]);
-
-    console.log(formFields, "formFields", fields?.fields)
 
     const validationSchema = formFields.reduce((acc: any, field: any) => {
         field.fields.forEach((subField: any) => {
@@ -69,11 +69,11 @@ export const SubmitLeadModal = () => {
         defaultValues: formFields.reduce((acc: any, field: any) => {
             if (Array.isArray(fields?.fields)) {
                 field.fields.forEach((subField: any) => {
-                    acc[subField.name] = "";
+                    acc[subField.name] = subField.value || "";
                 });
             } else {
                 acc[field.name] = field.fields.reduce((subAcc: any, subField: any) => {
-                    subAcc[subField.name] = "";
+                    subAcc[subField.name] = subField.value || "";
                     return subAcc;
                 }, {});
             }
@@ -83,7 +83,24 @@ export const SubmitLeadModal = () => {
         criteriaMode: "all",
     });
 
+    const { setValue } = form;
+
+    useEffect(() => {
+        if (formFields?.length > 0) {
+            formFields.forEach((field: any) => {
+                field.fields.forEach((subField: any) => {
+                    const fieldName = Array.isArray(fields?.fields)
+                        ? subField.name
+                        : `${field.name}.${subField.name}`;
+                    setValue(fieldName, subField.value || "");
+                });
+            });
+        }
+    }, [formFields, setValue]);
+
     const onSubmit = async (data: any) => {
+        console.log(data, "data", formatFormData(fields?.fields, data))
+
         let parentformattedData;
         let childformattedData;
 
@@ -96,103 +113,29 @@ export const SubmitLeadModal = () => {
         }
 
         try {
-            let uploadedFiles: any[] = [];
 
-            if (Object.keys(fileStates)?.length) {
-                const formData = new FormData();
+            const { data: resData, loading, error } = await editLeadFormValue({
+                variables: {
+                    submittedFormId: fields?.id,
+                    formValue: formatFormData(fields?.fields, data)
+                },
+            });
 
-                Object.entries(fileStates).forEach(([fieldName, files]) => {
-                    files?.forEach((file: File) => {
-                        formData.append(fieldName, file);
-                    });
-                });
-
-
-                const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/upload`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const uploadData = await uploadRes.json();
-                uploadedFiles = uploadData.files;
-
-                const formDataWithUrls = fields?.fields.map((field: any) => {
-                    if (field.fieldType === 'IMAGE' || field.fieldType === 'DD_IMG') {
-                        const uploadedFilesForField = uploadedFiles?.filter((file: any) => {
-                            if (field.fieldType === 'DD_IMG') {
-                                return field.options.find((r: any) => {
-                                    return r.value.find((c: any) => c.label === file.fieldname)
-                                })
-                            }
-                            return file.fieldname === field.name
-                        });
-                        if (uploadedFilesForField && uploadedFilesForField.length > 0) {
-                            const urls = uploadedFilesForField.map((file: any) => file.url);
-                            return { ...field, value: urls }; // Always return an array of URLs
-                        }
-                    }
-                    return field;
-                });
-
-                const { data: resData, loading, error } = await submitFeedback({
-                    variables: {
-                        deptId: user?.deptId,
-                        leadId: lead?.id || "",
-                        callStatus: "SUCCESS",
-                        paymentStatus: "PENDING",
-                        feedback: parentformattedData,
-                        childFormValue: childformattedData,
-                        submitType: "updateLead",
-                        formName: fields?.name || ""
-                    },
-                });
-
-                if (error) {
-                    const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
-                    toast({
-                        title: 'Error',
-                        description: message || "Something went wrong",
-                        variant: "destructive"
-                    });
-                    return;
-                }
-
+            if (error) {
+                const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
                 toast({
-                    variant: "default",
-                    title: "Lead Submitted Successfully!",
+                    title: 'Error',
+                    description: message || "Something went wrong",
+                    variant: "destructive"
                 });
-                handleClose();
-            } else {
-                // No files to upload, directly proceed with GraphQL mutation
-                const { data: resData, loading, error } = await submitFeedback({
-                    variables: {
-                        formName: fields?.name,
-                        dependentOnFormName: fields?.childName,
-                        deptId: user?.deptId,
-                        leadId: lead?.id || "",
-                        callStatus: "SUCCESS",
-                        paymentStatus: "PENDING",
-                        feedback: parentformattedData,
-                        childFormValue: childformattedData,
-                    },
-                });
-
-                if (error) {
-                    const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
-                    toast({
-                        title: 'Error',
-                        description: message || "Something went wrong",
-                        variant: "destructive"
-                    });
-                    return;
-                }
-
-                toast({
-                    variant: "default",
-                    title: "Lead Submitted Successfully!",
-                });
-                handleClose();
+                return;
             }
+
+            toast({
+                variant: "default",
+                title: "Lead Submitted Successfully!",
+            });
+            handleClose();
         } catch (error) {
             console.error("Error during submission:", error);
             toast({
@@ -270,6 +213,7 @@ export const SubmitLeadModal = () => {
                                                     fieldName={fieldName}
                                                     validationRules={validationRules}
                                                     form={form}
+
                                                 />
                                             );
                                         default:

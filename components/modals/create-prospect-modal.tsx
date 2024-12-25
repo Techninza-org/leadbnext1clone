@@ -111,7 +111,7 @@ export const ProspectForm = ({ fields, onClose }: {
     });
 
 
-    const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
+    const validationSchema = fields?.fields.reduce((acc: any, field: any) => {
         if (field.isRequired) {
             acc[field.name] = { required: "Required" };
         }
@@ -119,7 +119,7 @@ export const ProspectForm = ({ fields, onClose }: {
     }, {});
 
     const form = useForm({
-        defaultValues: fields?.subDeptFields.reduce((acc: any, field: any) => {
+        defaultValues: fields?.fields.reduce((acc: any, field: any) => {
             acc[field.name] = "";
             return acc;
         }, {}),
@@ -159,7 +159,7 @@ export const ProspectForm = ({ fields, onClose }: {
                 const uploadData = await uploadRes.json();
                 uploadedFiles = uploadData.files;
 
-                const formDataWithUrls = fields?.subDeptFields.map((field: any) => {
+                const formDataWithUrls = fields?.fields.map((field: any) => {
                     if (field.fieldType === 'IMAGE' || field.fieldType === 'DD_IMG') {
                         const uploadedFilesForField = uploadedFiles?.filter((file: any) => {
                             if (field.fieldType === 'DD_IMG') {
@@ -247,7 +247,7 @@ export const ProspectForm = ({ fields, onClose }: {
         }
     };
 
-    const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
+    const sortedFields = fields?.fields.sort((a: any, b: any) => a.order - b.order);
 
     const handleClose = () => {
         form.reset();

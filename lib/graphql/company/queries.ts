@@ -12,7 +12,7 @@ const GET_COMPANY_DEPT_FIELDS = `
     getCompanyDeptFields(deptId: $deptId) {
       id
       name
-      subDeptFields { 
+      fields { 
         name
         fieldType
         ddOptionId
@@ -130,10 +130,7 @@ const GET_FOLLOWUP = `
       customerResponse
       rating
       leadId
-      followUpById
-      followUpBy{
-        name
-      }
+      followUpBy
       createdAt
       updatedAt
     }

@@ -11,13 +11,16 @@ query getDeptFields($deptId: String!) {
 `;
 
 const GET_COMPANY_DEPTS = `
-  query GetCompanyDepts($companyId: String!) {
+  query GetCompanyDepts($companyId: String) {
     getCompanyDepts(companyId: $companyId) {
       id
       name
-      companyDeptForms {
+      companyForms {
         id
         name
+        category {
+          name
+        }
       }
     }
   }
@@ -28,7 +31,8 @@ const GET_COMPANY_DEPT_FIELDS = `
     getCompanyDeptFields(deptId: $deptId) {
       id
         name
-        subDeptFields { 
+        dependentOnId
+        fields { 
           name
           fieldType
           ddOptionId

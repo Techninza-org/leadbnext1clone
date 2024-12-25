@@ -15,43 +15,41 @@ import { useCompany } from '../providers/CompanyProvider'
 
 const FollowUpsData = ({ lead }: { lead: any }) => {
   const [followups, setFollowups] = React.useState([])
-  const { data, loading, error } = useQuery(leadQueries.GET_FOLLOWUP, {
-    variables: {
-      leadId: lead?.id
-    }
-  })
+  // const { data, loading, error } = useQuery(leadQueries.GET_FOLLOWUP, {
+  //   variables: {
+  //     leadId: lead?.id
+  //   }
+  // })
 
-  const { optForms } = useCompany()
-  const fields = optForms.find((x: any) => x.name === "Enquiry")
+  // const { optForms } = useCompany()
+  // const fields = optForms?.find((x: any) => x.name === "Enquiry")
 
   return (
     <div className="rounded-md border mt-2">
       <Table className='text-sm'>
         <TableHeader>
           <TableRow className='uppercase'>
-            <TableHead>WHEN CREATED</TableHead>
-            <TableHead>ADDED BY</TableHead>
-            {fields?.subDeptFields?.map((x: any) => (
+            <TableHead>Added By</TableHead>
+            <TableHead>Remark</TableHead>
+            <TableHead>Next FollowUp Date</TableHead>
+            {/* <TableHead>WHEN CREATED</TableHead> */}
+            {/* {Object.keys(lead.followUps[0] || {})?.map((x: any) => (
               <TableHead key={x.name}>{x.name}</TableHead>
-            ))}
+            ))} */}
           </TableRow>
         </TableHeader>
         <TableBody>
           {
-            data?.getFollowUpByLeadId?.map((row: any) => (
+            lead?.followUps?.map((row: any) => (
               <TableRow
                 key={row.id}
               >
-                <TableCell>{row.createdAt}</TableCell>
-                <TableCell>{row.followUpBy.name}</TableCell>
+                {/* <TableCell>{row.createdAt}</TableCell> */}
+                <TableCell>{row.followUpBy}</TableCell>
+                <TableCell>{row.remark}</TableCell>
                 <TableCell>{row.nextFollowUpDate}</TableCell>
-                <TableCell>{row.customerResponse}</TableCell>
-                <TableCell>{row.rating}</TableCell>
-                <TableCell>
-                  <HoverCardToolTip label="Remark">
-                    <span>{row.remark}</span>
-                  </HoverCardToolTip>
-                </TableCell>
+                {/* <TableCell>{row.customerResponse}</TableCell>
+                <TableCell>{row.rating}</TableCell> */}
               </TableRow>
             ))
           }

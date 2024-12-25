@@ -148,7 +148,7 @@ export function DataTableProspect<TData, TValue>({
     fileInputRef.current?.click();
   };
 
-  const addProspectForm = optForms.find((x: any) => x.name === "Prospect")
+  const addProspectForm = optForms?.find((x: any) => x.name === "Prospect")
 
   return (
     <div className="space-y-4">
@@ -180,7 +180,6 @@ export function DataTableProspect<TData, TValue>({
                 <UploadIcon size={15} /> <span>Upload Prospects</span>
               </Button>
             </label>
-
           </div>
           <Button
             onClick={() => onOpen("addProspect", { fields: addProspectForm })}

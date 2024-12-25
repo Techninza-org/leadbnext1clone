@@ -38,7 +38,7 @@ export const leadSchema = createLeadSchema.extend({
     LeadMember: z.array(z.object({
         Member: loggedUserSchema,
     })),
-    LeadFeedback: z.array(z.object({
+    submittedForm: z.array(z.object({
         id: z.string(),
         memberId: z.string(),
         member: loggedUserSchema,

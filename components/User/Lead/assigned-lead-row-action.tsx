@@ -27,6 +27,7 @@ import { useAtomValue } from "jotai"
 import { CompanyDeptFieldSchema } from "@/types/company"
 import { LOGIN_USER } from "@/lib/graphql/user/mutations"
 import { deptQueries } from "@/lib/graphql/dept/queries"
+import { updateDependentFields } from "@/lib/utils"
 
 
 interface DataTableRowActionsProps<TData> {
@@ -53,6 +54,8 @@ export function AssignedLeadTableRowActions<TData>({
     skip: !user,
   })
 
+  const formateFields = updateDependentFields(data?.getCompanyDeptFields || [])
+  
   const { onOpen } = useModal()
   return (
     <DropdownMenu>
@@ -67,7 +70,7 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          ["root", "telecaller"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && data?.getCompanyDeptFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+          ["root", "telecaller"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && formateFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
             <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
               {field.name}
             </DropdownMenuItem>

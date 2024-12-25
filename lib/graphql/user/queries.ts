@@ -1,5 +1,5 @@
 const GET_COMPANY_DEPT_MEMBERS = `
-  query GetCompanyDeptMembers($deptId: String, $companyId: String!) {
+  query GetCompanyDeptMembers($deptId: String, $companyId: String) {
     getCompanyDeptMembers(deptId: $deptId, companyId: $companyId) {
       id
       name
@@ -82,10 +82,10 @@ const GET_DEPT_FIELDS = `
       getDeptWFields{
          id
          name
-         deptFields {
+         adminDeptForm {
           id
           name
-          subDeptFields {
+          fields {
             id
             name
             fieldType
@@ -110,7 +110,7 @@ const GET_DEPT_OPT_FIELDS = `
          id
          name
         
-          subDeptFields {
+          fields {
             id
             name
             fieldType

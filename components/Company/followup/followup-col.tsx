@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { leadBidsSchema, leadSchema } from "@/types/lead";
 import { formatCurrencyForIndia } from "@/lib/utils";
+import { format } from "date-fns";
 
 export const BidsColDefs: ColumnDef<z.infer<typeof leadBidsSchema>>[] = [
     {
@@ -29,6 +30,15 @@ export const BidsColDefs: ColumnDef<z.infer<typeof leadBidsSchema>>[] = [
         enableHiding: false,
     },
     {
+        header: 'Id',
+        accessorKey: 'id',
+        cell: ({ row }) => {
+            return (
+                <div className="capitalize">{row.getValue("id")}</div>
+            )
+        }
+    },
+    {
         header: 'Remark',
         accessorKey: 'remark',
         cell: ({ row }) => {
@@ -38,6 +48,25 @@ export const BidsColDefs: ColumnDef<z.infer<typeof leadBidsSchema>>[] = [
         }
     },
     {
+        header: 'Followup By',
+        accessorKey: 'followUpBy',
+        cell: ({ row }) => {
+            return (
+                <div className="capitalize">{row.getValue("followUpBy")}</div>
+            )
+        }
+    },
+    // {
+    //     header: 'Date',
+    //     accessorKey: 'createdAt',
+    //     cell: ({ row }) => {
+    //         return (
+    //             // <div className="capitalize">{format(new Date(row.getValue("createdAt")), "DD MM YYYY")}</div>
+    //             <div className="capitalize">{(row.getValue("createdAt"))}</div>
+    //         )
+    //     }
+    // },
+    {
         header: 'Next FollowUp Date',
         accessorKey: 'nextFollowUpDate',
         cell: ({ row }) => {
@@ -46,24 +75,4 @@ export const BidsColDefs: ColumnDef<z.infer<typeof leadBidsSchema>>[] = [
             )
         }
     },
-    {
-        header: 'Followup By',
-        accessorKey: 'followUpBy',
-        cell: ({ row }) => {
-            const member: { name: string } = row.getValue("followUpBy");
-            return (
-                <div className="capitalize">{member.name}</div>
-            )
-        }
-    },
-    {
-        header: 'Type',
-        accessorKey: 'customerResponse',
-        cell: ({ row }) => {
-            return (
-                <div className="capitalize">{row.getValue("customerResponse")}</div>
-            )
-        }
-    },
-
 ];

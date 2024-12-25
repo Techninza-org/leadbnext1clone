@@ -29,13 +29,22 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
     const setLeads = useSetAtom(leads)
     const setProspect = useSetAtom(prospects)
 
+    const { skip, variables } = {
+        skip: ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || "")  &&
+        !!userInfo?.companyId,
+        variables: {
+            deptId: userInfo?.deptId,
+            companyId: userInfo?.companyId,
+        },
+    };
+
     const { loading: leadsLoading } = useQuery(
         leadQueries.GET_COMPANY_LEADS,
         {
             variables: { companyId: userInfo?.companyId },
-            skip: !userInfo,
+            skip,
             onSuccess: ({ data }) => {
-                setLeads(data.getCompanyLeads.lead.filter((x: any) => x.isLeadApproved === true));
+                setLeads(data.getCompanyLeads.lead);
             },
             refetchAfterMutations: [
                 {
@@ -60,7 +69,7 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             onSuccess: ({ data }) => {
                 setProspect(data.getCompanyProspects);
             },
-            skip: !userInfo,
+            skip,
             refetchAfterMutations: [
                 {
                     mutation: LOGIN_USER,

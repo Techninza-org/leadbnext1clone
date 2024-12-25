@@ -228,7 +228,7 @@ export const EnquiryDetailsModal = () => {
                         </div>
                     </div>
                     <div className="p-4">
-                        {!!lead?.LeadFeedback && lead?.LeadFeedback?.map(({ feedback, member, imageUrls }) => (
+                        {!!lead?.submittedForm && lead?.submittedForm?.map(({ feedback, member, imageUrls }) => (
                             <>
                                 {member && <div className="flex justify-between pb-4 items-center">
                                     <div className="flex items-center">
@@ -242,7 +242,7 @@ export const EnquiryDetailsModal = () => {
                                 </div>}
 
                                 {
-                                    feedback?.map((item) => {
+                                    feedback?.map((item: any) => {
                                         const isValidUrl = (url: string) => {
                                             const pattern = new RegExp('^(https?:\\/\\/)' + // protocol
                                                 '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name and extension

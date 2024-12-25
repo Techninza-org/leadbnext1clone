@@ -12,11 +12,11 @@ const DashboardCards = () => {
 
   const [rootMembersInfo] = useAtom(rootMembersAtom);
 
-  const [getRootUsers, { data, loading, error }] = useManualQuery(userQueries.GET_COMPANIES);
+  // const [getRootUsers, { data, loading, error }] = useManualQuery(userQueries.GET_COMPANIES);
 
-  useEffect(() => {
-    getRootUsers()
-  }, [userInfo?.token, companyId])
+  // useEffect(() => {
+  //   getRootUsers()
+  // }, [userInfo?.token, companyId])
 
   return (
     <div className="lg:grid grid-cols-3 gap-3">

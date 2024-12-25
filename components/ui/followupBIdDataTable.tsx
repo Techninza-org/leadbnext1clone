@@ -90,7 +90,7 @@ export function FollowUpBidDataTable<TData, TValue>({
     const toTimestamp = date.to.setHours(23, 59, 59, 999);
 
     const filteredByDate = data.filter((row: any) => {
-      const createdAtTimestamp = new Date(parseInt(row.createdAt)).getTime();
+      const createdAtTimestamp = new Date(parseInt(row?.createdAt)).getTime();
       console.log(createdAtTimestamp , fromTimestamp , createdAtTimestamp , toTimestamp)
       return createdAtTimestamp >= fromTimestamp && createdAtTimestamp <= toTimestamp;
     });

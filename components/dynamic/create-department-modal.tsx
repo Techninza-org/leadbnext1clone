@@ -30,11 +30,7 @@ const DepartmentSchema = z.object({
         fieldType: z.string().min(1, "Field type is required"),
         ddOptionId: z.any().optional(),
         order: z.number().int().min(1, "Field order is required"),
-        options: z.array(z.object({
-            label: z.string(),
-            value: z.any(),
-            colorCode: z.any().optional(),
-        })).default([]),
+        options: z.any(),
         isRequired: z.boolean(),
         isDisabled: z.boolean(),
     })).default([]),
@@ -70,7 +66,7 @@ const languages = [
 ] as const
 
 
-const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
+const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
     const [currIdx, setCurrIdx] = useState(0)
     const userInfo = useAtomValue(userAtom)
     const [currentOptionsIndx, setCurrentOptionsIndx] = useState(0)
@@ -101,12 +97,12 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
     })
 
     const filteredDeptFields = useMemo(() =>
-        data?.getCompanyDeptFields?.filter(field => String(field.name) === String(deptName)) || [],
+        data?.getCompanyDeptFields?.filter(field => String(field.name) === String(decodeURIComponent(deptName))) || [],
         [data, deptName])
 
     useEffect(() => {
         if (filteredDeptFields.length > 0) {
-            const sortedSubDeptFields = filteredDeptFields[0]?.subDeptFields?.sort((a, b) => a.order - b.order) || []
+            const sortedSubDeptFields = filteredDeptFields[0]?.fields?.sort((a, b) => a.order - b.order) || []
             form.reset({ deptFields: sortedSubDeptFields })
         }
     }, [filteredDeptFields, form])
@@ -117,7 +113,8 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                 variables: {
                     input: {
                         companyDeptId: deptId || "",
-                        name: deptName,
+                        categoryName: decodeURIComponent(categoryName),
+                        name: decodeURIComponent(deptName),
                         deptName,
                         order: 4,
                         subDeptFields: values.deptFields,
@@ -168,7 +165,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         form.setValue('deptFields', updatedFields)
     }, [fields, form])
 
-    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (!files || files.length === 0) return;
 
@@ -190,7 +187,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         } catch (error) {
             console.error("Error parsing CSV:", error);
         }
-    };
+    }, [currIdx, currentOptionsIndx, form]);
 
     // console.log(form.watch(`deptFields.${currIdx}.options`), "`deptFields.${currIdx}.options`")
 
@@ -458,7 +455,7 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
                                                     <CommandEmpty>No language found.</CommandEmpty>
                                                     <CommandGroup>
                                                         {(() => {
-                                                            const selectedParent = filteredDeptFields[0]?.subDeptFields.find(
+                                                            const selectedParent = filteredDeptFields[0]?.fields.find(
                                                                 (subField) => subField.name === form.watch(`deptFields.${currIdx}.ddOptionId`)
                                                             )
                                                             if (["SELECT", "TAG"].includes(selectedParent?.fieldType)) {
@@ -642,14 +639,14 @@ const UpdateDepartmentFieldsModal = ({ deptName, deptId }) => {
         }
 
         return null
-    }, [form, currIdx, searchTerm, editingIndex, filteredDeptFields])
+    }, [form, currIdx, searchTerm, editingIndex, filteredDeptFields, handleFileChange])
 
     return (
         <Form {...form}>
             <Card className="grid grid-cols-7 gap-2">
                 <Card className="col-span-4">
                     <CardHeader>
-                        <CardTitle className="text-2xl text-center font-bold">Form Builder  {filteredDeptFields[0]?.name || ''}</CardTitle>
+                        <CardTitle className="text-2xl text-center font-bold">Form Builder {filteredDeptFields[0]?.name || ''}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={form.handleSubmit(onSubmit)}>

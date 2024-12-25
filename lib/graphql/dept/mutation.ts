@@ -21,10 +21,6 @@ const CREATE_OR_UPDATE_GLOBAL_DEPTS = `
     createDept(input: $input) {
       dept {
         id
-        deptFields{
-            id
-            name
-        }
     }
     }
   }

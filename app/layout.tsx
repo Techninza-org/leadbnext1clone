@@ -13,6 +13,7 @@ import { LeadProvider } from "@/components/providers/LeadProvider";
 import LoadingProviders from "@/components/providers/LoadingbarProivder";
 import { CompanyProvider } from "@/components/providers/CompanyProvider";
 import { SubscriptionProvider } from "@/components/providers/SubscriptionProvider";
+import { AdminProvider } from "@/components/providers/AdminProvider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -42,17 +43,19 @@ export default function RootLayout({
           <Provider>
 
             <AuthProvider>
-              <SubscriptionProvider>
-                <LeadProvider>
-                  <CompanyProvider>
-                    <ModalProvider />
-                    <LoadingProviders>
-                      {children}
-                    </LoadingProviders>
-                  </CompanyProvider>
-                  <Toaster />
-                </LeadProvider>
-              </SubscriptionProvider>
+              <AdminProvider>
+                <SubscriptionProvider>
+                  <LeadProvider>
+                    <CompanyProvider>
+                      <ModalProvider />
+                      <LoadingProviders>
+                        {children}
+                      </LoadingProviders>
+                    </CompanyProvider>
+                    <Toaster />
+                  </LeadProvider>
+                </SubscriptionProvider>
+              </AdminProvider>
             </AuthProvider>
 
           </Provider>

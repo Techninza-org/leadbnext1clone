@@ -29,18 +29,33 @@ import { deptQueries } from "@/lib/graphql/dept/queries"
 import { LOGIN_USER } from "@/lib/graphql/user/mutations"
 import { Button } from "../ui/button"
 import { Checkbox } from "../ui/checkbox"
+import { Check, ChevronsUpDown } from "lucide-react"
+import { cn } from "@/lib/utils"
+import { useState } from "react"
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "../ui/command"
+
+const options = [
+    { value: "next.js", label: "Next.js" },
+    { value: "sveltekit", label: "SvelteKit" },
+    { value: "nuxt.js", label: "Nuxt.js" },
+    { value: "remix", label: "Remix" },
+    { value: "astro", label: "Astro" },
+]
 
 const creatDeptFormSchema = z.object({
     formName: z.string(),
     deptId: z.string(),
     isDependentOn: z.boolean(),
     dependentFormName: z.string().optional(),
+    categoryName: z.string().optional(),
 });
 
 
 export const CreateDeptFormModal = () => {
 
     const userInfo = useAtomValue(userAtom)
+    const [open, setOpen] = useState(false)
 
     const { isOpen, onClose, type, data: modalData } = useModal();
 
@@ -66,13 +81,14 @@ export const CreateDeptFormModal = () => {
             deptId: "",
             formName: "",
             isDependentOn: false,
-            dependentFormName: ""
+            dependentFormName: "",
+            categoryName: ""
         }
     })
 
     const formDeptId = form.watch("deptId")
 
-    const selectedDept = (deptData?.getCompanyDepts.find((x: any) => x.id == formDeptId))
+    const selectedDept = (deptData?.getCompanyDepts?.find((x: any) => x.id == formDeptId))
 
     const onSubmit = async (data: z.infer<typeof creatDeptFormSchema>) => {
 
@@ -80,6 +96,8 @@ export const CreateDeptFormModal = () => {
         const { data: formRes, error } = await CreateNUpdateCompanyDeptForm({
             variables: {
                 input: {
+                    dependentOnId: data.dependentFormName,
+                    categoryName: data.categoryName, // TODO: Change this to the actual category name
                     deptName: selectedDept.name,
                     companyDeptId: data.deptId,
                     name: data.formName,
@@ -110,8 +128,6 @@ export const CreateDeptFormModal = () => {
         form.reset();
         onClose();
     }
-
-    console.log(deptData?.getCompanyDepts, "deptData?.getCompanyDepts")
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
@@ -150,6 +166,7 @@ export const CreateDeptFormModal = () => {
                                                     <SelectItem key={dept.id} value={dept.id} className="capitalize">{dept.name}</SelectItem>
                                                 ))
                                             }
+                                            {/* <SelectItem value={'Departments Forms (Auxiliary Forms)'} className="capitalize">Departments Forms (Auxiliary Forms)</SelectItem> */}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
@@ -164,6 +181,20 @@ export const CreateDeptFormModal = () => {
                                     <FormLabel className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Form Name</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Enter the form name" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="categoryName"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Category Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Enter the category name" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -196,33 +227,84 @@ export const CreateDeptFormModal = () => {
                             name="dependentFormName"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel
-                                        className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Dependent Form</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
+                                    <FormLabel className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Dependent Form</FormLabel>
+                                    <Select onValueChange={field.onChange} value={field.value}>
                                         <FormControl>
-                                            <SelectTrigger
-                                                className="bg-zinc-100 placeholder:capitalize  border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                            >
-                                                <SelectValue placeholder="Select Dependent" />
+                                            <SelectTrigger className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
+                                                <SelectValue placeholder="Select Dependent Form" />
                                             </SelectTrigger>
                                         </FormControl>
-                                        <SelectContent
-                                            className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                        >
-                                            {
-                                                selectedDept?.companyDeptForms?.map((dept: any) => (
-                                                    <SelectItem key={dept.id} value={dept.id} className="capitalize">{dept.name}</SelectItem>
-                                                ))
-                                            }
+                                        <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
+                                            {selectedDept?.companyForms?.map((dept: any) => (
+                                                <SelectItem key={dept.id} value={dept.name} className="capitalize">{dept.name}</SelectItem>
+                                            ))}
                                         </SelectContent>
                                     </Select>
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />}
+                        {/* <FormField
+                            control={form.control}
+                            name="language"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                    <FormLabel>Language</FormLabel>
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <FormControl>
+                                                <Button
+                                                    variant="outline"
+                                                    role="combobox"
+                                                    className={cn(
+                                                        "w-[200px] justify-between",
+                                                        !field.value && "text-muted-foreground"
+                                                    )}
+                                                >
+                                                    {field.value
+                                                        ? options.find(
+                                                            (language) => language.value === field.value
+                                                        )?.label
+                                                        : "Select language"}
+                                                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                                </Button>
+                                            </FormControl>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-[200px] p-0">
+                                            <Command>
+                                                <CommandInput placeholder="Search language..." />
+                                                <CommandList>
+                                                    <CommandEmpty>No language found.</CommandEmpty>
+                                                    <CommandGroup>
+                                                        {options.map((language) => (
+                                                            <CommandItem
+                                                                value={language.label}
+                                                                key={language.value}
+                                                                onSelect={() => {
+                                                                    form.setValue("language", language.value)
+                                                                }}
+                                                            >
+                                                                {language.label}
+                                                                <Check
+                                                                    className={cn(
+                                                                        "ml-auto",
+                                                                        language.value === field.value
+                                                                            ? "opacity-100"
+                                                                            : "opacity-0"
+                                                                    )}
+                                                                />
+                                                            </CommandItem>
+                                                        ))}
+                                                    </CommandGroup>
+                                                </CommandList>
+                                            </Command>
+                                        </PopoverContent>
+                                    </Popover>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        /> */}
+
 
                         <Button type="submit" className="mt-6">Submit</Button>
 

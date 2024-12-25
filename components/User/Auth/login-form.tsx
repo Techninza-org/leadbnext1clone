@@ -115,7 +115,7 @@ export const LoginForm = () => {
                             )}
                         />
                         <Button type="button" disabled={genratingOTP} onClick={() => genrateOTP()} className="mt-6 w-full">Send OTP</Button>
-                    </div> : <OTPForm form={form} timer={timer} setTimer={setTimer} resendOTP={genrateOTP}  />}
+                    </div> : <OTPForm form={form} timer={timer} setTimer={setTimer} resendOTP={genrateOTP} />}
                 </form>
             </Form>
 
@@ -123,7 +123,7 @@ export const LoginForm = () => {
     )
 }
 
-const OTPForm = ({ form, timer, setTimer, resendOTP }: { form: any, timer: number, setTimer: any, resendOTP: any  }) => {
+const OTPForm = ({ form, timer, setTimer, resendOTP }: { form: any, timer: number, setTimer: any, resendOTP: any }) => {
 
     useEffect(() => {
         if (timer > 0) {

@@ -1,4 +1,5 @@
 'use client'
+import { useAdmin } from '@/components/providers/AdminProvider'
 import { useCompany } from '@/components/providers/CompanyProvider'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -7,7 +8,9 @@ import Link from 'next/link'
 import React from 'react'
 
 const Departments = () => {
-  const { departments, braodcasteForm, optForms } = useCompany()
+  // const { departments, braodcasteForm, optForms } = useCompany()
+  const { departmentsForms } = useAdmin()
+
   const { onOpen } = useModal()
 
   return (
@@ -20,14 +23,14 @@ const Departments = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="grid grid-cols-2 gap-8">
-          {departments?.map((dept: any) => (
+          {departmentsForms?.map((dept: any) => (
             <Link className='p-6 border rounded-md text-center shadow' href={`/admin/depts/${dept.name}`} key={dept.id}>
               <CardTitle>{dept.name}</CardTitle>
             </Link>
           ))}
         </CardContent>
       </Card>
-      <Card className='my-3'>
+      {/* <Card className='my-3'>
         <CardHeader>
           <CardTitle className="font-bold">Broadcast</CardTitle>
         </CardHeader>
@@ -38,8 +41,8 @@ const Departments = () => {
             </CardContent>
           </Card>
         </CardContent>
-      </Card>
-      <Card>
+      </Card> */}
+      {/* <Card>
         <CardHeader>
           <CardTitle className="font-bold">Departments Operational Forms</CardTitle>
         </CardHeader>
@@ -50,7 +53,7 @@ const Departments = () => {
             </Link>
           ))}
         </CardContent>
-      </Card>
+      </Card> */}
     </>
   )
 }

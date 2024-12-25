@@ -111,7 +111,7 @@ export const LeadForm = ({ fields, onClose }: {
     });
 
 
-    const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
+    const validationSchema = fields?.fields.reduce((acc: any, field: any) => {
         if (field.isRequired) {
             acc[field.name] = { required: "Required" };
         }
@@ -119,7 +119,7 @@ export const LeadForm = ({ fields, onClose }: {
     }, {});
 
     const form = useForm({
-        defaultValues: fields?.subDeptFields.reduce((acc: any, field: any) => {
+        defaultValues: fields?.fields.reduce((acc: any, field: any) => {
             acc[field.name] = "";
             return acc;
         }, {}),
@@ -160,7 +160,7 @@ export const LeadForm = ({ fields, onClose }: {
                 const uploadData = await uploadRes.json();
                 uploadedFiles = uploadData.files;
 
-                const formDataWithUrls = fields?.subDeptFields.map((field: any) => {
+                const formDataWithUrls = fields?.fields.map((field: any) => {
                     if (field.fieldType === 'IMAGE' || field.fieldType === 'DD_IMG') {
                         const uploadedFilesForField = uploadedFiles?.filter((file: any) => {
                             if (field.fieldType === 'DD_IMG') {
@@ -219,10 +219,7 @@ export const LeadForm = ({ fields, onClose }: {
                         email: data.email,
                         phone: data.phone,
                         alternatePhone: data.alternatePhone,
-                        address: data.address,
-                        city: data.city,
-                        state: data.state,
-                        zip: data.zip,
+                        remark: data.remark,
                         department: data.department,
                         dynamicFieldValues: formatFormData(fields?.subDeptFields ?? [], data),
                     },
@@ -254,7 +251,7 @@ export const LeadForm = ({ fields, onClose }: {
         }
     };
 
-    const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
+    const sortedFields = fields?.fields.sort((a: any, b: any) => a.order - b.order);
 
 
     const handleClose = () => {
@@ -788,8 +785,24 @@ export const LeadForm = ({ fields, onClose }: {
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="remark"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Remark</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        className="bg-zinc-100 border-0 placeholder:capitalize  dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                        placeholder="Remark"
+                                        disabled={isLoading}
+                                        {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </div>
-
                 <Button type="submit" className="mt-6">Submit</Button>
             </form>
         </Form>

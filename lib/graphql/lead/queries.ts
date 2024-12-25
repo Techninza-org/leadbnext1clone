@@ -1,5 +1,5 @@
 const GET_COMPANY_LEADS = `
-  query GetCompanyLeads($companyId: String!) {
+  query GetCompanyLeads($companyId: String) {
     getCompanyLeads(companyId: $companyId) {
       lead {
         id
@@ -7,37 +7,54 @@ const GET_COMPANY_LEADS = `
         email
         phone
         alternatePhone
-        vehicleDate
-        vehicleName
-        vehicleModel
         callStatus
         paymentStatus
-        isLeadApproved
         department
-        bids{
+        bids {
           id
           bidAmount
         }
 
-        LeadMember {
+        leadMember {
           id
-          Member {
+          member {
             name
           }
         }
-
-        LeadFeedback {
+        followUps {
           id
+          nextFollowUpDate
+          remark
+          customerResponse
+          rating
+          leadId
+          followUpBy
+          createdAt
+          updatedAt
+       }
+        
+
+        submittedForm {
+          id
+          formName
           memberId
+          dependentOnFormName
           member {
             name
             role {
               name
             }
           }
-          imageUrls
-          feedback {
+          formValue {
             id
+            formValueId
+            name
+            fieldType
+            value
+          }
+          dependentOnValue {
+            id
+            formValueId
             name
             fieldType
             value
@@ -45,13 +62,7 @@ const GET_COMPANY_LEADS = `
         }
       }
 
-      groupedLeads {
-        formName
-        feedback {
-          name
-          value
-        }
-      }
+     
     }
   }
 `;
@@ -78,21 +89,15 @@ query getAssignedLeads($userId: String!) {
       email
       phone
       alternatePhone
-      address
-      city
-      state
-      zip
-      vehicleDate
-      vehicleName
-      vehicleModel
       callStatus
       paymentStatus
       bids{
         id
         bidAmount
       }
-      LeadFeedback {
+      submittedForm {
         id
+        formName
         memberId
         member {
             name
@@ -100,8 +105,7 @@ query getAssignedLeads($userId: String!) {
                 name
             }
         }
-        imageUrls
-        feedback {
+        formValue {
             id
             name
             fieldType
@@ -109,8 +113,8 @@ query getAssignedLeads($userId: String!) {
         }
       }
 
-      LeadMember {
-        Member { 
+      leadMember {
+        member { 
             name
         }
       }
@@ -150,7 +154,7 @@ query GetLastMonthAllLeads {
       callStatus
       paymentStatus
 
-      LeadMember {
+      leadMember {
         Member { 
             name
         }
@@ -169,7 +173,7 @@ const UPDATE_LEAD_FOLLOW_UP_DATE = `
 `;
 
 const GET_LEADS_BY_DATE_RANGE = `
-  query GetLeadsByDateRange($companyId: ID!, $startDate: String!, $endDate: String!) {
+  query GetLeadsByDateRange($companyId: ID, $startDate: String!, $endDate: String!) {
     getLeadsByDateRange(companyId: $companyId, startDate: $startDate, endDate: $endDate) {
       callCount
       totalPayCollectedCount

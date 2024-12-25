@@ -69,7 +69,7 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
 
     const fields = optForms.find((x: any) => x.name === "Enquiry")
 
-    const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
+    const validationSchema = fields?.fields.reduce((acc: any, field: any) => {
         if (field.isRequired) {
             acc[field.name] = { required: "Required" };
         }
@@ -77,7 +77,7 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
     }, {});
 
     const form = useForm({
-        defaultValues: fields?.subDeptFields.reduce((acc: any, field: any) => {
+        defaultValues: fields?.fields.reduce((acc: any, field: any) => {
             acc[field.name] = "";
             return acc;
         }, {}),
@@ -143,7 +143,7 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
 
 
 
-    const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
+    const sortedFields = fields?.fields.sort((a: any, b: any) => a.order - b.order);
 
     return (
         <Card>

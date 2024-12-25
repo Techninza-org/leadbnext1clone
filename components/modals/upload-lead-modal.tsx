@@ -58,7 +58,7 @@ export const UploadLeadModal = () => {
 
     const isModalOpen = isOpen && type === "uploadLeadModal";
 
-    const validationSchema = fields?.subDeptFields.reduce((acc: any, field: any) => {
+    const validationSchema = fields?.formFields?.reduce((acc: any, field: any) => {
         if (field.isRequired) {
             acc[field.name] = { required: "Required" };
         }
@@ -66,7 +66,7 @@ export const UploadLeadModal = () => {
     }, {});
 
     const form = useForm({
-        defaultValues: fields?.subDeptFields.reduce((acc: any, field: any) => {
+        defaultValues: fields?.formFields?.reduce((acc: any, field: any) => {
             acc[field.name] = "";
             return acc;
         }, {}),
@@ -109,7 +109,7 @@ export const UploadLeadModal = () => {
     };
 
 
-    const sortedFields = fields?.subDeptFields.sort((a: any, b: any) => a.order - b.order);
+    const sortedFields = fields?.formFields?.sort((a: any, b: any) => a.order - b.order);
 
     const onSubmit = async (data: any) => {
         const updatedCSVData = wrapFieldsInDynamicFieldValueArray(sortedFields || [], updateCsvKeys(uploadCSVData, data))
@@ -277,102 +277,7 @@ export const UploadLeadModal = () => {
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
-                                        control={form.control}
-                                        name="address"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={`Select`} />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {
-                                                            uploadedCSVHeaders.map((item, i) => (
-                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="city"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={`Select`} />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {
-                                                            uploadedCSVHeaders.map((item, i) => (
-                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="zip"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={`Select`} />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {
-                                                            uploadedCSVHeaders.map((item, i) => (
-                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                    <FormField
-                                        control={form.control}
-                                        name="state"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Email</FormLabel>
-                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
-                                                    <FormControl>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder={`Select`} />
-                                                        </SelectTrigger>
-                                                    </FormControl>
-                                                    <SelectContent>
-                                                        {
-                                                            uploadedCSVHeaders.map((item, i) => (
-                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
-                                                            ))
-                                                        }
-                                                    </SelectContent>
-                                                </Select>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
+
                                     {sortedFields?.map((cfield: any) => {
                                         //  const isRequired = cfield.isRequired;
                                         const isDisabled = cfield.isDisabled;

@@ -74,8 +74,8 @@ const LEAD_ASSIGN_TO = `
       description: $description
     ) {
       name
-      LeadMember { 
-          Member { 
+      leadMember { 
+          member { 
               name
           }
       }
@@ -91,9 +91,11 @@ const SUBMIT_LEAD = `
     $callStatus: String!,
     $paymentStatus: String!,
     $feedback: [FeedbackInput!]!
+    $childFormValue: [FeedbackInput!]!
     $urls: [String]
     $submitType: String
     $formName: String
+    $dependentOnFormName: String
   ) {
     submitFeedback(
       nextFollowUpDate: $nextFollowUpDate,
@@ -102,9 +104,11 @@ const SUBMIT_LEAD = `
       callStatus: $callStatus,
       paymentStatus: $paymentStatus,
       feedback: $feedback
+      childFormValue: $childFormValue
       urls: $urls
       submitType: $submitType
       formName: $formName
+      dependentOnFormName: $dependentOnFormName
     ) {
       message
     }
@@ -195,7 +199,22 @@ const UPDATE_FOLLOWUP = `
   }
 `
 
+const EDIT_LEAD_FORM_VALUE = `
+  mutation editLeadFormValue( 
+    $submittedFormId: String!,
+    $formValue: [CreateDeptFieldInput]!
+  ) {
+    editLeadFormValue(
+      submittedFormId: $submittedFormId,
+      formValue: $formValue
+    ) {
+      id
+    }
+  }
+`;
+
 export const leadMutation = {
+  EDIT_LEAD_FORM_VALUE,
   CREATE_LEAD,
   CREATE_PROSPECT,
   LEAD_ASSIGN_TO,

@@ -26,7 +26,7 @@ mutation CreateUser(
   $password: String!,
   $roleId: String!,
   $deptId: String!,
-  $companyId: String!
+  $companyId: String
 ) {
   createUser(
     name: $name,
