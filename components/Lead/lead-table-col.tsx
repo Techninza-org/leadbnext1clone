@@ -83,7 +83,7 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     },
 ];
 
-const AssigneeName = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+const AssigneeName = ({ lead }: { lead: any }) => {
     const assigneeName = lead?.leadMember?.map((leadMember: any) => leadMember?.member?.name).join(", ");
     return (
         <Button

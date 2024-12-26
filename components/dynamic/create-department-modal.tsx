@@ -75,6 +75,8 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
     const fileInputRef = React.useRef<HTMLInputElement>(null);
     const [jsonData, setJsonData] = useState<ParsedData[] | null>(null);
 
+    const [companyDeptFormId, setCompanyDeptFormId] = useState(null)
+
 
     const [searchTerm, setSearchTerm] = useState('')
     const [editingIndex, setEditingIndex] = useState(null);
@@ -105,10 +107,21 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
             const sortedSubDeptFields = filteredDeptFields[0]?.fields?.sort((a, b) => a.order - b.order) || []
             form.reset({ deptFields: sortedSubDeptFields })
         }
+        console.log(filteredDeptFields[0]?.id, "filteredDeptFields[0]?.id")
+        setCompanyDeptFormId(filteredDeptFields[0]?.id)
     }, [filteredDeptFields, form])
 
     const onSubmit = useCallback(async (values) => {
         try {
+            console.log({
+                companyDeptId: deptId || "",
+                categoryName: decodeURIComponent(categoryName),
+                name: decodeURIComponent(deptName),
+                deptName,
+                order: 4,
+                subDeptFields: values.deptFields,
+                companyDeptFormId: companyDeptFormId,
+            } , "values")
             const { data, error } = await updateDepartmentFields({
                 variables: {
                     input: {
@@ -118,6 +131,7 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
                         deptName,
                         order: 4,
                         subDeptFields: values.deptFields,
+                        companyDeptFormId: companyDeptFormId,
                     }
                 },
             });
@@ -140,7 +154,7 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
         } catch (error) {
             console.error(error);
         }
-    }, [])
+    }, [categoryName, companyDeptFormId, deptId, deptName, toast, updateDepartmentFields])
 
     const handleSelectChange = useCallback((value, index) => {
         form.setValue(`deptFields.${index}.fieldType`, value)

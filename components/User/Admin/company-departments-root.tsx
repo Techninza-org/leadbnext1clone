@@ -43,7 +43,7 @@ const CompanyDepartmentsRoot = () => {
 
   if (loading) return <div>Loading...</div>;
 
-  const groupFormOnCategoryName = Object?.groupBy(
+  const groupFormOnCategoryName = data?.getCompanyDepts?.[0].companyForms &&  Object.groupBy(
     data?.getCompanyDepts?.[0].companyForms ?? [],
     (form: any) => form?.category?.name || "Uncategorized"
   );
@@ -57,7 +57,7 @@ const CompanyDepartmentsRoot = () => {
           </div>
         </CardHeader>
         <CardContent className='space-y-2'>
-          {Object.entries(groupFormOnCategoryName).map(([categoryName, forms]) => (
+          {Object.entries(groupFormOnCategoryName ?? {}).map(([categoryName, forms]) => (
             <Card key={categoryName}>
               <CardHeader>
                 <CardTitle className="font-bold flex justify-between">
@@ -65,7 +65,7 @@ const CompanyDepartmentsRoot = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-2 gap-8">
-                {forms?.map((form) => (
+                {Array.isArray(forms) && forms.map((form: any) => (
                   <Link className='p-6 border rounded-md text-center shadow' href={`/departments/form/${categoryName}/${form.name}/${deptId}/${userInfo?.companyId}`} key={form.id}>
                     <CardTitle>{form.name}</CardTitle>
                   </Link>
@@ -75,34 +75,6 @@ const CompanyDepartmentsRoot = () => {
           ))}
         </CardContent>
       </Card>
-      {/* <Card>
-        <CardHeader>
-          <CardTitle className="flex justify-between font-bold">
-            <div>Departments Forms (Auxiliary Forms)</div>
-            <Button size={'sm'} onClick={()=>onOpen('addDept')}>Add Department</Button>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-2 gap-8">
-          {data?.getCompanyDepts[0]?.companyForms?.map((dept: any) => (
-            <Link className='p-6 border rounded-md text-center shadow' href={`/departments/form/${dept.name}/${deptId}/${userInfo?.companyId}`} key={dept.id}>
-              <CardTitle>{dept.name}</CardTitle>
-            </Link>
-          ))}
-        </CardContent>
-      </Card> */}
-      {/* <Card className='my-3'>
-        <CardHeader>
-          <CardTitle className="font-bold">Broadcast</CardTitle>
-        </CardHeader>
-        <CardContent className='grid grid-cols-2 gap-8'>
-          <Card onClick={() => onOpen("updateGlobalBroadcastForm", { dept: braodcasteForm })}>
-            <CardContent className='grid place-content-center p-6 hover:bg-slate-200 cursor-pointer hover:rounded-md'>
-              <CardTitle>{"Broadcast"}</CardTitle>
-            </CardContent>
-          </Card>
-        </CardContent>
-      </Card> */}
-
     </>
   );
 };

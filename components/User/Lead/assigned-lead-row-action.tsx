@@ -70,7 +70,7 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          ["root", "telecaller"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && formateFields?.map((field: z.infer<typeof CompanyDeptFieldSchema>) => (
+          ["root", "telecaller"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && formateFields?.map((field: any) => (
             <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
               {field.name}
             </DropdownMenuItem>

@@ -30,7 +30,7 @@ interface LeadsTableProps {
   selectedRows: any;
 }
 
-export default function LeadsTable({ data, setSelectedRows, selectedRows }: LeadsTableProps) {
+export default function FollowupTable({ data, setSelectedRows, selectedRows }: LeadsTableProps) {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const { onOpen } = useModal()
 

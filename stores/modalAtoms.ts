@@ -9,7 +9,7 @@ export interface ModalData {
 
     lead?: z.infer<typeof leadSchema>,
     leads?: z.infer<typeof createLeadSchema>[],
-    fields?: z.infer<typeof CompanyDeptFieldSchema>
+    fields?: any
     deptName?: string;
     deptId?: string;
     depId?: string;

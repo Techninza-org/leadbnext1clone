@@ -28,7 +28,7 @@ export const LeadTable = () => {
 
     const filteredProspects = leadInfo?.filter((prospect: any) =>
         Object.values(prospect).some((value: any) =>
-            value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            value?.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
     )
 
@@ -45,6 +45,7 @@ export const LeadTable = () => {
                     </div>
                     <div className="flex gap-2 ml-auto">
                         <Button
+                            // @ts-ignore
                             onClick={() => onOpen("assignLead", { leads: selectedLeads })}
                             variant={'default'}
                             size={"sm"}
@@ -89,7 +90,7 @@ export const LeadTable = () => {
                     />
                 </div>
 
-                <LeadsTable data={filteredProspects} selectedRows={selectedRows} setSelectedRows={setSelectedRows} />
+                <LeadsTable data={filteredProspects as any} selectedRows={selectedRows} setSelectedRows={setSelectedRows} />
             </CardContent>
         </Card >
     )

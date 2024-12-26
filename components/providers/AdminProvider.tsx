@@ -7,7 +7,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 
 type AdminContextType = {
-
+    departmentsForms: any[]
 };
 
 const AdminContext = createContext<AdminContextType | undefined>(undefined);
@@ -26,7 +26,7 @@ export const AdminProvider = ({ children }: { children: React.ReactNode }) => {
 
 
 
-    const [departmentsForms, setDepartmentsForms] = useState()
+    const [departmentsForms, setDepartmentsForms] = useState<any[]>([])
 
     const { } = useQuery(adminQueries.GET_DEPT_FIELDS, {
         skip,

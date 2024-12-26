@@ -42,6 +42,7 @@ export const ProspectTable = () => {
                     </div>
                     <div className="flex gap-2 ml-auto">
                         <Button
+                        // @ts-ignore
                             onClick={() => onOpen("assignLead", { leads: selectedLeads })}
                             variant={'default'}
                             size={"sm"}
@@ -84,7 +85,7 @@ export const ProspectTable = () => {
                     />
                 </div>
 
-                <ProspectsTable data={filteredProspects} selectedRows={selectedRows} setSelectedRows={setSelectedRows} />
+                <ProspectsTable data={filteredProspects as any} selectedRows={selectedRows} setSelectedRows={setSelectedRows} />
             </CardContent>
         </Card >
     )

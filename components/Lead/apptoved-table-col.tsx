@@ -13,7 +13,7 @@ import { leadMutation } from "@/lib/graphql/lead/mutation";
 import HoverCardToolTip from "../hover-card-tooltip";
 import { Dot } from "lucide-react";
 
-export const AssignedLeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
+export const AssignedLeadColDefs: ColumnDef<any>[] = [
     {
         id: "id",
         header: ({ table }) => (

@@ -107,6 +107,7 @@ export default function ProspectsTable({ data, setSelectedRows, selectedRows }: 
                     )}
                     <span
                       className="text-blue-900 cursor-pointer hover:underline"
+                      // @ts-ignore
                       onClick={() => onOpen("viewLeadInfo", { lead: prospect })}>{prospect.name}
                     </span>
                   </button>
