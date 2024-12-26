@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, MoreHorizontal, PencilLineIcon } from "lucide-react";
+import { ChevronDown, ChevronUp, LucidePlusCircle, MoreHorizontal, PencilLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useModal } from "@/hooks/use-modal-store";
+import { useCompany } from "../providers/CompanyProvider";
 
 interface Lead {
   id: string;
@@ -33,6 +34,8 @@ interface LeadsTableProps {
 export default function LeadsTable({ data, setSelectedRows, selectedRows }: LeadsTableProps) {
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
   const { onOpen } = useModal()
+
+  const {companyDeptFields} = useCompany()
 
 
   const toggleRow = (id: string) => {
@@ -145,6 +148,7 @@ export default function LeadsTable({ data, setSelectedRows, selectedRows }: Lead
                       )}
                     >
                       {lead.submittedForm.map((item: any) => {
+                        const FormField  = companyDeptFields.find((field: any) => field.name === item.dependentOnFormName)?.fields
                         return item.dependentOnValue.map((field: any) => (
                           <>
                             <h1 className="text-lg font-bold my-3 items-center flex">{item.dependentOnFormName}
@@ -155,6 +159,15 @@ export default function LeadsTable({ data, setSelectedRows, selectedRows }: Lead
                                 onClick={() => onOpen("editLeadFormValue", { fields: { id: item.id, name: item.dependentOnFormName, fields: [field]} })}
                               >
                                 <PencilLineIcon size={20} />
+                              </Button>
+                              <Button
+                                variant={'ghost'}
+                                disabled={!FormField?.length}
+                                size={'icon'}
+                                // @ts-ignore
+                                onClick={() => onOpen("editLeadFormValue", { fields: { id: item.id, name: item.dependentOnFormName, fields: FormField} })}
+                              >
+                                <LucidePlusCircle size={20} />
                               </Button>
                             </h1>
                             <table className="w-full bg-gray-50 border-collapse">

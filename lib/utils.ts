@@ -97,7 +97,7 @@ export const parseCSVToJson = async (file: File) => {
     return row;
   });
 
-  return {jsonData, headers};
+  return { jsonData, headers };
 };
 
 export const generateCSV = (data: any, fileName: string): void => {
@@ -193,15 +193,16 @@ export function updateDependentFields(data: DataItem[]): DataItem[] {
         // Set child name on parent
         parent.childName = item.name.trim();
 
-        // If this item is also a parent, update its fields structure
         if (nameToItemMap[item.name.trim()]) {
           const currentItem = nameToItemMap[item.name.trim()];
-          if (Array.isArray(currentItem.fields)) {
-            currentItem.fields = {
-              [item.name.trim()]: currentItem.fields,
-              ...(item.fields as FieldRelationship)
-            } as FieldRelationship;
-          }
+          // Not required for now: as it updating the child fields
+
+          // if (Array.isArray(currentItem.fields)) {
+          //   currentItem.fields = {
+          //     [item.name.trim()]: currentItem.fields,
+          //     ...(item.fields as FieldRelationship)
+          //   } as FieldRelationship;
+          // }
         }
       }
     }

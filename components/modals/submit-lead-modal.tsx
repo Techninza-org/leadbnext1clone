@@ -55,8 +55,6 @@ export const SubmitLeadModal = () => {
         }
     }, [fields]);
 
-    console.log(formFields, "formFields", fields?.fields)
-
     const validationSchema = formFields.reduce((acc: any, field: any) => {
         field.fields.forEach((subField: any) => {
             if (subField.isRequired) {
@@ -142,9 +140,11 @@ export const SubmitLeadModal = () => {
                         callStatus: "SUCCESS",
                         paymentStatus: "PENDING",
                         feedback: parentformattedData,
-                        childFormValue: childformattedData,
                         submitType: "updateLead",
-                        formName: fields?.name || ""
+                        formName: fields?.name || "",
+                        childFormValue: childformattedData || [],
+                        dependentOnFormName: fields?.childName,
+
                     },
                 });
 
@@ -257,7 +257,7 @@ export const SubmitLeadModal = () => {
                                                     key={subField.id}
                                                     field={subField}
                                                     fieldName={fieldName}
-                                                    validationRules={validationRules}
+                                                    // validationRules={validationRules}
                                                     form={form}
                                                     fileStates={fileStates}
                                                     handleFileChange={handleFileChange}
