@@ -35,7 +35,7 @@ import { MultiSelect } from '../multi-select-new';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 
 const FollowUpSchema = z.object({
-    nextFollowUpDate: z.date(),
+    nextFollowUpDate: z.string(),
     remarks: z.string().min(1, 'Remarks is required'),
     customerResponse: z.string().min(1, 'Customer Response is required'),
     rating: z.string().min(1, 'Rating is required'),
@@ -85,25 +85,24 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive, forLead }: 
         maxSize: 1 * 1024 * 1024,
     } satisfies DropzoneOptions;
 
-
     const onSubmit = async (values: z.infer<typeof FollowUpSchema>) => {
         try {
             const variables = {
                 leadId: lead?.id,
-                nextFollowUpDate: values.nextFollowUpDate?.toLocaleDateString() || "",
+                nextFollowUpDate: values.nextFollowUpDate || "",
                 customerResponse: values.customerResponse,
                 rating: values.rating,
                 remark: values.remarks,
-                feedback: formatFormData(fields?.fields, { ...values, nextFollowUpDate: values.nextFollowUpDate.toLocaleDateString() })
+                feedback: fields?.fields && formatFormData(fields?.fields, values)
             }
             let res: any;
             if (forLead) {
                 res = await updateLeadFollowUpDate({
-                    variables,
+                    variables: variables,
                 });
             } else {
                 res = await updateProspectFollowUpDate({
-                    variables,
+                    variables: variables,
                 });
             }
 
@@ -118,6 +117,7 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive, forLead }: 
                 });
                 return;
             }
+            handleCancel();
 
             toast({
                 variant: "default",
@@ -127,7 +127,6 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive, forLead }: 
         } catch (error) {
             console.log(error);
         }
-        setIsFollowUpActive(false);
     }
 
     const handleCancel = () => {
@@ -654,8 +653,8 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive, forLead }: 
                         </div>
 
                         <div className='grid place-items-end justify-between grid-flow-col mt-2'>
+                            {/* <Button type="button" variant={'destructive'} onClick={handleCancel}>Cancel</Button> */}
                             <Button type="submit">Save</Button>
-                            <Button type="button" variant={'destructive'} onClick={handleCancel}>Cancel</Button>
                         </div>
                     </form>
                 </Form>

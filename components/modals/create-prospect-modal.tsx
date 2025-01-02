@@ -377,7 +377,7 @@ export const ProspectForm = ({ fields, onClose }: {
                                     >
                                         {
                                             deptData?.getCompanyDepts?.map((role: any) => (
-                                                <SelectItem key={role.id} value={role.name} className="capitalize">{role.name}</SelectItem>
+                                                <SelectItem key={role.id} value={role.id} className="capitalize">{role.name}</SelectItem>
                                             ))
                                         }
                                     </SelectContent>
