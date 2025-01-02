@@ -40,6 +40,7 @@ export const leadSchema = createLeadSchema.extend({
     })),
     submittedForm: z.array(z.object({
         id: z.string(),
+        formName: z.string(),
         memberId: z.string(),
         member: loggedUserSchema,
         imageUrls: z.array(z.string().optional()),
@@ -69,7 +70,6 @@ export const groupedLeadSchema = z.object({
 
 export const companyLeadSchema = z.object({
     lead: z.array(leadSchema),
-    groupedLeads: z.array(groupedLeadSchema),
 });
 
 export const leadAssignToSchema = z.object({

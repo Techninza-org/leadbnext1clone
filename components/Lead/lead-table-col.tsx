@@ -5,15 +5,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { leadSchema } from "@/types/lead";
 import { Button } from "../ui/button";
 import { useModal } from "@/hooks/use-modal-store";
-import { Switch } from "../ui/switch";
 import { useMutation } from "graphql-hooks";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
-import HoverCardToolTip from "../hover-card-tooltip";
 import { AssignedLeadTableRowActions } from "../User/Lead/assigned-lead-row-action";
 import { useToast } from "../ui/use-toast";
 import { useEffect } from "react";
-import { useAtomValue } from "jotai";
-import { userAtom } from "@/lib/atom/userAtom";
+import { multiSelectFilter } from "../advance-data-table";
 
 export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -45,7 +42,8 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             return (
                 <ViewLeadInfo lead={row.original} />
             )
-        }
+        },
+        filterFn: multiSelectFilter,
     },
     {
         header: 'Email',
@@ -57,7 +55,8 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                 </div>
             )
 
-        }
+        },
+        filterFn: multiSelectFilter,
     },
     {
         header: 'Phone',
@@ -69,7 +68,21 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                 </div>
             )
 
-        }
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Alternate Phone',
+        accessorKey: 'alternatePhone',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("alternatePhone")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
     },
     {
         header: 'Assigned',
@@ -79,7 +92,8 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             return (
                 <AssigneeName lead={rowData} />
             );
-        }
+        },
+        filterFn: multiSelectFilter,
     },
 ];
 
@@ -91,10 +105,96 @@ const AssigneeName = ({ lead }: { lead: any }) => {
             variant={assigneeName ? "secondary" : "destructive"}
             className="text-xs p-2  capitalize"
         >
-            { !!assigneeName ? assigneeName: "Not Assigned"}
+            {!!assigneeName ? assigneeName : "Not Assigned"}
         </Button>
     )
 }
+
+export const RootProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
+    {
+        id: "id",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        header: 'Name',
+        accessorKey: 'name',
+        cell: ({ row }) => {
+            return (
+                <ViewProspectInfo prospect={row.original} />
+            )
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Email',
+        accessorKey: 'email',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("email")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Phone',
+        accessorKey: 'phone',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("phone")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    // {
+    //     header: 'Department',
+    //     accessorKey: 'dept',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 {/* <span>{row.getValue("dept")}</span> */}
+    //                 <span>Sales</span>
+    //             </div>
+    //         )
+    //     }
+    // },
+    {
+        header: 'Alternate Phone',
+        accessorKey: 'alternatePhone',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("alternatePhone")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+];
 
 export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     {
@@ -126,7 +226,8 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             return (
                 <ViewLeadInfo lead={row.original} />
             )
-        }
+        },
+        filterFn: multiSelectFilter,
     },
     {
         header: 'Email',
@@ -138,7 +239,8 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                 </div>
             )
 
-        }
+        },
+        filterFn: multiSelectFilter,
     },
     {
         header: 'Phone',
@@ -150,42 +252,33 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
                 </div>
             )
 
-        }
+        },
+        filterFn: multiSelectFilter,
     },
+    // {
+    //     header: 'Department',
+    //     accessorKey: 'dept',
+    //     cell: ({ row }) => {
+    //         return (
+    //             <div className="flex items-center">
+    //                 {/* <span>{row.getValue("dept")}</span> */}
+    //                 <span>Sales</span>
+    //             </div>
+    //         )
+    //     }
+    // },
     {
-        header: 'Address',
-        accessorKey: 'address',
+        header: 'Alternate Phone',
+        accessorKey: 'alternatePhone',
         cell: ({ row }) => {
             return (
-                <HoverCardToolTip label="Address">
-                    <span>{row.getValue("address")}</span>
-                </HoverCardToolTip>
+                <div className="flex items-center">
+                    <span>{row.getValue("alternatePhone")}</span>
+                </div>
             )
 
-        }
-    },
-    {
-        header: 'City',
-        accessorKey: 'city',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    <span>{row.getValue("city")}</span>
-                </div>
-            )
-        }
-    },
-    {
-        header: 'Department',
-        accessorKey: 'dept',
-        cell: ({ row }) => {
-            return (
-                <div className="flex items-center">
-                    {/* <span>{row.getValue("dept")}</span> */}
-                    <span>Sales</span>
-                </div>
-            )
-        }
+        },
+        filterFn: multiSelectFilter,
     },
     {
         header: 'Action',
@@ -206,6 +299,18 @@ const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
             <span
                 className="text-blue-900 cursor-pointer hover:underline"
                 onClick={() => onOpen("viewLeadInfo", { lead })}>{lead.name}</span>
+        </div>
+    )
+}
+
+const ViewProspectInfo = ({ prospect }: { prospect: z.infer<typeof leadSchema> }) => {
+    const { onOpen } = useModal()
+
+    return (
+        <div className="flex items-center">
+            <span
+                className="text-blue-900 cursor-pointer hover:underline"
+                onClick={() => onOpen("viewProspectInfo", { lead: prospect })}>{prospect.name}</span>
         </div>
     )
 }

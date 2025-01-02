@@ -37,6 +37,10 @@ import { Label } from "@/components/ui/label"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
+import { capitalizeFirstLetter, isValidUrl } from "@/lib/utils"
+import { useModal } from "@/hooks/use-modal-store"
+import Link from "next/link"
+import Image from "next/image"
 // import {
 //   DndContext,
 //   closestCenter,
@@ -55,7 +59,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 // } from "@dnd-kit/sortable"
 // import { CSS } from "@dnd-kit/utilities"
 
-const multiSelectFilter: FilterFn<any> = (row, columnId, filterValue: string[]) => {
+export const multiSelectFilter: FilterFn<any> = (row, columnId, filterValue: string[]) => {
   if (!filterValue.length) return true
   const cellValue = row.getValue(columnId)
   return filterValue.includes(String(cellValue))
@@ -89,7 +93,20 @@ const multiSelectFilter: FilterFn<any> = (row, columnId, filterValue: string[]) 
 //   )
 // }
 
-export default function AdvancedDataTable({ data = [], columnNames = [], dependentCols = [] }: { data: string[], columnNames: string[], dependentCols: string[] }) {
+export default function AdvancedDataTable({ leadProspectCols = [],
+  data = [],
+  columnNames = [],
+  dependentCols = [],
+  MoreInfo,
+  showTools = true
+}: {
+  data: string[],
+  columnNames: string[],
+  dependentCols?: string[],
+  leadProspectCols?: any[],
+  MoreInfo?: any,
+  showTools?: boolean
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -99,7 +116,7 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
   const [activeFilters, setActiveFilters] = React.useState<Record<string, string[]>>({})
   const [columnOrder, setColumnOrder] = React.useState<string[]>([])
 
-  const columns: ColumnDef<any>[] = generateColumns(columnNames);
+  const columns: ColumnDef<any>[] = Boolean(leadProspectCols.length) ? leadProspectCols : generateColumns(columnNames, dependentCols);
 
   const table = useReactTable({
     data,
@@ -131,6 +148,8 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
   React.useEffect(() => {
     setColumnOrder(table.getAllLeafColumns().map(d => d.id))
   }, [table])
+
+  const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
 
   //   const sensors = useSensors(
   //     useSensor(PointerSensor),
@@ -257,7 +276,7 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
+        {showTools && <div className="flex items-center space-x-2">
           <Input
             placeholder="Filter all columns..."
             value={globalFilter ?? ""}
@@ -298,7 +317,7 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
                                 onChange={(event) => column.setFilterValue(event.target.value)}
                                 className="max-w-sm mb-2"
                               />
-                              {Array.from(new Set(data.map((item) => String(item[column.id as any])))).map((value) => (
+                              {Array.from(new Set(data?.map((item) => String(item[column.id as any])))).map((value) => (
                                 <div key={value} className="flex items-center space-x-2">
                                   <Checkbox
                                     checked={activeFilters[column.id]?.includes(value)}
@@ -323,33 +342,8 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
               </div>
             </PopoverContent>
           </Popover>
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        </div>}
+        {leadProspectCols.length !== 0 && <MoreInfo selectedLeads={selectedRows} />}
       </div>
       {Object.entries(activeFilters).map(([columnId, filters]) => (
         filters.map((filter) => (
@@ -450,7 +444,7 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
           {/* </DndContext> */}
         </div>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      {showTools && <div className="flex items-center justify-end space-x-2 py-4">
         <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
@@ -473,43 +467,57 @@ export default function AdvancedDataTable({ data = [], columnNames = [], depende
             Next
           </Button>
         </div>
-      </div>
+      </div>}
     </div>
   )
 }
 
 
-export const generateColumns = (columnNames: string[]): ColumnDef<any>[] => {
+export const generateColumns = (columnNames: string[], dependentCols: any): ColumnDef<any>[] => {
   const dynamicColumns = columnNames?.map((colName) => ({
-    accessorKey: colName, // Use column name as accessor key
-    header: colName, // Use column name as header
-    cell: ({ row }: any) => <div className="capitalize">{row.getValue(colName)}</div>, // Render cell value
-    enableSorting: true, // Enable sorting by default
-    enableHiding: true, // Enable column hiding by default
-    filterFn: multiSelectFilter, // Apply filter function
+    accessorKey: colName,
+    header: capitalizeFirstLetter(colName),
+    cell: ({ row }: any) => {
+      const value = row.getValue(colName)
+      return (
+        <div className="capitalize">
+          {
+            isValidUrl(value) ?
+              <Link href={value} target="_blank" className="my-1">
+                <Image src={value} alt={value} height={250} width={250} className="rounded-sm h-24 w-24 object-cover" />s
+              </Link> : <span>{value}</span>
+          }
+        </div>
+      )
+    },
+    enableSorting: true,
+    enableHiding: true,
+    filterFn: multiSelectFilter,
   })) || [];
 
-  // Add static columns (expander, select, etc.) if needed
+
   const staticColumns = [
-    {
-      id: "expander",
-      header: () => null,
-      cell: ({ row }: any) => (
-        <Button
-          variant="ghost"
-          onClick={() => row.toggleExpanded()}
-          className="p-0 h-auto"
-        >
-          {row.getIsExpanded() ? (
-            <ChevronDown className="h-4 w-4" />
-          ) : (
-            <ChevronRight className="h-4 w-4" />
-          )}
-        </Button>
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
+    dependentCols.length > 0
+      ? {
+        id: "expander",
+        header: () => null,
+        cell: ({ row }: any) => (
+          <Button
+            variant="ghost"
+            onClick={() => row.toggleExpanded()}
+            className="p-0 h-auto"
+          >
+            {row.getIsExpanded() ? (
+              <ChevronDown className="h-4 w-4" />
+            ) : (
+              <ChevronRight className="h-4 w-4" />
+            )}
+          </Button>
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      }
+      : undefined, // Return undefined when columnNames is empty
     {
       id: "select",
       header: ({ table }: any) => (
@@ -529,7 +537,7 @@ export const generateColumns = (columnNames: string[]): ColumnDef<any>[] => {
       enableSorting: false,
       enableHiding: false,
     },
-  ];
+  ].filter(Boolean) as ColumnDef<any>[]; // Filter out undefined entries and assert type
 
   // Combine static and dynamic columns
   return [...staticColumns, ...dynamicColumns];

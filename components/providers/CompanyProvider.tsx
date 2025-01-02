@@ -76,9 +76,9 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         onSuccess: ({ data }) => {
             if (data?.getCompanyDeptFields) {
                 setCompanyDeptFields(data?.getCompanyDeptFields)
-                setOptForms(data?.getCompanyDeptFields.filter((field: any) => ['Lead', "Prospect"].includes(field.name)))
+                setOptForms(data?.getCompanyDeptFields.filter((field: any) => ['LEAD', "PROSPECT", "LEAD FOLLOW UP", "PROSPECT FOLLOW UP"].includes(String(field.name).toUpperCase())))
             }
-        }
+        }, 
     });
 
     const { } = useQuery(deptQueries.GET_COMPANY_DEPTS, {

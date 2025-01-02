@@ -16,7 +16,7 @@ import { useAtomValue } from "jotai"
 import { userAtom } from "@/lib/atom/userAtom"
 import { leadMutation } from "@/lib/graphql/lead/mutation"
 import { useModal } from "@/hooks/use-modal-store"
-import { FormField } from "../formFieldsComponents/FormField"
+import { IFormField } from "../formFieldsComponents/FormField"
 import { FileUploaderField } from "../formFieldsComponents/FileUploaderField"
 import { DatePickerField } from "../formFieldsComponents/DatePickerField"
 import { formatFormData } from "@/lib/utils"
@@ -243,7 +243,7 @@ export const SubmitLeadModal = () => {
                                         case 'DD':
                                         case 'RADIO':
                                             return (
-                                                <FormField
+                                                <IFormField
                                                     key={subField.id}
                                                     field={subField}
                                                     fieldName={fieldName}

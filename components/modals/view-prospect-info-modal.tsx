@@ -17,13 +17,12 @@ import { Button } from "../ui/button";
 import FollowUpForm from "../Lead/follow-up-form";
 import { Fragment, useEffect, useState } from "react";
 import FollowUpsData from "../Lead/follow-ups-data";
-import { formatCurrencyForIndia, formatReturnOfDB } from "@/lib/utils";
+import { formatCurrencyForIndia } from "@/lib/utils";
 import { LeadApprovedAction } from "../Lead/lead-table-col";
 import { Input } from "../ui/input";
-import AdvancedDataTable from "../advance-data-table";
 
 
-export const ViewLeadInfoModal = () => {
+export const ViewProspectInfoModal = () => {
     const [isFollowUpActive, setIsFollowUpActive] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const { isOpen, onClose, type, data: modalData } = useModal();
@@ -43,11 +42,13 @@ export const ViewLeadInfoModal = () => {
     }, [lead])
 
 
-    const isModalOpen = isOpen && lead && type === "viewLeadInfo";
+    const isModalOpen = isOpen && lead && type === "viewProspectInfo";
 
     const handleClose = () => {
         onClose();
     }
+
+
 
     const toggleEdit = (feedbackId: string, value: string) => {
         setEditingFeedback(prev => ({ ...prev, [feedbackId]: !prev[feedbackId] }))
@@ -67,6 +68,18 @@ export const ViewLeadInfoModal = () => {
     const handleLeadSave = (field: any) => {
         // onLeadUpdate({ [field]: leadValues[field] })
         setEditingLead(prev => ({ ...prev, [field]: false }))
+    }
+
+    const isValidUrl = (url: string) => {
+        const pattern = new RegExp('^(https?:\\/\\/)' +
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+            'localhost|' +
+            '((\\d{1,3}\\.){3}\\d{1,3}))' +
+            '(\\:\\d+)?' +
+            '(\\/[-a-z\\d%_.~+\\s]*)*' +
+            '(\\?[;&a-z\\d%_.~+=-]*)?' +
+            '(\\#[-a-z\\d_]*)?$', 'i')
+        return !!pattern.test(url)
     }
 
     const formatCurrencyForIndia = (amount: number) => {
@@ -133,7 +146,7 @@ export const ViewLeadInfoModal = () => {
                                 <Badge variant="outline" className="text-xs text-gray-600  font-medium">
                                     ID: {lead?.id}
                                 </Badge>
-                                <h2 className="pl-2">Lead Details</h2>
+                                <h2 className="pl-2">Prospect Details</h2>
                             </div>
                             <div className="flex items-center space-x-4">
                                 {
@@ -163,6 +176,17 @@ export const ViewLeadInfoModal = () => {
                         </div>
                     </DialogTitle>
                     <Separator className="my-4" />
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                            <Badge variant="secondary" className="text-sm font-medium">
+                                {lead?.name}
+                            </Badge>
+                            {/* Add more badges for other important lead info */}
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <LeadApprovedAction lead={lead as any} />
+                        </div>
+                    </div>
                 </DialogHeader>
                 <ScrollArea className="max-h-full w-full rounded-md border">
                     <div className="p-4">
@@ -171,57 +195,10 @@ export const ViewLeadInfoModal = () => {
                                 {renderEditableField('name', 'Name')}
                                 {renderEditableField('email', 'Email')}
                                 {renderEditableField('phone', 'Phone')}
-                                <Separator className="my-2" />
                             </div>
                         )}
-                        {!!lead?.submittedForm && lead.submittedForm.map((item, index) => {
-                            const data = formatReturnOfDB(item)
-                            return (
-                                <Fragment key={index}>
-                                    {/* {member && (
-                                    <div className="flex justify-between pb-4 items-center">
-                                        <span className="text-sm font-semibold">Submitted By:</span>
-                                        <span className="text-sm font-semibold capitalize">
-                                            {member.name}
-                                            <Badge className="ml-2" variant={member.role.name === "MANAGER" ? "default" : "secondary"}>
-                                                {member.role.name}
-                                            </Badge>
-                                        </span>
-                                    </div>
-                                )} */}
-
-                                    <h3 className="font-medium text-xl pl-2 pt-2">{item?.formName}</h3>
-
-                                    <AdvancedDataTable
-                                        columnNames={data.cols.columnNames as any}
-                                        dependentCols={data.cols.dependentCols as any}
-                                        data={[data.row as any]}
-                                        showTools={false}
-                                    />
-
-                                </Fragment>
-                            )
-                        })}
-
-                        {lead?.bids && lead.bids.length > 0 && (
-                            <ScrollArea className="h-44 w-full rounded-md border">
-                                <div className="p-4">
-                                    <h4 className="mb-4 text-sm font-medium leading-none">All Bids</h4>
-                                    {lead.bids.map((bid: any) => (
-                                        <Fragment key={bid?.id}>
-                                            <div className="text-sm grid-cols-2 grid">
-                                                <span>{bid?.Member?.name || ""}</span>
-                                                <span>{formatCurrencyForIndia(bid?.bidAmount || 0)}</span>
-                                            </div>
-                                            <Separator className="my-2" />
-                                        </Fragment>
-                                    ))}
-                                </div>
-                            </ScrollArea>
-                        )}
-
+                    
                         <div>
-                            <h3 className="font-medium text-xl pl-2 pt-2">Follow Up</h3>
                             <FollowUpsData lead={lead} />
                             <div className="my-4 grid place-items-end grid-flow-col">
                                 <Button
@@ -231,7 +208,7 @@ export const ViewLeadInfoModal = () => {
                                     onClick={() => setIsFollowUpActive(!isFollowUpActive)}
                                 >Add Follow Up</Button>
                             </div>
-                            {isFollowUpActive && <FollowUpForm forLead lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
+                            {isFollowUpActive && <FollowUpForm forLead={false} lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
                         </div>
                     </div>
                 </ScrollArea>

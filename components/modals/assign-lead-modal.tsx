@@ -49,10 +49,10 @@ export const AssignLeadModal = () => {
     const [, setCompanyDeptMembers] = useAtom(companyDeptMembersAtom)
 
     const { isOpen, onClose, type, data: modalData } = useModal();
-    const { leads } = modalData;
+    const { leads, apiUrl, query: formName } = modalData;
     const leadIds = leads?.map((lead: z.infer<typeof createLeadSchema>) => lead?.id)
 
-    const [leadAssignTo, { loading: assignLoading }] = useMutation(leadMutation.LEAD_ASSIGN_TO)
+    const [leadAssignTo, { loading: assignLoading }] = useMutation(apiUrl ?? "")
 
     const { companyDeptMembers: deptMembers } = useCompany()
 
@@ -123,12 +123,12 @@ export const AssignLeadModal = () => {
             <DialogContent className="text-black max-w-screen-md min-h-[620px]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Assign Lead
+                        Assign {formName}
                     </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="max-h-40 w-full rounded-md border">
                     <div className="p-4">
-                        <h4 className="mb-4 text-sm font-medium leading-none">Selected Leads</h4>
+                        <h4 className="mb-4 text-sm font-medium leading-none">Selected {formName}</h4>
                         {leads && leads.map((lead) => (
                             <>
                                 <div key={lead.id} className="text-sm grid-cols-2 grid">

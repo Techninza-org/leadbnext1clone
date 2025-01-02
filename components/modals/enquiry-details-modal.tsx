@@ -324,7 +324,7 @@ export const EnquiryDetailsModal = () => {
                                     onClick={() => setIsFollowUpActive(!isFollowUpActive)}
                                 >Add Follow Up</Button>
                             </div>
-                            {isFollowUpActive && <FollowUpForm lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
+                            {isFollowUpActive && <FollowUpForm forLead={false} lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
                         </div>
                     </div>
                 </ScrollArea>

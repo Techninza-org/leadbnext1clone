@@ -69,7 +69,7 @@ const CustomDropdown = ({ option, value, onChange }: { option: Option, value: st
 const UpdateGlobalBroadcastModal = () => {
     const { isOpen, onClose, type, data: { dept } } = useModal()
     const { toast } = useToast()
-    const isModalOpen = isOpen && type === "updateGlobalBroadcastForm"
+    const isModalOpen = isOpen && type === 'updateGlobalBroadcastForm'
 
     const [forms, setForms] = useState<BroadcastForm[]>([])
     const [selectedFormId, setSelectedFormId] = useState<string>(forms[0]?.id || '')

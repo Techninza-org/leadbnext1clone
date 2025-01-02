@@ -137,7 +137,9 @@ export function ApprovedDataTable<TData, TValue>({
       {
             userRole === "manager" && (
               <Button
-                onClick={() => onOpen("assignLead", { leads: selectedRows })}
+                // onClick={() => onOpen("assignLead", { leads: selectedRows })} should update to below
+                // onClick={() => onOpen("assignLead", { leads: selectedLeads, apiUrl: leadMutation.PROSPECT_ASSIGN_TO, query: { type: "Prospect" } })}
+
                 variant={'default'}
                 size={"sm"}
                 className="items-center gap-1"

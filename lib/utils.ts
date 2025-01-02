@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx"
+import { format, isValid } from "date-fns";
 import { twMerge } from "tailwind-merge"
 
 export function cn(...inputs: ClassValue[]) {
@@ -7,6 +8,18 @@ export function cn(...inputs: ClassValue[]) {
 
 export interface CallData {
   [key: string]: string;
+}
+
+export const isValidUrl = (url: string) => {
+  const pattern = new RegExp('^(https?:\\/\\/)' +
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+    'localhost|' +
+    '((\\d{1,3}\\.){3}\\d{1,3}))' +
+    '(\\:\\d+)?' +
+    '(\\/[-a-z\\d%_.~+\\s]*)*' +
+    '(\\?[;&a-z\\d%_.~+=-]*)?' +
+    '(\\#[-a-z\\d_]*)?$', 'i')
+  return !!pattern.test(url)
 }
 
 export const formatFormData = (backendData: CallData | CallData[], formData: CallData) => {
@@ -153,30 +166,25 @@ interface DataItem {
 }
 
 export function updateDependentFields(data: DataItem[]): DataItem[] {
-  // Create a map for quick lookup
   const nameToItemMap: Record<string, DataItem> = {};
   data.forEach(item => {
     nameToItemMap[item.name.trim()] = item;
   });
 
-  // Process each item to establish relationships
   data.forEach(item => {
     if (item.dependentOnId) {
       const parentName = item.dependentOnId.trim();
       const parent = nameToItemMap[parentName];
 
       if (parent) {
-        // Convert parent's fields to relationship object if it's an array
         if (Array.isArray(parent.fields)) {
           parent.fields = {
             [parent.name.trim()]: parent.fields
           } as FieldRelationship;
         }
 
-        // Get the existing relationships from parent
         const parentRelationships: FieldRelationship = { ...parent.fields as FieldRelationship };
 
-        // If the current item has a child, merge its relationships
         if (item.fields && !Array.isArray(item.fields)) {
           // Merge existing relationships from item
           Object.assign(parentRelationships, item.fields);
@@ -209,4 +217,112 @@ export function updateDependentFields(data: DataItem[]): DataItem[] {
   });
 
   return data;
+}
+
+
+export const capitalizeFirstLetter = (str: string): string => {
+  if (!str) return str; // Guard clause for empty strings
+  return str?.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export function getColumnNames(data: any) {
+  const columnNames = new Set();
+  const dependentCols = new Set();
+
+  data.formValue.forEach((formItem: any) => {
+    return formItem.name && columnNames.add(formItem.name);
+  });
+  data?.dependentOnValue?.forEach((formItem: any) => {
+    return formItem.name && dependentCols.add(formItem.name);
+  })
+  return { columnNames: Array.from(columnNames), dependentCols: Array.from(dependentCols) };
+}
+
+export const formatReturnOfDB = (formData: any) => {
+  const cols = getColumnNames(formData);
+  const row: any = {};
+  row.dependentValue = {};
+  formData.formValue.forEach((item: any) => {
+    row.createdAt = item.createdAt;
+    row[item.name] = item.value; // Might need to change handle for dependent fieldTypes
+  });
+
+  formData?.dependentOnValue?.forEach((item: any) => {
+    row.dependentValue.createdAt = item.createdAt;
+    row.dependentValue[item.name] = item.value; // Might need to change handle for dependent fieldTypes
+  });
+
+  return {
+    cols,
+    row
+  }
+}
+
+export function formatDyanmicFormCols(data: any[] | null | undefined) {
+  if (!data || !Array.isArray(data)) {
+    return { columnNames: [] }
+  }
+
+  const columnNames = new Set<string>()
+
+  data.forEach((x: any) => {
+    if (x && typeof x === 'object') {
+      Object.keys(x).forEach((key: string) => {
+        columnNames.add(key)
+      })
+    }
+  })
+
+  return { columnNames: Array.from(columnNames) }
+}
+
+export const formatDyamicTableData = (formData: any[] | null | undefined) => {
+  if (!formData || !Array.isArray(formData)) {
+    return {
+      cols: { columnNames: [] },
+      rows: []
+    }
+  }
+
+  const rows = formData.map((item: any) => {
+    try {
+      const row: Record<string, any> = {
+        createdAt: formatDate(item?.createdAt),
+        followUpBy: item?.followUpBy || '',
+        nextFollowUpDate: formatDate(item?.nextFollowUpDate),
+        remark: item?.remark || ''
+      }
+
+      // Safely handle dynamic fields
+      if (Array.isArray(item?.dynamicFieldValues)) {
+        item.dynamicFieldValues.forEach((field: any) => {
+          if (field?.name) {
+            row[field.name] = field.value ?? ''
+          }
+        })
+      }
+
+      return row
+    } catch (err) {
+      console.error('Error processing row:', err)
+      return {}
+    }
+  }).filter(row => Object.keys(row).length > 0) // Remove empty rows
+
+  const cols = formatDyanmicFormCols(rows)
+
+  return {
+    cols,
+    rows
+  }
+}
+
+export const formatDate = (date: string | null | undefined) => {
+  if (!date) return ''
+  try {
+    const parsedDate = new Date(date)
+    return isValid(parsedDate) ? format(parsedDate, 'dd/MM/yyyy') : ''
+  } catch {
+    return ''
+  }
 }

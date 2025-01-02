@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
+import { cn, formatFormData } from '@/lib/utils';
 import { format } from 'date-fns';
 import { CalendarDaysIcon } from 'lucide-react';
 import { Calendar } from '../ui/calendar';
@@ -44,30 +44,20 @@ const FollowUpSchema = z.object({
 interface FollowUpFormProps {
     lead: any;
     isFollowUpActive: boolean;
+    forLead: boolean;
     setIsFollowUpActive: React.Dispatch<React.SetStateAction<boolean>>;
+
 }
 
-const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpFormProps) => {
+const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive, forLead }: FollowUpFormProps) => {
     const [fileStates, setFileStates] = useState<{ [key: string]: File[] | null }>({});
     const { toast } = useToast();
     const { optForms } = useCompany()
 
-    const [updateLeadFollowUpDate, { loading }] = useMutation(leadMutation.UPDATE_FOLLOWUP);
+    const [updateLeadFollowUpDate, { }] = useMutation(leadMutation.UPDATE_FOLLOWUP);
+    const [updateProspectFollowUpDate, { }] = useMutation(leadMutation.UPDATE_FOLLOWUP_PROSPECT);
 
-
-    // const form = useForm<z.infer<typeof FollowUpSchema>>({
-    //     resolver: zodResolver(FollowUpSchema),
-    //     defaultValues: {
-    //         nextFollowUpDate: new Date(),
-    //         remarks: '',
-    //         customerResponse: '',
-    //         rating: '',
-    //     },
-    // });
-
-
-
-    const fields = optForms.find((x: any) => x.name === "Enquiry")
+    const fields = optForms.find((x: any) => x.name.toUpperCase() === (forLead ? "LEAD FOLLOW UP" : "PROSPECT FOLLOW UP"))
 
     const validationSchema = fields?.fields.reduce((acc: any, field: any) => {
         if (field.isRequired) {
@@ -85,7 +75,7 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
         criteriaMode: "all",
     });
 
-    const isLoading = form.formState.isSubmitting || loading;
+    const isLoading = form.formState.isSubmitting;
     const dropzone = {
         accept: {
             "image/*": [".jpg", ".jpeg", ".png"],
@@ -98,15 +88,26 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
 
     const onSubmit = async (values: z.infer<typeof FollowUpSchema>) => {
         try {
-            const { data, error } = await updateLeadFollowUpDate({
-                variables: {
-                    leadId: lead?.id,
-                    nextFollowUpDate: values.nextFollowUpDate?.toLocaleDateString() || "",
-                    customerResponse: values.customerResponse,
-                    rating: values.rating,
-                    remark: values.remarks,
-                },
-            });
+            const variables = {
+                leadId: lead?.id,
+                nextFollowUpDate: values.nextFollowUpDate?.toLocaleDateString() || "",
+                customerResponse: values.customerResponse,
+                rating: values.rating,
+                remark: values.remarks,
+                feedback: formatFormData(fields?.fields, { ...values, nextFollowUpDate: values.nextFollowUpDate.toLocaleDateString() })
+            }
+            let res: any;
+            if (forLead) {
+                res = await updateLeadFollowUpDate({
+                    variables,
+                });
+            } else {
+                res = await updateProspectFollowUpDate({
+                    variables,
+                });
+            }
+
+            const { error } = res;
 
             if (error) {
                 const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
@@ -141,8 +142,6 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
         }));
     };
 
-
-
     const sortedFields = fields?.fields.sort((a: any, b: any) => a.order - b.order);
 
     return (
@@ -158,7 +157,7 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
                                     <FormItem className="">
                                         <FormLabel className="capitalize  font-bold text-zinc-500 dark:text-secondary/70">Select Follow Up Date</FormLabel>
                                         <Popover>
-                                            <PopoverTrigger asChild>
+                                            <PopoverTrigger className='w-full' asChild>
                                                 <FormControl>
                                                     <Button
                                                         variant={"outline"}
@@ -220,6 +219,22 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive }: FollowUpF
 
                                             </SelectContent>
                                         </Select>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name='remarks'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="capitalize font-bold text-zinc-500 dark:text-secondary/70">Remarks</FormLabel>
+                                        <Input
+                                            className="bg-zinc-100 placeholder:capitalize border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                            placeholder="Remarks"
+                                            disabled={isLoading}
+                                            {...field} />
                                         <FormMessage />
                                     </FormItem>
                                 )}

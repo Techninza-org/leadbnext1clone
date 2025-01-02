@@ -26,6 +26,7 @@ const GET_COMPANY_LEADS = `
           nextFollowUpDate
           remark
           customerResponse
+          dynamicFieldValues
           rating
           leadId
           followUpBy
@@ -73,10 +74,23 @@ const GET_PROSPECT_LEADS = `
         id
         name
         email
+        alternatePhone
         callStatus
         paymentStatus
         phone
         isLeadConverted
+        followUps {
+          id
+          nextFollowUpDate
+          remark
+          customerResponse
+          dynamicFieldValues
+          rating
+          leadId
+          followUpBy
+          createdAt
+          updatedAt
+       }
     }
   }
 `;

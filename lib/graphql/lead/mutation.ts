@@ -80,6 +80,30 @@ const LEAD_ASSIGN_TO = `
     }
   }
 `;
+const PROSPECT_ASSIGN_TO = `
+  mutation prospectAssignTo(
+    $leadIds: [String!]!
+    $userIds: [String!]!
+    $deptId: String
+    $companyId: String!
+    $description: String
+  ) {
+    prospectAssignTo(
+      leadIds: $leadIds
+      userIds: $userIds
+      deptId: $deptId
+      companyId: $companyId
+      description: $description
+    ) {
+      name
+      leadMember { 
+          member { 
+              name
+          }
+      }
+    }
+  }
+`;
 
 const SUBMIT_LEAD = `
   mutation SubmitFeedback(
@@ -180,16 +204,40 @@ const UPDATE_FOLLOWUP = `
   mutation updateLeadFollowUpDate(
     $leadId: String!,
     $nextFollowUpDate: String!,
-    $rating: String!,
+    $rating: String,
     $customerResponse: String!,
     $remark: String!
+    $feedback: [FeedbackInput!]
   ) {
     updateLeadFollowUpDate(
       leadId: $leadId,
       nextFollowUpDate: $nextFollowUpDate,
       rating: $rating,
       customerResponse: $customerResponse,
-      remark: $remark
+      remark: $remark,
+      feedback: $feedback
+    ) {
+      id
+      name
+    }
+  }
+`
+const UPDATE_FOLLOWUP_PROSPECT = `
+  mutation updateProspectFollowUpDate(
+    $leadId: String!,
+    $nextFollowUpDate: String!,
+    $rating: String,
+    $customerResponse: String!,
+    $remark: String!
+    $feedback: [FeedbackInput!]
+  ) {
+    updateProspectFollowUpDate(
+      leadId: $leadId,
+      nextFollowUpDate: $nextFollowUpDate,
+      rating: $rating,
+      customerResponse: $customerResponse,
+      remark: $remark,
+      feedback: $feedback
     ) {
       id
       name
@@ -216,10 +264,12 @@ export const leadMutation = {
   CREATE_LEAD,
   CREATE_PROSPECT,
   LEAD_ASSIGN_TO,
+  PROSPECT_ASSIGN_TO,
   SUBMIT_LEAD,
   SUBMIT_BID_MUTATION,
   UPDATE_LEAD_FINANCE_STATUS,
   APPROVED_LEAD_MUTATION,
   TRANSFER_LEAD,
-  UPDATE_FOLLOWUP
+  UPDATE_FOLLOWUP,
+  UPDATE_FOLLOWUP_PROSPECT
 } 

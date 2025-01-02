@@ -24,7 +24,7 @@ interface FormFieldProps {
     form: any;
 }
 
-export const FormField: React.FC<FormFieldProps> = ({ field, fieldName, validationRules, form }) => {
+export const IFormField: React.FC<FormFieldProps> = ({ field, fieldName, validationRules, form }) => {
     const isDisabled = field.isDisabled;
 
     switch (field.fieldType) {
