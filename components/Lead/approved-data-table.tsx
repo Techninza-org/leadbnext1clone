@@ -115,9 +115,6 @@ export function ApprovedDataTable<TData, TValue>({
                     city: lead.city,
                     state: lead.state,
                     zip: lead.zip,
-                    vehicleDate: formattedVehicleDate,
-                    vehicleName: lead.vehicleName,
-                    vehicleModel: lead.vehicleModel,
                 }
             });
             

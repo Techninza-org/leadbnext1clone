@@ -26,7 +26,8 @@ const BroadcastCards = () => {
     const [selectedCategory, setSelectedCategory] = React.useState('All')
     const user = useAtomValue(userAtom)
 
-    const { braodcasteForm } = useCompany()
+    const { companyForm } = useCompany()
+    const braodcasteForm = companyForm?.find((form: any) => form.name === 'Broadcast')
 
     const { onOpen } = useModal();
     const { toast } = useToast();

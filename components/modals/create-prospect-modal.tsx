@@ -217,7 +217,7 @@ export const ProspectForm = ({ fields, onClose }: {
                         alternatePhone: data.alternatePhone,
                         department: data.department,
                         remark: data.remark,
-                        dynamicFieldValues: formatFormData(fields?.subDeptFields ?? [], data),
+                        dynamicFieldValues: formatFormData(fields?.fields ?? [], data),
                     },
                 });
 
@@ -351,7 +351,42 @@ export const ProspectForm = ({ fields, onClose }: {
                             </FormItem>
                         )}
                     />
-                    {sortedFields?.map((cfield: any) => {
+                   
+
+                    <FormField
+                        control={form.control}
+                        name="department"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel
+                                    className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Department</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger
+                                            className="bg-zinc-100 placeholder:capitalize  border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                        >
+                                            <SelectValue placeholder="Select Department" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent
+                                        className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+
+                                    >
+                                        {
+                                            deptData?.getCompanyDepts?.map((role: any) => (
+                                                <SelectItem key={role.id} value={role.name} className="capitalize">{role.name}</SelectItem>
+                                            ))
+                                        }
+                                    </SelectContent>
+                                </Select>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                     {sortedFields?.map((cfield: any) => {
                         //  const isRequired = cfield.isRequired;
                         const isDisabled = cfield.isDisabled;
                         const validationRules = validationSchema?.[cfield.name] || {};
@@ -762,40 +797,6 @@ export const ProspectForm = ({ fields, onClose }: {
                             )
                         }
                     })}
-
-                    <FormField
-                        control={form.control}
-                        name="department"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel
-                                    className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Department</FormLabel>
-                                <Select
-                                    onValueChange={field.onChange}
-                                    defaultValue={field.value}
-                                >
-                                    <FormControl>
-                                        <SelectTrigger
-                                            className="bg-zinc-100 placeholder:capitalize  border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                        >
-                                            <SelectValue placeholder="Select Department" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent
-                                        className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-
-                                    >
-                                        {
-                                            deptData?.getCompanyDepts?.map((role: any) => (
-                                                <SelectItem key={role.id} value={role.name} className="capitalize">{role.name}</SelectItem>
-                                            ))
-                                        }
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                 </div>
 
                 <Button type="submit" className="mt-6">Submit</Button>

@@ -10,9 +10,11 @@ import { useAtom } from "jotai";
 import { userAtom } from "@/lib/atom/userAtom";
 import { MANAGER, ROOT, ADMIN } from "@/lib/role-constant";
 import { ADMIN_NAV_LINKS, MANAGER_NAV_LINKS, ROOT_NAV_LINKS } from "@/lib/navigation-route";
+import { useCompany } from "../providers/CompanyProvider";
 
 
 export function NavigationBar({ children }: { children: React.ReactNode }) {
+    const { companyForm } = useCompany()
     const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(false)
     const handleNavToggle = () => {
         setIsNavCollapsed(!isNavCollapsed);
@@ -24,10 +26,17 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAdmin = pathname.startsWith("/admin");
 
+    const rootLinks  = companyForm?.map((form: any) => ({
+        title: form.name,
+        icon: FileTextIcon,
+        href: `/values/${form.name}`,
+    })).filter((form: any) =>  !["LEAD", "PROSPECT", "LEAD FOLLOW UP", "PROSPECT FOLLOW UP"].includes(String(form.title).toUpperCase()));
+
+    const extendRootLinks = [...ROOT_NAV_LINKS, ...rootLinks];
 
     const EMP_NAV_LINKS = [
         {
-            title: "Home",
+            title: "Lead",
             icon: Truck,
             href: `/${role}/leads`,
         },
@@ -43,9 +52,9 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
         },
     ];
 
-    const navLinks = [ROOT].includes(role) ? ROOT_NAV_LINKS : [ADMIN].includes(role) ? ADMIN_NAV_LINKS : [MANAGER].includes(role) ? MANAGER_NAV_LINKS : EMP_NAV_LINKS;
+    const navLinks = [ROOT].includes(role) ? extendRootLinks : [ADMIN].includes(role) ? ADMIN_NAV_LINKS : [MANAGER].includes(role) ? MANAGER_NAV_LINKS : EMP_NAV_LINKS;
 
-    useEffect(() => {   
+    useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 768) {
                 setIsNavCollapsed(true);

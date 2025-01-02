@@ -148,9 +148,6 @@ query GetLastMonthAllLeads {
       city
       state
       zip
-      vehicleDate
-      vehicleName
-      vehicleModel
       callStatus
       paymentStatus
 

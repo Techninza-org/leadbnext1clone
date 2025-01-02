@@ -33,19 +33,21 @@ export async function middleware(request: NextRequest) {
   ];
   
   const rootManagerPaths = [
-    '/dashboard',
     '/follow-up',
     '/xchange-customer-list',
     '/xchange-list',
     '/lead-imgs',
-    '/pay-receipt',
+    '/broadcast',
+
+    '/values',
+    
+    '/dashboard',
     '/prospect',
     '/bids',
     '/leads',
     '/members',
     '/leads/transfered',
     '/track',
-    '/broadcast',
     '/departments',
     '/lead.csv'
     // Add more paths for root and manager

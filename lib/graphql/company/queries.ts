@@ -159,11 +159,9 @@ const GET_LEADS_PHOTOS = `
     }
 `
 
-const GET_PAYMENT_LIST = `
-    query PaymentList {
-      paymentList {
-        data
-      }
+const GET_SUBMITTED_FORM_VALUE = `
+    query getFormValuesByFormName($formName: String!) {
+      getFormValuesByFormName(formName: $formName)
     }
 `
 
@@ -179,5 +177,5 @@ export const companyQueries = {
   GET_COMPANY_XCHANGER_BIDS_QUERY,
   GET_XCHANGE_LEAD_IMGS,
   GET_LEADS_PHOTOS,
-  GET_PAYMENT_LIST,
+  GET_SUBMITTED_FORM_VALUE,
 }

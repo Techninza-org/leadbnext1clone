@@ -65,7 +65,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                     )}
                   >
                     <link.icon className="h-4 w-4" />
-                    <span className="sr-only">{link.title}</span>
+                    <span className="sr-only capitalize">{link.title}</span>
                   </Link>
                 ) : (
                   <Button
@@ -75,7 +75,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                     className={"h-9 w-9"}
                   >
                     <link.icon className="h-4" />
-                    <span className="sr-only">{link.title}</span>
+                    <span className="sr-only capitalize">{link.title}</span>
                   </Button>
                 )
               }
@@ -87,7 +87,7 @@ export function Nav({ links, isCollapsed }: NavProps) {
                   href={link.href}
                   className={cn(
                     buttonVariants({ variant: isActive(link.href || ""), size: "sm" }),
-                    "justify-start"
+                    "justify-start capitalize"
                   )}
                 >
                   <link.icon className="mr-2 h-4 w-4" />

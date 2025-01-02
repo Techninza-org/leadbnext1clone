@@ -19,7 +19,7 @@ type CompanyContextType = {
     members: any;
     companyDeptFields: any;
     leadRangeData: any;
-    braodcasteForm: any;
+    companyForm: any;
     departments: any;
     optForms: any;
 };
@@ -38,7 +38,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [leadRangeData, setLeadRangeData] = React.useState<any>([])
     const [departments, setDepartmentsForms] = useState([])
     const [optForms, setOptForms] = useState([])
-    const [braodcasteForm, setBroadcastForm] = useState([])
+    const [companyForm, setCompanyForms] = useState([])
 
     const authToken = useAtomValue(userAuthToken)
 
@@ -81,6 +81,24 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         }
     });
 
+    const { } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
+        variables: {
+            companyId: userInfo?.companyId,
+        },
+        skip,
+        refetchAfterMutations: [
+            {
+                mutation: LOGIN_USER,
+            },
+        ],
+        onSuccess: ({ data }) => {
+            if (data?.getCompanyDepts?.[0].companyForms?.length > 0) {
+                setCompanyForms(data?.getCompanyDepts?.[0].companyForms);
+            }
+        }
+    });
+
+
     const { data: rootDate, loading, error } = useQuery(userQueries.GET_COMPANIES, {
         skip,
         onSuccess: ({ data }) => {
@@ -118,7 +136,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     // })
 
     return (
-        <CompanyContext.Provider value={{ braodcasteForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields, optForms }}>
+        <CompanyContext.Provider value={{ companyForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields, optForms }}>
             {children}
         </CompanyContext.Provider>
     );

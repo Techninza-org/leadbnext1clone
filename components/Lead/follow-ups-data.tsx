@@ -21,18 +21,18 @@ const FollowUpsData = ({ lead }: { lead: any }) => {
   //   }
   // })
 
-  // const { optForms } = useCompany()
-  // const fields = optForms?.find((x: any) => x.name === "Enquiry")
+  const { optForms } = useCompany()
+  const fields = optForms?.find((x: any) => x.name === "Enquiry")
 
   return (
     <div className="rounded-md border mt-2">
       <Table className='text-sm'>
         <TableHeader>
           <TableRow className='uppercase'>
+            <TableHead>WHEN CREATED</TableHead>
             <TableHead>Added By</TableHead>
-            <TableHead>Remark</TableHead>
             <TableHead>Next FollowUp Date</TableHead>
-            {/* <TableHead>WHEN CREATED</TableHead> */}
+            <TableHead>Remark</TableHead>
             {/* {Object.keys(lead.followUps[0] || {})?.map((x: any) => (
               <TableHead key={x.name}>{x.name}</TableHead>
             ))} */}

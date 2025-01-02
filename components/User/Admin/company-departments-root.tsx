@@ -15,7 +15,7 @@ const CompanyDepartmentsRoot = () => {
   const [deptId, setDeptId] = useState('');
   const { onOpen } = useModal();
   const userInfo = useAtomValue(userAtom);
-  const { departments, braodcasteForm, optForms } = useCompany()
+  const { departments } = useCompany()
 
   const { data, loading, error, refetch } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
     variables: {
@@ -53,7 +53,7 @@ const CompanyDepartmentsRoot = () => {
       <Card>
         <CardHeader>
           <div className='ml-auto '>
-            <Button size={'sm'} onClick={() => onOpen('addDept')}>Add Department</Button>
+            <Button size={'sm'} onClick={() => onOpen('addDept')}>Add Form</Button>
           </div>
         </CardHeader>
         <CardContent className='space-y-2'>

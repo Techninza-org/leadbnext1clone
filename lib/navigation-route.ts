@@ -26,31 +26,31 @@ export const ROOT_NAV_LINKS = [
         icon: Pencil,
         href: "/departments",
     },
-    {
-        title: "Follow Up",
-        icon: Pencil,
-        href: "/follow-up",
-    },
-    {
-        title: "Bids",
-        icon: Pencil,
-        href: "/bids",
-    },
-    {
-        title: "Exchange Vehicle Images",
-        icon: Pencil,
-        href: "/xchange-customer-list",
-    },
-    {
-        title: "Exchange Document",
-        icon: Pencil,
-        href: "/lead-imgs",
-    },
-    {
-        title: "Payments",
-        icon: Pencil,
-        href: "/pay-receipt",
-    },
+    // {
+    //     title: "Follow Up",
+    //     icon: Pencil,
+    //     href: "/follow-up",
+    // },
+    // {
+    //     title: "Bids",
+    //     icon: Pencil,
+    //     href: "/bids",
+    // },
+    // {
+    //     title: "Exchange Vehicle Images",
+    //     icon: Pencil,
+    //     href: "/xchange-customer-list",
+    // },
+    // {
+    //     title: "Exchange Document",
+    //     icon: Pencil,
+    //     href: "/lead-imgs",
+    // },
+    // {
+    //     title: "Payments",
+    //     icon: Pencil,
+    //     href: "/pay-receipt",
+    // },
     // {
     //     title: "Assign Lead",
     //     icon: ShoppingCart,

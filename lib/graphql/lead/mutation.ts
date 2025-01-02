@@ -6,7 +6,7 @@ mutation createLead(
   $alternatePhone: String, 
   $phone: String!, 
   $remark: String!, 
-  $department: String
+  $department: String!
 ) {
   createLead(
     input: {
@@ -22,7 +22,6 @@ mutation createLead(
     lead {
       id
       name
-      vehicleName
     }
   }
 }
@@ -36,7 +35,7 @@ mutation createProspect(
   $alternatePhone: String, 
   $phone: String!, 
   $remark: String!, 
-  $department: String
+  $department: String!
 ) {
   createProspect(
     input: {
@@ -52,7 +51,6 @@ mutation createProspect(
     lead {
       id
       name
-      vehicleName
     }
   }
 }
@@ -91,7 +89,7 @@ const SUBMIT_LEAD = `
     $callStatus: String!,
     $paymentStatus: String!,
     $feedback: [FeedbackInput!]!
-    $childFormValue: [FeedbackInput!]!
+    $childFormValue: [FeedbackInput!]
     $urls: [String]
     $submitType: String
     $formName: String

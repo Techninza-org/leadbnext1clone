@@ -5,7 +5,7 @@ import { useQuery } from "graphql-hooks";
 import { companyQueries } from "@/lib/graphql/company/queries";
 import { leadQueries } from "@/lib/graphql/lead/queries";
 import { LOGIN_USER } from "@/lib/graphql/user/mutations";
-import { renderContent } from "../../payment-table";
+import { renderContent } from "../../lead-imgs-table";
 
 export const ExchangeCustomerTable = () => {
 

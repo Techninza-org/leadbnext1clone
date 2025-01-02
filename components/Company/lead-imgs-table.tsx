@@ -6,7 +6,31 @@ import { companyQueries } from "@/lib/graphql/company/queries";
 // import { CustomerDefs } from "./customer-col";
 import { leadQueries } from "@/lib/graphql/lead/queries";
 import { LOGIN_USER } from "@/lib/graphql/user/mutations";
-import { renderContent } from "./payment-table";
+
+export const renderContent = (content: string | string[]): JSX.Element => {
+    const urlPattern = /^(https?:\/\/(?:localhost|\d{1,3}(?:\.\d{1,3}){3}|\w+)(?::\d+)?(?:\/[^\s]*)?)$/i;
+
+    if (Array.isArray(content)) {
+        return (
+            <div className="flex gap-2">
+                {content.map((url, index) => (
+                    urlPattern.test(url) ? (
+                        <img className="h-20 w-20 rounded-md" key={index} src={url} alt={`Content ${index + 1}`} width="100" />
+                    ) : (
+                        <span key={index}>{url}</span>
+                    )
+                ))}
+            </div>
+        );
+    } else {
+        return urlPattern.test(content) ? (
+            <img src={content} alt="Content" width="100" />
+        ) : (
+            <>{content}</>
+        );
+    }
+};
+
 
 export const LeadImagesTable = () => {
 
