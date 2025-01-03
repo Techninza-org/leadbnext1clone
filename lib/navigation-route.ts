@@ -78,15 +78,20 @@ export const MANAGER_NAV_LINKS = [
         href: "/dashboard",
     },
     {
-        title: "Prospects",
+        title: "Leads",
         icon: FileTextIcon,
         href: "/leads",
     },
     {
-        title: "Leads",
+        title: "Prospect",
         icon: FileTextIcon,
-        href: "/leads/transfered",
+        href: "/prospect",
     },
+    // {
+    //     title: "Leads",
+    //     icon: FileTextIcon,
+    //     href: "/leads/transfered",
+    // },
     {
         title: "Track Location",
         icon: Pin,

@@ -56,6 +56,7 @@ export async function middleware(request: NextRequest) {
   const managerPaths = [
     '/dashboard',
     '/leads',
+    '/prospect',
     '/leads/transfered',
     '/track',
     '/broadcast',

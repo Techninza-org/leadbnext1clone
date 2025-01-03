@@ -20,14 +20,10 @@ import {
 import { useModal } from "@/hooks/use-modal-store"
 import { leadSchema } from "@/types/lead"
 import { z } from "zod"
-import { useQuery } from "graphql-hooks"
-import { companyQueries } from "@/lib/graphql/company/queries"
 import { userAtom } from "@/lib/atom/userAtom"
 import { useAtomValue } from "jotai"
-import { CompanyDeptFieldSchema } from "@/types/company"
-import { LOGIN_USER } from "@/lib/graphql/user/mutations"
-import { deptQueries } from "@/lib/graphql/dept/queries"
 import { updateDependentFields } from "@/lib/utils"
+import { useCompany } from "@/components/providers/CompanyProvider"
 
 
 interface DataTableRowActionsProps<TData> {
@@ -37,26 +33,14 @@ interface DataTableRowActionsProps<TData> {
 export function AssignedLeadTableRowActions<TData>({
   lead,
 }: DataTableRowActionsProps<TData>) {
-  const user = useAtomValue(userAtom)
-
-  // const { loading, error, data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-  //   skip: !user?.token || !user?.deptId,
-  //   variables: { deptId: user?.deptId },
-  //   refetchAfterMutations: [
-  //     {
-  //       mutation: LOGIN_USER,
-  //     },
-  //   ],
-  // });
-
-  const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
-    variables: { deptId: null },
-    skip: !user,
-  })
-
-  const formateFields = updateDependentFields(data?.getCompanyDeptFields || [])
-  
   const { onOpen } = useModal()
+  const user = useAtomValue(userAtom)
+  const { companyForm, optForms } = useCompany()
+
+  const OptFormNames = optForms?.map((form: any) => form.name)
+  const formFields = companyForm.filter((x: any) => !OptFormNames.includes(x.name))
+  const formateFields = updateDependentFields(formFields || [])
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

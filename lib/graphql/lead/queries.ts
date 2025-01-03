@@ -138,6 +138,49 @@ query getAssignedLeads($userId: String!) {
   }
 `;
 
+const GET_ASSIGNED_PROSPECT = `
+query getAssignedProspect($userId: String!) {
+    getAssignedProspect(userId: $userId) {
+      id
+      name
+      email
+      phone
+      alternatePhone
+      callStatus
+      paymentStatus
+      bids{
+        id
+        bidAmount
+      }
+      submittedForm {
+        id
+        formName
+        memberId
+        member {
+            name
+            role {
+                name
+            }
+        }
+        formValue {
+            id
+            name
+            fieldType
+            value
+        }
+      }
+
+      leadMember {
+        member { 
+            name
+        }
+      }
+      nextFollowUpDate
+      createdAt
+    }
+  }
+`;
+
 const GET_LEAD_BIDS_QUERY = `
   query GetLeadBids($leadId: String!) {
     getLeadBids(leadId: $leadId) {
@@ -243,6 +286,7 @@ export const leadQueries = {
   GET_ASSIGNED_LEADS,
   GET_LEAD_BIDS_QUERY,
   GET_LAST_MONTH_ALL_LEADS,
+  GET_ASSIGNED_PROSPECT,
   UPDATE_LEAD_FOLLOW_UP_DATE,
   GET_LEADS_BY_DATE_RANGE,
   GET_TRANSFERED_LEADS,

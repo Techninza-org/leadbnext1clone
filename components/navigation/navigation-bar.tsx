@@ -21,7 +21,7 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
     };
 
     const [user] = useAtom(userAtom)
-    const role = user?.role?.name?.toLowerCase() || "";
+    const role = user?.role?.name?.toLowerCase().replaceAll(" ", "") || "";
 
     const pathname = usePathname();
     const isAdmin = pathname.startsWith("/admin");
@@ -41,10 +41,15 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             href: `/${role}/leads`,
         },
         {
-            title: "Transfered Leads",
-            icon: HandCoins,
-            href: `/${role}/leads/transfered`,
+            title: "Prospect",
+            icon: Truck,
+            href: `/${role}/prospects`,
         },
+        // {
+        //     title: "Transfered Leads",
+        //     icon: HandCoins,
+        //     href: `/${role}/leads/transfered`,
+        // },
         {
             title: "Broadcast",
             icon: FileTextIcon,
