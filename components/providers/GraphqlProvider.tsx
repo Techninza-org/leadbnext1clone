@@ -2,7 +2,6 @@
 
 import { useContext } from "react";
 import { GraphQLClient, ClientContext } from 'graphql-hooks'
-import memCache from 'graphql-hooks-memcache'
 
 const graphqlUrl = process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080';
 
@@ -10,7 +9,6 @@ function GraphqlProvider({ children }: { children: React.ReactNode }) {
 
     const client = new GraphQLClient({
         url: `${graphqlUrl}/graphql`,
-        cache: memCache(),
         fetchOptions: { 
             method: 'POST',
         },

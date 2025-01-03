@@ -2,13 +2,10 @@
 
 import { createContext, useContext, ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-
 import { APIError, useMutation, useQuery } from 'graphql-hooks';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { z } from 'zod';
-
 import { useToast } from '@/components/ui/use-toast';
-
 import { leadSchema } from '@/types/lead';
 import { leads, prospects } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
@@ -24,75 +21,71 @@ interface LeadProviderType {
 const LeadContext = createContext<LeadProviderType | undefined>(undefined);
 
 export const LeadProvider = ({ children }: { children: ReactNode }) => {
-    const userInfo = useAtomValue(userAtom)
-    const { toast } = useToast()
-    const setLeads = useSetAtom(leads)
-    const setProspect = useSetAtom(prospects)
+    const userInfo = useAtomValue(userAtom);
+    const { toast } = useToast();
+    const setLeads = useSetAtom(leads);
+    const setProspect = useSetAtom(prospects);
 
-    const { skip, variables } = {
-        skip: ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || "")  &&
-        !!userInfo?.companyId,
-        variables: {
-            deptId: userInfo?.deptId,
-            companyId: userInfo?.companyId,
-        },
+    // Only skip if user has ROOT/MANAGER role but no companyId
+    const shouldSkipQuery = () => {
+        const isValidRole = ['ROOT', 'MANAGER'].includes(userInfo?.role?.name || "");
+        const hasCompanyId = !!userInfo?.companyId;
+        return isValidRole && !hasCompanyId;
     };
 
     const { loading: leadsLoading } = useQuery(
         leadQueries.GET_COMPANY_LEADS,
         {
             variables: { companyId: userInfo?.companyId },
-            skip,
+            skip: shouldSkipQuery(),
             onSuccess: ({ data }) => {
-                setLeads(data.getCompanyLeads.lead);
+                if (data?.getCompanyLeads?.lead) {
+                    setLeads(data.getCompanyLeads.lead);
+                }
+            },
+            onError: (error: any) => {
+                console.error('Leads query error:', error);
             },
             refetchAfterMutations: [
-                {
-                    mutation: LOGIN_USER,
-                },
-                {
-                    mutation: leadMutation.LEAD_ASSIGN_TO,
-                },
-                {
-                    mutation: leadMutation.CREATE_LEAD,
-                },
-                {
-                    mutation: leadMutation.APPROVED_LEAD_MUTATION,
-                },
+                { mutation: LOGIN_USER },
+                { mutation: leadMutation.LEAD_ASSIGN_TO },
+                { mutation: leadMutation.CREATE_LEAD },
+                { mutation: leadMutation.APPROVED_LEAD_MUTATION },
             ],
-        },
+        }
     );
 
     const { loading: prospectsLoading } = useQuery(
         leadQueries.GET_PROSPECT_LEADS,
         {
+            skip: shouldSkipQuery(),
             onSuccess: ({ data }) => {
-                setProspect(data.getCompanyProspects);
+                if (data?.getCompanyProspects) {
+                    setProspect(data.getCompanyProspects);
+                }
             },
-            skip,
+            onError: (error: any) => {
+                console.error('Prospects query error:', error);
+            },
             refetchAfterMutations: [
-                {
-                    mutation: LOGIN_USER,
-                },
-                {
-                    mutation: leadMutation.LEAD_ASSIGN_TO,
-                },
-                {
-                    mutation: leadMutation.CREATE_LEAD,
-                },
+                { mutation: LOGIN_USER },
+                { mutation: leadMutation.LEAD_ASSIGN_TO },
+                { mutation: leadMutation.CREATE_LEAD },
             ],
-        },
+        }
     );
 
-    const handleCreateLead = async ({ lead, error }: { lead: z.infer<typeof leadSchema>, error?: APIError<object> | undefined }) => {
-
+    const handleCreateLead = async ({ lead, error }: { 
+        lead: z.infer<typeof leadSchema>, 
+        error?: APIError<object> | undefined 
+    }) => {
         if (error) {
-            const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ")
+            const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
             toast({
                 title: 'Error',
                 description: message || "Something went wrong",
                 variant: "destructive",
-            })
+            });
             return;
         }
 
@@ -100,21 +93,29 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
             title: 'Success',
             description: 'Lead created successfully',
             variant: "default",
-        })
-    }
-    const handleCreateBulkLead = async ({ lead, error }: { lead: any, error?: APIError<object> | undefined }) => {
+        });
+    };
 
+    const handleCreateBulkLead = async ({ lead, error }: { 
+        lead: any, 
+        error?: APIError<object> | undefined 
+    }) => {
         if (error) {
-            const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ")
+            const message = error?.graphQLErrors?.map((e: any) => e.message).join(", ");
             toast({
                 title: 'Error',
                 description: message || "Something went wrong",
                 variant: "destructive",
-            })
+            });
             return;
         }
 
-    }
+        toast({
+            title: 'Success',
+            description: 'Leads created successfully',
+            variant: "default",
+        });
+    };
 
     return (
         <LeadContext.Provider value={{ handleCreateLead, handleCreateBulkLead }}>
@@ -126,7 +127,7 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
 export const useLead = (): LeadProviderType => {
     const context = useContext(LeadContext);
     if (!context) {
-        throw new Error('useAuth must be used within an AuthProvider');
+        throw new Error('useLead must be used within a LeadProvider');
     }
     return context;
 };
