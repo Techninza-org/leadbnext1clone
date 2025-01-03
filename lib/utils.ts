@@ -243,7 +243,7 @@ export const formatReturnOfDB = (formData: any) => {
   const row: any = {};
   row.dependentValue = {};
   formData.formValue.forEach((item: any) => {
-    row.createdAt = item.createdAt;
+    row.createdAt = new Date(Number(item.createdAt)).toLocaleDateString();
     row[item.name] = item.value; // Might need to change handle for dependent fieldTypes
   });
 
@@ -287,8 +287,9 @@ export const formatDyamicTableData = (formData: any[] | null | undefined) => {
   const rows = formData.map((item: any) => {
     try {
       const row: Record<string, any> = {
-        createdAt: formatDate(item?.createdAt),
+        createdAt: formatDate(Number(item?.createdAt || 0)),
         followUpBy: item?.followUpBy || '',
+        customerResponse: item?.customerResponse || '',
         nextFollowUpDate: formatDate(item?.nextFollowUpDate),
         remark: item?.remark || ''
       }
@@ -317,12 +318,60 @@ export const formatDyamicTableData = (formData: any[] | null | undefined) => {
   }
 }
 
-export const formatDate = (date: string | null | undefined) => {
+export const formatDate = (date: string | number | null | undefined) => {
   if (!date) return ''
   try {
     const parsedDate = new Date(date)
     return isValid(parsedDate) ? format(parsedDate, 'dd/MM/yyyy') : ''
   } catch {
     return ''
+  }
+}
+
+const leadHardCodeFields = [
+  "name",
+  "email",
+  "phone",
+  "alternatePhone",
+  "rating",
+  "remark",
+]
+
+const followUp = [
+  "followUpBy",
+  "nextFollowUpDate",
+  "remark",
+  "customerResponse",
+  "rating"
+]
+
+function generateFields(fieldNames: string[]) {
+  return fieldNames.map((name: string, index: number) => {
+    const isDefaultField = ['name', 'email', 'phone'].includes(name.toLowerCase());
+
+    return {
+      name: name, // Capitalize first letter
+      fieldType: "INPUT",
+      ddOptionId: null,
+      options: null,
+      isDisabled: true,
+      isRequired: false,
+      imgLimit: null,
+      order: index + 1,
+      isHardCoded: true
+    };
+  });
+}
+
+export const genHardCodedFields = (formName: string) => {
+  switch (decodeURIComponent(formName.toLowerCase())) {
+    case "lead":
+      return generateFields(leadHardCodeFields);
+    case "prospect":
+      return generateFields(leadHardCodeFields);
+    case "lead follow up":
+      return generateFields(followUp);
+    default:
+      return [];
   }
 }

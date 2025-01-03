@@ -169,7 +169,6 @@ export const ProspectForm = ({ fields, onClose }: {
                             }
                             return file.fieldname === field.name
                         });
-                        console.log(uploadedFilesForField, 'uploadedFilesForField')
                         if (uploadedFilesForField && uploadedFilesForField.length > 0) {
                             const urls = uploadedFilesForField.map((file: any) => file.url);
                             return { ...field, value: urls }; // Always return an array of URLs
@@ -597,7 +596,6 @@ export const ProspectForm = ({ fields, onClose }: {
 
                             const allLabels = cfield.options.flatMap((pOption: any) => pOption.label);
                             const isChildExist = sortedFields.some((x: any) => allLabels.includes(x.name));
-                            // console.log(isChildExist)
                             return (
                                 <>
                                     <FormField

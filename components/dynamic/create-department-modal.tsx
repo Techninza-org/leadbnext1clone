@@ -21,18 +21,19 @@ import { DeptMutation } from "@/lib/graphql/dept/mutation"
 import { userAtom } from "@/lib/atom/userAtom"
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command'
-import { cn, parseCSVToJson } from '@/lib/utils'
+import { cn, genHardCodedFields, parseCSVToJson } from '@/lib/utils'
 import { ScrollArea } from '../ui/scroll-area'
 
 const DepartmentSchema = z.object({
     deptFields: z.array(z.object({
-        name: z.string().min(1, "Field name is required"),
+        name: z.string().optional(),
         fieldType: z.string().min(1, "Field type is required"),
         ddOptionId: z.any().optional(),
         order: z.number().int().min(1, "Field order is required"),
         options: z.any(),
         isRequired: z.boolean(),
         isDisabled: z.boolean(),
+        isHardCoded: z.boolean().optional(),
     })).default([]),
 })
 
@@ -93,6 +94,8 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
         name: "deptFields",
     })
 
+    const hardCodedFields = genHardCodedFields(deptName);
+
     const { data } = useQuery(deptQueries.GET_COMPANY_DEPT_FIELDS, {
         variables: { deptId },
         skip: !userInfo?.token || !deptId,
@@ -105,55 +108,51 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
     useEffect(() => {
         if (filteredDeptFields.length > 0) {
             const sortedSubDeptFields = filteredDeptFields[0]?.fields?.sort((a, b) => a.order - b.order) || []
-            form.reset({ deptFields: sortedSubDeptFields })
+            // form.reset({ deptFields: sortedSubDeptFields })
+            form.reset({ deptFields: [...hardCodedFields, ...sortedSubDeptFields] })
         }
-        console.log(filteredDeptFields[0]?.id, "filteredDeptFields[0]?.id")
         setCompanyDeptFormId(filteredDeptFields[0]?.id)
     }, [filteredDeptFields, form])
 
+    console.log(form.formState.errors, "formState.errors")
+
     const onSubmit = useCallback(async (values) => {
-        try {
-            console.log({
-                companyDeptId: deptId || "",
-                categoryName: decodeURIComponent(categoryName),
-                name: decodeURIComponent(deptName),
-                deptName,
-                order: 4,
-                subDeptFields: values.deptFields,
-                companyDeptFormId: companyDeptFormId,
-            } , "values")
-            const { data, error } = await updateDepartmentFields({
-                variables: {
-                    input: {
-                        companyDeptId: deptId || "",
-                        categoryName: decodeURIComponent(categoryName),
-                        name: decodeURIComponent(deptName),
-                        deptName,
-                        order: 4,
-                        subDeptFields: values.deptFields,
-                        companyDeptFormId: companyDeptFormId,
-                    }
-                },
-            });
+        const filteredFields = values.deptFields.filter(field => !field.isHardCoded)
 
-            if (error) {
-                const message = error?.graphQLErrors?.map((e) => e.message).join(", ");
-                toast({
-                    title: 'Error',
-                    description: message || "Something went wrong",
-                    variant: "destructive"
-                });
-                return;
-            }
+        console.log(filteredFields, 'values.deptFields')
+        // try {
+        //     const { data, error } = await updateDepartmentFields({
+        //         variables: {
+        //             input: {
+        //                 companyDeptId: deptId || "",
+        //                 categoryName: decodeURIComponent(categoryName),
+        //                 name: decodeURIComponent(deptName),
+        //                 deptName,
+        //                 order: 4,
+        //                 subDeptFields: filteredFields,
+        //                 companyDeptFormId: companyDeptFormId,
+        //             }
+        //         },
+        //     });
 
-            toast({
-                variant: "default",
-                title: "Department Form Updated Successfully!",
-            });
+        //     if (error) {
+        //         const message = error?.graphQLErrors?.map((e) => e.message).join(", ");
+        //         toast({
+        //             title: 'Error',
+        //             description: message || "Something went wrong",
+        //             variant: "destructive"
+        //         });
+        //         return;
+        //     }
 
-        } catch (error) {
-            console.error(error);
-        }
+        //     toast({
+        //         variant: "default",
+        //         title: "Department Form Updated Successfully!",
+        //     });
+
+        // } catch (error) {
+        //     console.error(error);
+        // }
     }, [categoryName, companyDeptFormId, deptId, deptName, toast, updateDepartmentFields])
 
     const handleSelectChange = useCallback((value, index) => {
@@ -202,8 +201,6 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
             console.error("Error parsing CSV:", error);
         }
     }, [currIdx, currentOptionsIndx, form]);
-
-    // console.log(form.watch(`deptFields.${currIdx}.options`), "`deptFields.${currIdx}.options`")
 
     const renderFieldOptions = useCallback(() => {
         const fieldType = form.watch(`deptFields.${currIdx}.fieldType`)
@@ -300,7 +297,6 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
             );
         }
         if (['SELECT', 'RADIO', 'CHECKBOX', 'TAG'].includes(fieldType)) {
-            // console.log(, "form.watch(`deptFields.${currIdx}.options`)")
             return (
                 <div className="mt-4">
                     <FormLabel className="mr-2">Options ({form.watch(`deptFields.${currIdx}.name`)}) </FormLabel>
@@ -511,7 +507,6 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
                                                                                     options.push({ label: value, value: [] })
                                                                                     form.setValue(`deptFields.${currIdx}.options`, options)
                                                                                 }
-                                                                                // console.log(value, , "form.getValues(`deptFields.${currIdx}.options`)")
                                                                                 setCurrentOptionsIndx(form.getValues(`deptFields.${currIdx}.options`).findIndex((x) => x.label === value))
                                                                             }}
                                                                         >
@@ -664,153 +659,155 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
                     </CardHeader>
                     <CardContent>
                         <form onSubmit={form.handleSubmit(onSubmit)}>
-                            {fields.map((field, index) => (
-                                <div
-                                    key={field.id}
-                                    className={`mb-4 border p-4 rounded-md ${currIdx === index ? 'bg-blue-50' : ''}`}
-                                    onClick={() => setCurrIdx(index)}
-                                >
-                                    <div className="grid grid-cols-8 gap-2">
-                                        <div className="col-span-3">
+                            {fields.map((field, index) => {
+                                const isDisabled = form.watch(`deptFields.${index}.isDisabled`);
+                                const isHardCoded = form.watch(`deptFields.${index}.isHardCoded`);
+
+                                return (
+                                    <div
+                                        key={field.id}
+                                        className={`mb-4 border p-4 rounded-md ${currIdx === index ? 'bg-blue-50' : ''
+                                            } ${isDisabled || isHardCoded ? 'opacity-50 pointer-events-none' : ''}`}
+                                        onClick={() => !isDisabled && !isHardCoded && setCurrIdx(index)}
+                                        aria-disabled={isDisabled || isHardCoded}
+                                    >
+                                        <div className="grid grid-cols-8 gap-2">
+                                            <div className="col-span-3">
+                                                <FormField
+                                                    control={form.control}
+                                                    disabled={isDisabled}
+                                                    name={`deptFields.${index}.name`}
+                                                    render={({ field: nameField }) => (
+                                                        <FormItem>
+                                                            <FormControl>
+                                                                <Input
+                                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                                    placeholder="Field Name"
+                                                                    disabled={isDisabled}
+                                                                    {...nameField}
+                                                                />
+                                                            </FormControl>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className="col-span-3">
+                                                <FormField
+                                                    control={form.control}
+                                                    name={`deptFields.${index}.fieldType`}
+                                                    render={({ field }) => (
+                                                        <FormItem>
+                                                            <Select
+                                                                onValueChange={(value) => {
+                                                                    if (!isDisabled) {
+                                                                        field.onChange(value);
+                                                                        handleSelectChange(value, index);
+                                                                        form.trigger();
+                                                                        setCurrIdx(index);
+                                                                    }
+                                                                }}
+                                                                value={field.value || ""}
+                                                                disabled={isDisabled}
+                                                            >
+                                                                <FormControl>
+                                                                    <SelectTrigger className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
+                                                                        <SelectValue placeholder="Select Field Type" />
+                                                                    </SelectTrigger>
+                                                                </FormControl>
+                                                                <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
+                                                                    {fieldTypes.map(type => (
+                                                                        <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+                                                                    ))}
+                                                                </SelectContent>
+                                                            </Select>
+                                                            <FormMessage />
+                                                        </FormItem>
+                                                    )}
+                                                />
+                                            </div>
+                                            <div className="flex gap-2 col-span-2">
+                                                <Button
+                                                    type="button"
+                                                    variant="default"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (!isDisabled) moveField(index, -1);
+                                                    }}
+                                                    disabled={index === 0 || isDisabled}
+                                                >
+                                                    <ArrowUp size={15} />
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="default"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (!isDisabled) moveField(index, 1);
+                                                    }}
+                                                    disabled={index === fields.length - 1 || isDisabled}
+                                                >
+                                                    <ArrowDown size={15} />
+                                                </Button>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        if (!isDisabled) remove(index);
+                                                    }}
+                                                    disabled={isDisabled}
+                                                >
+                                                    <X color="red" size={20} />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                        <div className="flex gap-8 mt-2">
                                             <FormField
                                                 control={form.control}
-                                                name={`deptFields.${index}.name`}
-                                                render={({ field }) => (
-                                                    <FormItem>
+                                                name={`deptFields.${index}.isRequired`}
+                                                render={({ field: requiredField }) => (
+                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
                                                         <FormControl>
-                                                            <Input
-                                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                                                placeholder="Field Name"
-                                                                {...field}
+                                                            <Checkbox
+                                                                checked={requiredField.value}
+                                                                onCheckedChange={(checked) => {
+                                                                    if (!isDisabled) {
+                                                                        requiredField.onChange(checked);
+                                                                    }
+                                                                }}
+                                                                disabled={isDisabled}
                                                             />
                                                         </FormControl>
-                                                        <FormMessage />
+                                                        <FormLabel className="font-normal">Required</FormLabel>
                                                     </FormItem>
                                                 )}
                                             />
-                                        </div>
-                                        <div className="col-span-3">
                                             <FormField
                                                 control={form.control}
-                                                name={`deptFields.${index}.fieldType`}
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <Select
-                                                            onValueChange={(value) => {
-                                                                field.onChange(value)
-                                                                handleSelectChange(value, index)
-                                                                form.trigger()
-                                                                setCurrIdx(index)
-                                                            }}
-                                                            value={field.value || ""}
-                                                        >
-                                                            <FormControl>
-                                                                <SelectTrigger className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
-                                                                    <SelectValue placeholder="Select Field Type" />
-                                                                </SelectTrigger>
-                                                            </FormControl>
-                                                            <SelectContent className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0">
-                                                                {fieldTypes.map(type => (
-                                                                    <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
-                                                                ))}
-                                                            </SelectContent>
-                                                        </Select>
-
-                                                        <FormMessage />
+                                                name={`deptFields.${index}.isDisabled`}
+                                                render={({ field: disabledField }) => (
+                                                    <FormItem className="flex flex-row items-center space-x-3 space-y-0">
+                                                        <FormControl>
+                                                            <Checkbox
+                                                                checked={disabledField.value}
+                                                                onCheckedChange={(checked) => {
+                                                                    disabledField.onChange(checked);
+                                                                    form.trigger(`deptFields.${index}.isDisabled`);
+                                                                }}
+                                                            />
+                                                        </FormControl>
+                                                        <FormLabel className="font-normal">Disabled</FormLabel>
                                                     </FormItem>
                                                 )}
                                             />
-                                            {/* {form.watch(`deptFields.${index}.fieldType`) === "DD" && <div key={index}>
-                                                <FormLabel className="mr-2">Dependent On ({index})</FormLabel>
-                                                <Select
-                                                    onValueChange={(value) => form.setValue(`deptFields.${index}.ddOptionId`, value)}
-                                                    value={form.watch(`deptFields.${currIdx}.ddOptionId`) || undefined}
-                                                >
-                                                    <SelectTrigger className="w-[250px]">
-                                                        <SelectValue placeholder="Select dependency" />
-                                                    </SelectTrigger>
-                                                    <SelectContent>
-                                                        {form.watch('deptFields').filter(x => ["SELECT", "DD"].includes(x.fieldType)).map((field, index) => (
-                                                            field.name !== form.watch(`deptFields.${currIdx}.name`) && <SelectItem key={index} value={field.name}>
-                                                                {field.name}
-                                                            </SelectItem>
-                                                        ))}
-                                                    </SelectContent>
-                                                </Select>
-                                            </div>} */}
-                                        </div>
-                                        <div className="flex gap-2 col-span-2">
-                                            <Button
-                                                type="button"
-                                                variant="default"
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    moveField(index, -1)
-                                                }}
-                                                disabled={index === 0}
-                                            >
-                                                <ArrowUp size={15} />
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant="default"
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    moveField(index, 1)
-                                                }}
-                                                disabled={index === fields.length - 1}
-                                            >
-                                                <ArrowDown size={15} />
-                                            </Button>
-                                            <Button
-                                                type="button"
-                                                variant="ghost"
-                                                onClick={(e) => {
-                                                    e.stopPropagation()
-                                                    remove(index)
-                                                }}
-                                            >
-                                                <X color="red" size={20} />
-                                            </Button>
                                         </div>
                                     </div>
-                                    <div className="flex gap-8 mt-2">
-                                        <FormField
-                                            control={form.control}
-                                            name={`deptFields.${index}.isRequired`}
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value}
-                                                            onCheckedChange={field.onChange}
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">Required</FormLabel>
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name={`deptFields.${index}.isDisabled`}
-                                            render={({ field }) => (
-                                                <FormItem className="flex flex-row items-center space-x-3 space-y-0">
-                                                    <FormControl>
-                                                        <Checkbox
-                                                            checked={field.value}
-                                                            onCheckedChange={field.onChange}
-                                                        />
-                                                    </FormControl>
-                                                    <FormLabel className="font-normal">Disabled</FormLabel>
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
+                                )
+                            })}
                             <Button
                                 type="button"
-                                onClick={() => append({ name: '', fieldType: '', order: fields.length + 1, isRequired: true, isDisabled: false, ddOptionId: null })}
+                                onClick={() => append({ name: '', fieldType: '', order: fields.length + 1, isRequired: true, isDisabled: false, ddOptionId: null, isHardCoded: false, })}
                                 className="mt-4 bg-blue-500 text-white"
                             >
                                 Add Field

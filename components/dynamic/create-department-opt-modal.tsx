@@ -113,8 +113,6 @@ const UpdateDepartmentOptFieldsModal = ({ deptName, companyId }) => {
     }, [])
 
     const handleSelectChange = useCallback((value, index) => {
-        console.log(value, index, "value, index");
-        
         form.setValue(`adminDeptForm.${index}.fieldType`, value)
         if (['SELECT', 'RADIO', 'DROPDOWN', 'CHECKBOX'].includes(value)) {
             const currentOptions = form.getValues(`adminDeptForm.${index}.options`) || []
@@ -161,13 +159,11 @@ const UpdateDepartmentOptFieldsModal = ({ deptName, companyId }) => {
         }
     };
 
-    // console.log(form.watch(`adminDeptForm.${currIdx}.options`), "`adminDeptForm.${currIdx}.options`")
 
     const renderFieldOptions = useCallback(() => {
         const fieldType = form.watch(`adminDeptForm.${currIdx}.fieldType`)
 
         if (['SELECT', 'RADIO', 'CHECKBOX'].includes(fieldTypes)) {
-            // console.log(, "form.watch(`adminDeptForm.${currIdx}.options`)")
             return (
                 <div className="mt-4">
                     <FormLabel className="mr-2">Options ({form.watch(`adminDeptForm.${currIdx}.name`)}) </FormLabel>
@@ -378,7 +374,6 @@ const UpdateDepartmentOptFieldsModal = ({ deptName, companyId }) => {
                                                                                     options.push({ label: value, value: [] })
                                                                                     form.setValue(`adminDeptForm.${currIdx}.options`, options)
                                                                                 }
-                                                                                // console.log(value, , "form.getValues(`adminDeptForm.${currIdx}.options`)")
                                                                                 setCurrentOptionsIndx(form.getValues(`adminDeptForm.${currIdx}.options`).findIndex((x) => x.label === value))
                                                                             }}
                                                                         >

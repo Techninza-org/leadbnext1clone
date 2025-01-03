@@ -449,7 +449,6 @@ const FollowUpForm = ({ lead, isFollowUpActive, setIsFollowUpActive, forLead }: 
 
                                     const allLabels = cfield.options.flatMap((pOption: any) => pOption.label);
                                     const isChildExist = sortedFields.some((x: any) => allLabels.includes(x.name));
-                                    // console.log(isChildExist)
                                     return (
                                         <>
                                             <FormField

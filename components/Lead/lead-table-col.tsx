@@ -95,6 +95,32 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         },
         filterFn: multiSelectFilter,
     },
+    {
+        header: 'Created By',
+        accessorKey: 'via',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("via")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Created At',
+        accessorKey: 'createdAt',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("createdAt")}</span>
+                    </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
 ];
 
 const AssigneeName = ({ lead }: { lead: any }) => {
@@ -188,6 +214,32 @@ export const RootProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             return (
                 <div className="flex items-center">
                     <span>{row.getValue("alternatePhone")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Created By',
+        accessorKey: 'via',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("via")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Created At',
+        accessorKey: 'createdAt',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("createdAt")}</span>
                 </div>
             )
 

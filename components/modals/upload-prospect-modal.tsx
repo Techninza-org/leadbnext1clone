@@ -116,7 +116,7 @@ export const UploadProspectModal = () => {
     };
 
 
-    const sortedFields = fields?.formFields?.sort((a: any, b: any) => a.order - b.order);
+    const sortedFields = fields?.formFields?.sort((a: any, b: any) => a.order - b.order) || [];
 
     const onSubmit = async (data: any) => {
         const updatedCSVData = wrapFieldsInDynamicFieldValueArray(sortedFields || [], updateCsvKeys(uploadCSVData, data))

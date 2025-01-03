@@ -57,7 +57,6 @@ export const ViewProspectInfoModal = () => {
 
     const handleSave = (feedbackId: string) => {
         // Here you would typically make an API call to update the feedback
-        console.log(`Saving feedback ${feedbackId} with value: ${feedbackValues[feedbackId]}`)
         setEditingFeedback(prev => ({ ...prev, [feedbackId]: false }))
     }
 

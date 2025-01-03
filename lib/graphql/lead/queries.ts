@@ -10,6 +10,9 @@ const GET_COMPANY_LEADS = `
         callStatus
         paymentStatus
         department
+        via
+        createdAt
+        updatedAt
         bids {
           id
           bidAmount
@@ -79,6 +82,7 @@ const GET_PROSPECT_LEADS = `
         paymentStatus
         phone
         isLeadConverted
+        via
         followUps {
           id
           nextFollowUpDate
@@ -91,6 +95,8 @@ const GET_PROSPECT_LEADS = `
           createdAt
           updatedAt
        }
+        createdAt
+        updatedAt
     }
   }
 `;
