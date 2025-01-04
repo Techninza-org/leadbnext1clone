@@ -38,6 +38,7 @@ export async function middleware(request: NextRequest) {
     '/xchange-list',
     '/lead-imgs',
     '/broadcast',
+    '/settings',
 
     '/values',
     

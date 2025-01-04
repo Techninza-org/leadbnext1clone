@@ -43,7 +43,7 @@ export function UserAvatar() {
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <Link href="/Settings">
+                    <Link href="/settings">
                         <DropdownMenuItem>
                             Settings
                         </DropdownMenuItem>

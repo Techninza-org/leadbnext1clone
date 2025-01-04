@@ -35,10 +35,14 @@ export function AssignedLeadTableRowActions<TData>({
 }: DataTableRowActionsProps<TData>) {
   const { onOpen } = useModal()
   const user = useAtomValue(userAtom)
-  const { companyForm, optForms } = useCompany()
+  const { companyForm, optForms, companyMemberRoles } = useCompany()
 
   const OptFormNames = optForms?.map((form: any) => form.name)
-  const formFields = companyForm.filter((x: any) => !OptFormNames.includes(x.name))
+
+  const assignedForms = companyMemberRoles?.find((role: any) => role.name === user?.role.name)?.companyDeptForm || []
+  const assignedFormsName = assignedForms.map((x: any) => x.name)
+
+  const formFields = companyForm.filter((x: any) => !OptFormNames.includes(x.name) && assignedFormsName.includes(x.name)) || []
   const formateFields = updateDependentFields(formFields || [])
 
   return (
@@ -54,9 +58,10 @@ export function AssignedLeadTableRowActions<TData>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {
-          ["root", "telecaller"].includes(user?.role.name.toLowerCase().split(" ").join("") || "") && formateFields?.map((field: any) => (
-            <DropdownMenuItem key={field.id} onClick={() => onOpen("submitLead", { lead, fields: field })}>
-              {field.name}
+          formateFields.map((form: any) => (
+            <DropdownMenuItem key={form.name} onClick={() => onOpen("submitLead", { lead, fields: form })}>
+
+              {form.name}
             </DropdownMenuItem>
           ))
         }

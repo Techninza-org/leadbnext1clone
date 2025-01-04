@@ -48,8 +48,24 @@ const UPDATE_BROADCAST_FORM = `
   }
 `;
 
+const UPDATE_ROLE_FORM = `
+mutation upsertCompanyDeptForm(
+    $formIds: [String]!
+    $roleId: String!
+) {
+    upsertCompanyDeptForm(
+        formIds: $formIds
+        roleId: $roleId
+    ) {
+        id
+        name
+    }
+}
+`;
+
 export const companyMutation = {
   UPDATE_COMPANY_SUBSCRIPTION,
+  UPDATE_ROLE_FORM,
   DELETE_BROADCAST,
   UPDATE_BROADCAST_FORM,
 }

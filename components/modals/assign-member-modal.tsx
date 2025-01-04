@@ -33,9 +33,10 @@ import { companyQueries } from "@/lib/graphql/company/queries"
 import { useModal } from "@/hooks/use-modal-store"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { useState } from "react"
+import { useCompany } from "../providers/CompanyProvider"
 
 export const AssignMemberModal = () => {
-    const [filteredRoles, setFilteredRoles] = useState([])
+    const { companyMemberRoles: filteredRoles } = useCompany()
     const { toast } = useToast()
     const user = useAtomValue(userAtom)
     const [createUser, { loading, error, data }] = useMutation(CREATE_USER);
@@ -52,13 +53,7 @@ export const AssignMemberModal = () => {
         ],
     });
 
-    const { loading: roleLoading, error: roleError, data: rolesData } = useQuery(companyQueries.GET_ALL_ROLES, {
-        skip: !user?.companyId,
-        onSuccess: ({ data }) => {
-            const filter = data.getAllRoles.filter((role: any) => role.name !== "Root" && role.name !== "Admin")
-            setFilteredRoles(filter)
-        }
-    });
+
 
     const form = useForm<z.infer<typeof createCompanyMemberSchema>>({
         resolver: zodResolver(createCompanyMemberSchema),
@@ -97,7 +92,7 @@ export const AssignMemberModal = () => {
             variant: "default",
             title: "Member Added Successfully!",
         })
-        
+
         toast({
             variant: "default",
             title: "Note",
@@ -115,139 +110,139 @@ export const AssignMemberModal = () => {
 
     return (
         <Dialog open={isModalOpen} onOpenChange={handleClose}>
-        <DialogContent className="text-black max-w-screen-sm">
-            <DialogHeader className="pt-8 px-6">
-                <DialogTitle className="text-2xl text-center font-bold">
-                    Add New Member
-                </DialogTitle>
-            </DialogHeader>
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-                <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">Name</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                            placeholder="Name"
-                                            {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                            placeholder="Email"
-                                            {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <DialogContent className="text-black max-w-screen-sm">
+                <DialogHeader className="pt-8 px-6">
+                    <DialogTitle className="text-2xl text-center font-bold">
+                        Add New Member
+                    </DialogTitle>
+                </DialogHeader>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <div className="grid grid-cols-2 gap-6">
+                            <div className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">Name</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                    placeholder="Name"
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">Email</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                    placeholder="Email"
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                        <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">Phone</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                            placeholder="Enter Phone"
-                                            {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+                                <FormField
+                                    control={form.control}
+                                    name="phone"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="uppercase text-xs font-bold text-zinc-500 dark:text-secondary/70">Phone</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                    placeholder="Enter Phone"
+                                                    {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                    </div>
-                    <div className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="deptId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Department</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger
-                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                            </div>
+                            <div className="space-y-4">
+                                <FormField
+                                    control={form.control}
+                                    name="deptId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Department</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
                                             >
-                                                <SelectValue placeholder="Select Department" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent
-                                            className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-                                        >
-                                            {
-                                                deptData?.getCompanyDepts?.map((dept: z.infer<typeof companyDeptSchema>) => (
-                                                    <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
+                                                <FormControl>
+                                                    <SelectTrigger
+                                                        className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                    >
+                                                        <SelectValue placeholder="Select Department" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent
+                                                    className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                >
+                                                    {
+                                                        deptData?.getCompanyDepts?.map((dept: z.infer<typeof companyDeptSchema>) => (
+                                                            <SelectItem key={dept.id} value={dept.id}>{dept.name}</SelectItem>
 
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="roleId"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Role</FormLabel>
-                                    <Select
-                                        onValueChange={field.onChange}
-                                        defaultValue={field.value}
-                                    >
-                                        <FormControl>
-                                            <SelectTrigger
-                                                className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
-
+                                                        ))
+                                                    }
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="roleId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Role</FormLabel>
+                                            <Select
+                                                onValueChange={field.onChange}
+                                                defaultValue={field.value}
                                             >
-                                                <SelectValue placeholder="Select Member Role" />
-                                            </SelectTrigger>
-                                        </FormControl>
-                                        <SelectContent
-                                            className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                                <FormControl>
+                                                    <SelectTrigger
+                                                        className="bg-zinc-100/50 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
 
-                                        >
-                                            {
-                                                filteredRoles?.map((role: any) => (
-                                                    <SelectItem key={role.id} value={role.id} className="capitalize">{role.name}</SelectItem>
-                                                ))
-                                            }
-                                        </SelectContent>
-                                    </Select>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-                </div>
-                <Button type="submit" className="mt-6">Register Member</Button>
-            </form>
-        </Form>
-        </DialogContent>
+                                                    >
+                                                        <SelectValue placeholder="Select Member Role" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent
+                                                    className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+
+                                                >
+                                                    {
+                                                        filteredRoles?.map((role: any) => (
+                                                            <SelectItem key={role.id} value={role.id} className="capitalize">{role.name}</SelectItem>
+                                                        ))
+                                                    }
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
+                        <Button type="submit" className="mt-6">Register Member</Button>
+                    </form>
+                </Form>
+            </DialogContent>
         </Dialog>
     )
 }

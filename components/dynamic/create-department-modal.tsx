@@ -114,45 +114,42 @@ const UpdateDepartmentFieldsModal = ({ categoryName, deptName, deptId }) => {
         setCompanyDeptFormId(filteredDeptFields[0]?.id)
     }, [filteredDeptFields, form])
 
-    console.log(form.formState.errors, "formState.errors")
-
     const onSubmit = useCallback(async (values) => {
         const filteredFields = values.deptFields.filter(field => !field.isHardCoded)
 
-        console.log(filteredFields, 'values.deptFields')
-        // try {
-        //     const { data, error } = await updateDepartmentFields({
-        //         variables: {
-        //             input: {
-        //                 companyDeptId: deptId || "",
-        //                 categoryName: decodeURIComponent(categoryName),
-        //                 name: decodeURIComponent(deptName),
-        //                 deptName,
-        //                 order: 4,
-        //                 subDeptFields: filteredFields,
-        //                 companyDeptFormId: companyDeptFormId,
-        //             }
-        //         },
-        //     });
+        try {
+            const { data, error } = await updateDepartmentFields({
+                variables: {
+                    input: {
+                        companyDeptId: deptId || "",
+                        categoryName: decodeURIComponent(categoryName),
+                        name: decodeURIComponent(deptName),
+                        deptName,
+                        order: 4,
+                        subDeptFields: filteredFields,
+                        companyDeptFormId: companyDeptFormId,
+                    }
+                },
+            });
 
-        //     if (error) {
-        //         const message = error?.graphQLErrors?.map((e) => e.message).join(", ");
-        //         toast({
-        //             title: 'Error',
-        //             description: message || "Something went wrong",
-        //             variant: "destructive"
-        //         });
-        //         return;
-        //     }
+            if (error) {
+                const message = error?.graphQLErrors?.map((e) => e.message).join(", ");
+                toast({
+                    title: 'Error',
+                    description: message || "Something went wrong",
+                    variant: "destructive"
+                });
+                return;
+            }
 
-        //     toast({
-        //         variant: "default",
-        //         title: "Department Form Updated Successfully!",
-        //     });
+            toast({
+                variant: "default",
+                title: "Department Form Updated Successfully!",
+            });
 
-        // } catch (error) {
-        //     console.error(error);
-        // }
+        } catch (error) {
+            console.error(error);
+        }
     }, [categoryName, companyDeptFormId, deptId, deptName, toast, updateDepartmentFields])
 
     const handleSelectChange = useCallback((value, index) => {

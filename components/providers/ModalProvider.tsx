@@ -19,6 +19,7 @@ import { CreateLeadModal } from "../modals/create-lead-modal";
 import { CreateDeptFormModal } from "../modals/create-dept-form-modal";
 import { EditLeadFormValueModal } from "../modals/edit-lead-form-value-modal";
 import { ViewProspectInfoModal } from "../modals/view-prospect-info-modal";
+import { AssignFormModal } from "../modals/assign-form-modal";
 
 
 export const ModalProvider = () => {
@@ -33,6 +34,7 @@ export const ModalProvider = () => {
 
   return (
     <>
+      <AssignFormModal />
       <AssignMemberModal />
       <ViewProspectInfoModal />
       <CreateLeadModal />

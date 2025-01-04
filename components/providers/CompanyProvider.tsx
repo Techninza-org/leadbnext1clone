@@ -22,6 +22,7 @@ type CompanyContextType = {
     companyForm: any;
     departments: any;
     optForms: any;
+    companyMemberRoles: any;
 };
 
 const CompanyContext = createContext<CompanyContextType | undefined>(undefined);
@@ -39,6 +40,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [departments, setDepartmentsForms] = useState([])
     const [optForms, setOptForms] = useState([])
     const [companyForm, setCompanyForms] = useState([])
+    const [companyMemberRoles, setCompanyMemberRoles] = useState<any>([])
 
     const authToken = useAtomValue(userAuthToken)
 
@@ -78,7 +80,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
                 setCompanyDeptFields(data?.getCompanyDeptFields)
                 setOptForms(data?.getCompanyDeptFields.filter((field: any) => ['LEAD', "PROSPECT", "LEAD FOLLOW UP", "PROSPECT FOLLOW UP"].includes(String(field.name).toUpperCase())))
             }
-        }, 
+        },
     });
 
     const { } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
@@ -119,6 +121,13 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         },
     })
 
+    const { } = useQuery(companyQueries.GET_ALL_ROLES, {
+        skip,
+        onSuccess: ({ data }) => {
+            setCompanyMemberRoles(data.getAllRoles)
+        }
+    });
+
     // const { } = useQuery(userQueries.GET_DEPT_FIELDS, {
     //     skip,
     //     onSuccess: ({ data }) => {
@@ -136,7 +145,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     // })
 
     return (
-        <CompanyContext.Provider value={{ companyForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields, optForms }}>
+        <CompanyContext.Provider value={{ companyMemberRoles, companyForm, departments, leadRangeData, companyDeptMembers, rootInfo, members, companyDeptFields, optForms }}>
             {children}
         </CompanyContext.Provider>
     );
