@@ -1,6 +1,6 @@
 export const LOGIN_USER = `
-  mutation loginUser($phone: String!, $otp: String!) {
-    loginUser(phone: $phone, otp: $otp) {
+  mutation loginUser($phone: String, $otp: String, $email: String, $password: String) {
+    loginUser(phone: $phone, otp: $otp, email: $email, password: $password) {
      user {
         id
         name
