@@ -265,10 +265,10 @@ export const AssignedProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = 
         accessorKey: 'nextFollowUpDate',
         cell: ({ row }) => {
             // @ts-ignore
-            const nextDate = row.original?.followUps?.[row?.original?.followUps?.length -1]?.nextFollowUpDate
+            const nextDate = row.original?.followUps?.[row?.original?.followUps?.length - 1]?.nextFollowUpDate
             return (
                 <div className="flex items-center">
-                    <span>{formatDate(nextDate, "dd/MM/yyyy")}</span>
+                    <span>{nextDate ? formatDate(nextDate, "dd/MM/yyyy") : ""}</span>
                 </div>
             )
         },
@@ -296,7 +296,7 @@ const EnquiryDetailProspect = ({ lead }: { lead: z.infer<typeof leadSchema> }) =
         <div className="flex items-center">
             <span
                 className="text-blue-900 cursor-pointer hover:underline"
-                onClick={() => onOpen("enquiryDetails", { lead, query: "Prospect"})}>{lead.id}</span>
+                onClick={() => onOpen("enquiryDetails", { lead, query: "Prospect" })}>{lead.id}</span>
         </div>
     )
 }

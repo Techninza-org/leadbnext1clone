@@ -23,6 +23,6 @@ export const TransferedLeadsTable = () => {
     )
 
     return (
-        <UserLeadTable columns={TransferedLeadColDefs} data={data?.getTransferedLeads || []} />
+        <UserLeadTable columns={TransferedLeadColDefs} data={data?.getTransferedLeads || []} label="" />
     )
 }
