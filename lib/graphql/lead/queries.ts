@@ -17,7 +17,7 @@ const GET_COMPANY_LEADS = `
           id
           bidAmount
         }
-
+        dynamicFieldValues
         leadMember {
           id
           member {
@@ -71,6 +71,39 @@ const GET_COMPANY_LEADS = `
   }
 `;
 
+const GET_COMPANY_CLIENTS = `
+  query getClients {
+    getClients {
+        id
+        name
+        email
+        phone
+        alternatePhone
+        callStatus
+        paymentStatus
+        department
+        via
+        createdAt
+        updatedAt
+        dynamicFieldValues
+        followUps {
+          id
+          nextFollowUpDate
+          remark
+          customerResponse
+          dynamicFieldValues
+          rating
+          leadId
+          followUpBy
+          createdAt
+          updatedAt
+       }
+
+     
+    }
+  }
+`;
+
 const GET_PROSPECT_LEADS = `
   query GetCompanyProspects {
     getCompanyProspects {
@@ -83,6 +116,13 @@ const GET_PROSPECT_LEADS = `
         phone
         isLeadConverted
         via
+          leadMember {
+          id
+          member {
+            name
+          }
+        }
+        dynamicFieldValues
         followUps {
           id
           nextFollowUpDate
@@ -115,6 +155,19 @@ query getAssignedLeads($userId: String!) {
         id
         bidAmount
       }
+      dynamicFieldValues
+       followUps {
+          id
+          nextFollowUpDate
+          remark
+          customerResponse
+          dynamicFieldValues
+          rating
+          leadId
+          followUpBy
+          createdAt
+          updatedAt
+       }
       submittedForm {
         id
         formName
@@ -158,6 +211,18 @@ query getAssignedProspect($userId: String!) {
         id
         bidAmount
       }
+        followUps {
+          id
+          nextFollowUpDate
+          remark
+          customerResponse
+          dynamicFieldValues
+          rating
+          leadId
+          followUpBy
+          createdAt
+          updatedAt
+       }
       submittedForm {
         id
         formName
@@ -297,4 +362,5 @@ export const leadQueries = {
   GET_LEADS_BY_DATE_RANGE,
   GET_TRANSFERED_LEADS,
   GET_FOLLOWUP,
+  GET_COMPANY_CLIENTS,
 };

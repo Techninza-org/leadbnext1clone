@@ -18,7 +18,7 @@ import FollowUpForm from "../Lead/follow-up-form";
 import { Fragment, useEffect, useState } from "react";
 import FollowUpsData from "../Lead/follow-ups-data";
 import { formatCurrencyForIndia, formatReturnOfDB } from "@/lib/utils";
-import { LeadApprovedAction } from "../Lead/lead-table-col";
+import { ClientApprovedAction, LeadApprovedAction } from "../Lead/lead-table-col";
 import { Input } from "../ui/input";
 import AdvancedDataTable from "../advance-data-table";
 
@@ -162,6 +162,17 @@ export const ViewLeadInfoModal = () => {
                         </div>
                     </DialogTitle>
                     <Separator className="my-4" />
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                            <Badge variant="secondary" className="text-sm font-medium">
+                                {lead?.name}
+                            </Badge>
+                            {/* Add more badges for other important lead info */}
+                        </div>
+                        <div className="flex items-center space-x-4">
+                            <ClientApprovedAction lead={lead as any} />
+                        </div>
+                    </div>
                 </DialogHeader>
                 <ScrollArea className="max-h-full w-full rounded-md border">
                     <div className="p-4">

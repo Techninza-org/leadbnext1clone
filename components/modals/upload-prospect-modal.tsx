@@ -42,6 +42,9 @@ import { ScrollArea } from '../ui/scroll-area';
 import Image from 'next/image';
 import { FileInput, FileUploader, FileUploaderContent, FileUploaderItem } from '../file-uploader';
 import { DropzoneOptions } from 'react-dropzone';
+import { deptQueries } from '@/lib/graphql/dept/queries';
+import { useQuery } from 'graphql-hooks';
+import { LOGIN_USER } from '@/lib/graphql/user/mutations';
 
 const dropzone = {
     accept: {
@@ -81,6 +84,15 @@ export const UploadProspectModal = () => {
         criteriaMode: "all",
     });
 
+
+    const { loading: deptLoading, error: deptError, data: deptData } = useQuery(deptQueries.GET_COMPANY_DEPTS, {
+        variables: { companyId: userInfo?.companyId },
+        skip: !userInfo?.token || !userInfo?.companyId,
+        refetchAfterMutations: [
+           { mutation: LOGIN_USER}
+        ]
+    });
+
     const updateCsvKeys = (csvData: any, formDataMapping: any) => {
         const updatedJsonData = csvData?.map((row: any) => {
             const newRow: any = {};
@@ -98,7 +110,7 @@ export const UploadProspectModal = () => {
         fields: any[],
         inputData: any[]
     ) => {
-        return inputData.map((data) => {
+        return inputData.length && inputData?.map((data) => {
             const dynamicFieldValue: Record<string, any> = {};
             const updatedData: Record<string, any> = { ...data };
 
@@ -120,7 +132,7 @@ export const UploadProspectModal = () => {
 
     const onSubmit = async (data: any) => {
         const updatedCSVData = wrapFieldsInDynamicFieldValueArray(sortedFields || [], updateCsvKeys(uploadCSVData, data))
-        const filterCSVData = updatedCSVData.filter(x => !!x.email)
+        const filterCSVData = Array.isArray(updatedCSVData) ? updatedCSVData.filter(x => !!x.email) : []
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_GRAPHQL_API || 'http://localhost:8080'}/graphql/bulk-upload-prospect`, {
                 method: 'POST',
@@ -262,7 +274,7 @@ export const UploadProspectModal = () => {
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
+                                    {/* <FormField
                                         control={form.control}
                                         name="alternatePhone"
                                         render={({ field }) => (
@@ -285,7 +297,7 @@ export const UploadProspectModal = () => {
                                                 <FormMessage />
                                             </FormItem>
                                         )}
-                                    />
+                                    /> */}
 
                                     <FormField
                                         control={form.control}

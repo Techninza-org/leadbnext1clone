@@ -94,7 +94,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
             },
         ],
         onSuccess: ({ data }) => {
-            if (data?.getCompanyDepts?.[0].companyForms?.length > 0) {
+            if (data?.getCompanyDepts?.[0]?.companyForms?.length > 0) {
                 setCompanyForms(data?.getCompanyDepts?.[0].companyForms);
             }
         }

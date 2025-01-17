@@ -147,7 +147,7 @@ export const ViewProspectInfoModal = () => {
                                 </Badge>
                                 <h2 className="pl-2">Prospect Details</h2>
                             </div>
-                            <div className="flex items-center space-x-4">
+                            {/* <div className="flex items-center space-x-4">
                                 {
                                     isEditing ? (
                                         <Button
@@ -171,7 +171,7 @@ export const ViewProspectInfoModal = () => {
                                         </Button>
                                     )
                                 }
-                            </div>
+                            </div> */}
                         </div>
                     </DialogTitle>
                     <Separator className="my-4" />

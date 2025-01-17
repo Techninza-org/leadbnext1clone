@@ -7,7 +7,7 @@ import { useAtomValue, useSetAtom } from 'jotai';
 import { z } from 'zod';
 import { useToast } from '@/components/ui/use-toast';
 import { leadSchema } from '@/types/lead';
-import { leads, prospects } from '@/lib/atom/leadAtom';
+import { clients, leads, prospects } from '@/lib/atom/leadAtom';
 import { leadQueries } from '@/lib/graphql/lead/queries';
 import { userAtom } from '@/lib/atom/userAtom';
 import { leadMutation } from '@/lib/graphql/lead/mutation';
@@ -24,6 +24,7 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
     const userInfo = useAtomValue(userAtom);
     const { toast } = useToast();
     const setLeads = useSetAtom(leads);
+    const setClients = useSetAtom(clients);
     const setProspect = useSetAtom(prospects);
 
     // Only skip if user has ROOT/MANAGER role but no companyId
@@ -55,6 +56,26 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
         }
     );
 
+    const { loading } = useQuery(
+        leadQueries.GET_COMPANY_CLIENTS,
+        {
+            variables: { companyId: userInfo?.companyId },
+            skip: shouldSkipQuery(),
+            onSuccess: ({ data }) => {
+                setClients(data.getClients);
+            },
+            onError: (error: any) => {
+                console.error('Leads query error:', error);
+            },
+            refetchAfterMutations: [
+                { mutation: LOGIN_USER },
+                { mutation: leadMutation.LEAD_ASSIGN_TO },
+                { mutation: leadMutation.CREATE_LEAD },
+                { mutation: leadMutation.APPROVED_LEAD_MUTATION },
+            ],
+        }
+    );
+
     const { loading: prospectsLoading } = useQuery(
         leadQueries.GET_PROSPECT_LEADS,
         {
@@ -71,6 +92,7 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
                 { mutation: LOGIN_USER },
                 { mutation: leadMutation.LEAD_ASSIGN_TO },
                 { mutation: leadMutation.CREATE_LEAD },
+                { mutation: leadMutation.CREATE_PROSPECT },
             ],
         }
     );

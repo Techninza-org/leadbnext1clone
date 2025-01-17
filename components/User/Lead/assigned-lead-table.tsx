@@ -35,6 +35,6 @@ export const AssignedLeadTable = () => {
     )
 
     return (
-        <UserLeadTable columns={AssignedLeadColDefs} data={leadInfo || []} />
+        <UserLeadTable columns={AssignedLeadColDefs} data={leadInfo || []} label="LEAD" />
     )
 }

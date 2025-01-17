@@ -7,6 +7,7 @@ mutation createLead(
   $phone: String!, 
   $remark: String!, 
   $department: String!
+  $dynamicFieldValues: JSON
 ) {
   createLead(
     input: {
@@ -17,6 +18,7 @@ mutation createLead(
       phone: $phone,
       remark: $remark,
       department: $department
+      dynamicFieldValues: $dynamicFieldValues
     }
   ) {
     lead {
@@ -36,6 +38,7 @@ mutation createProspect(
   $phone: String!, 
   $remark: String!, 
   $department: String!
+  $dynamicFieldValues: JSON
 ) {
   createProspect(
     input: {
@@ -45,6 +48,7 @@ mutation createProspect(
       alternatePhone: $alternatePhone,
       phone: $phone,
       remark: $remark,
+      dynamicFieldValues: $dynamicFieldValues
       department: $department
     }
   ) {
@@ -184,6 +188,18 @@ const APPROVED_LEAD_MUTATION = `
   }
 `;
 
+const APPROVED_CLIENT_MUTATION = `
+  mutation leadToClient($leadId: ID!, $status: Boolean) {
+    leadToClient(
+      leadId: $leadId
+      status: $status
+    ) {
+      id
+      name
+    }
+  }
+`;
+
 const TRANSFER_LEAD  = `
 mutation TransferLead(
   $leadId: ID!,
@@ -269,6 +285,7 @@ export const leadMutation = {
   SUBMIT_BID_MUTATION,
   UPDATE_LEAD_FINANCE_STATUS,
   APPROVED_LEAD_MUTATION,
+  APPROVED_CLIENT_MUTATION,
   TRANSFER_LEAD,
   UPDATE_FOLLOWUP,
   UPDATE_FOLLOWUP_PROSPECT

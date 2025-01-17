@@ -72,17 +72,46 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         filterFn: multiSelectFilter,
     },
     {
-        header: 'Alternate Phone',
-        accessorKey: 'alternatePhone',
+        header: 'Company Name.',
+        accessorKey: 'dynamicFieldValues',
         cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "Company Name")?.value
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("alternatePhone")}</span>
+                    <span>{companyName}</span>
                 </div>
             )
 
-        },
-        filterFn: multiSelectFilter,
+        }
+    },
+    {
+        header: 'Company Address.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "Company Address")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: 'City.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "City")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
     },
     {
         header: 'Assigned',
@@ -123,8 +152,138 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
     },
 ];
 
+export const ClientColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
+    {
+        id: "id",
+        header: ({ table }) => (
+            <Checkbox
+                checked={
+                    table.getIsAllPageRowsSelected() ||
+                    (table.getIsSomePageRowsSelected() && "indeterminate")
+                }
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox
+                checked={row.getIsSelected()}
+                onCheckedChange={(value) => row.toggleSelected(!!value)}
+                aria-label="Select row"
+            />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
+    {
+        header: 'Name',
+        accessorKey: 'name',
+        cell: ({ row }) => {
+            return (
+                <ViewLeadInfo lead={row.original} />
+            )
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Email',
+        accessorKey: 'email',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("email")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Phone',
+        accessorKey: 'phone',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("phone")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Company Name.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "Company Name")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: 'Company Address.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "Company Address")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: 'City.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "City")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: 'Created By',
+        accessorKey: 'via',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("via")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Created At',
+        accessorKey: 'createdAt',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("createdAt")}</span>
+                    </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+];
+
 const AssigneeName = ({ lead }: { lead: any }) => {
     const assigneeName = lead?.leadMember?.map((leadMember: any) => leadMember?.member?.name).join(", ");
+    console.log(lead?.leadMember, 'lead?.leadMember')
     return (
         <Button
             size={'sm'}
@@ -195,28 +354,56 @@ export const RootProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         },
         filterFn: multiSelectFilter,
     },
-    // {
-    //     header: 'Department',
-    //     accessorKey: 'dept',
-    //     cell: ({ row }) => {
-    //         return (
-    //             <div className="flex items-center">
-    //                 {/* <span>{row.getValue("dept")}</span> */}
-    //                 <span>Sales</span>
-    //             </div>
-    //         )
-    //     }
-    // },
     {
-        header: 'Alternate Phone',
-        accessorKey: 'alternatePhone',
+        header: 'Company Name.',
+        accessorKey: 'dynamicFieldValues',
         cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "Company Name")?.value
             return (
                 <div className="flex items-center">
-                    <span>{row.getValue("alternatePhone")}</span>
+                    <span>{companyName}</span>
                 </div>
             )
 
+        }
+    },
+    {
+        header: 'Company Address.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "Company Address")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: 'City.',
+        accessorKey: 'dynamicFieldValues',
+        cell: ({ row }) => {
+            // @ts-ignore
+            const companyName = row.original?.dynamicFieldValues?.find(x => x.name == "City")?.value
+            return (
+                <div className="flex items-center">
+                    <span>{companyName}</span>
+                </div>
+            )
+
+        }
+    },
+    {
+        header: 'Assigned',
+        accessorKey: '',
+        cell: ({ row }) => {
+            const rowData = row?.original;
+            return (
+                <AssigneeName lead={rowData} />
+            );
         },
         filterFn: multiSelectFilter,
     },
@@ -396,6 +583,39 @@ export const LeadApprovedAction = ({ lead }: { lead: z.infer<typeof leadSchema> 
                 }
             })}>
             Transfer
+        </Button>
+    )
+}
+
+export const ClientApprovedAction = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
+    const { toast } = useToast()
+    const [leadToClient, { loading, data, error }] = useMutation(leadMutation.APPROVED_CLIENT_MUTATION)
+    useEffect(() => {
+        if (data?.leadToClient) {
+            toast({
+                title: "Transfer Successfully!"
+            })
+        }
+        if (error) {
+            toast({
+                title: "Error",
+                variant: "destructive"
+            })
+
+        }
+    }, [data, error, toast])
+
+    return (
+        <Button
+            className="bg-green-700"
+            size={'sm'}
+            onClick={async (value: any) => await leadToClient({
+                variables: {
+                    leadId: lead.id,
+                    status: true
+                }
+            })}>
+            Transfer To Client
         </Button>
     )
 }

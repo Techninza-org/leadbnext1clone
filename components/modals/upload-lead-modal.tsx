@@ -253,12 +253,37 @@ export const UploadLeadModal = () => {
                                             </FormItem>
                                         )}
                                     />
-                                    <FormField
+                                    {/* <FormField
                                         control={form.control}
                                         name="alternatePhone"
                                         render={({ field }) => (
                                             <FormItem>
                                                 <FormLabel>Alternate Phone</FormLabel>
+                                                <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
+                                                    <FormControl>
+                                                        <SelectTrigger>
+                                                            <SelectValue placeholder={`Select`} />
+                                                        </SelectTrigger>
+                                                    </FormControl>
+                                                    <SelectContent>
+                                                        {
+                                                            uploadedCSVHeaders.map((item, i) => (
+                                                                <SelectItem key={i} value={item}>{item}</SelectItem>
+                                                            ))
+                                                        }
+                                                    </SelectContent>
+                                                </Select>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    /> */}
+
+                                    <FormField
+                                        control={form.control}
+                                        name="remark"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Remark</FormLabel>
                                                 <Select disabled={uploadedCSVHeaders.length < 1} onValueChange={field.onChange} defaultValue={field.value}>
                                                     <FormControl>
                                                         <SelectTrigger>

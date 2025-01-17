@@ -46,6 +46,7 @@ export async function middleware(request: NextRequest) {
     '/prospect',
     '/bids',
     '/leads',
+    '/clients',
     '/members',
     '/leads/transfered',
     '/track',

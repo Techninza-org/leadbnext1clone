@@ -26,6 +26,11 @@ export const ROOT_NAV_LINKS = [
         icon: Pencil,
         href: "/departments",
     },
+    {
+        title: "Clients",
+        icon: FileTextIcon,
+        href: "/clients",
+    },
     // {
     //     title: "Follow Up",
     //     icon: Pencil,
@@ -81,6 +86,11 @@ export const MANAGER_NAV_LINKS = [
         title: "Leads",
         icon: FileTextIcon,
         href: "/leads",
+    },
+    {
+        title: "Clients",
+        icon: FileTextIcon,
+        href: "/clients",
     },
     {
         title: "Prospect",

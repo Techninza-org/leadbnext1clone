@@ -5,7 +5,7 @@ import { useQuery } from "graphql-hooks";
 import { userAtom } from "@/lib/atom/userAtom";
 import { leadQueries } from "@/lib/graphql/lead/queries";
 
-import { AssignedLeadColDefs } from "./assigned-lead-table-col";
+import { AssignedProspectColDefs } from "./assigned-lead-table-col";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
 import { UserLeadTable } from "./user-lead-table";
 import { useState } from "react";
@@ -34,6 +34,6 @@ export const AssignedProspectTable = () => {
     )
 
     return (
-        <UserLeadTable columns={AssignedLeadColDefs} data={leadInfo || []} />
+        <UserLeadTable columns={AssignedProspectColDefs} data={leadInfo || []} label="PROSPECT" />
     )
 }

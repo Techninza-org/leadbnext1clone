@@ -41,16 +41,22 @@ import {
 } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
 import { format } from "date-fns"
-import { CalendarDaysIcon } from "lucide-react"
+import { CalendarDaysIcon, PlusCircle, PlusCircleIcon, UploadIcon } from "lucide-react"
+import { useCompany } from "@/components/providers/CompanyProvider"
+import { useAtom } from "jotai"
+import { useModal } from "@/hooks/use-modal-store"
+import { leadMutation } from "@/lib/graphql/lead/mutation"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
+    label: string
 }
 
 export function UserLeadTable<TData, TValue>({
     columns,
     data,
+    label,
 }: DataTableProps<TData, TValue>) {
     const [rowSelection, setRowSelection] = React.useState({})
     const [columnVisibility, setColumnVisibility] =
@@ -73,7 +79,7 @@ export function UserLeadTable<TData, TValue>({
         const monthEndDate = new Date(date.getFullYear(), date.getMonth() + 1, 0).getTime();
         const filteredData = data.filter((lead: any) => {
             return lead.createdAt >= monthStartDate && lead.createdAt <= monthEndDate;
-        })        
+        })
         setMonthData(filteredData);
     };
 
@@ -123,12 +129,100 @@ export function UserLeadTable<TData, TValue>({
         }
     }
 
+    const { onOpen } = useModal()
+    const colsName = [
+        'name',
+        'email',
+        'phone',
+        'alternatePhone',
+    ]
+    const addLeadForm = useCompany().optForms?.find((x: any) => x.name === "Lead")
+    const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original)
+
+
+    const MoreInfoLead = ({ selectedLeads }: { selectedLeads: any[] }) => {
+        return (
+            <div className="flex gap-2 ml-auto">
+                <Button
+                    onClick={() => onOpen("assignLead", { leads: selectedLeads, apiUrl: leadMutation.LEAD_ASSIGN_TO, query: "Lead" })}
+                    variant={'default'}
+                    size={"sm"}
+                    className="items-center gap-1"
+                    disabled={!selectedLeads.length}
+                >
+                    Assign Lead
+                </Button>
+                <div>
+                    <label htmlFor="csv-upload">
+                        <Button
+                            variant="default"
+                            color="primary"
+                            size={"sm"}
+                            className="items-center gap-1"
+                            onClick={() => onOpen("uploadLeadModal", { fields: addLeadForm })}
+                        >
+                            <UploadIcon size={15} /> <span>Upload Lead</span>
+
+                        </Button>
+                    </label>
+                </div>
+                <Button
+                    onClick={() => onOpen("addLead", { fields: addLeadForm })}
+                    variant={'default'}
+                    size={"sm"}
+                    className="items-center gap-1">
+                    <PlusCircleIcon size={15} /> <span>Add New Lead</span>
+                </Button>
+            </div>
+        )
+    }
+
+    const addProspectForm = useCompany().optForms?.find((x: any) => x.name === "Prospect")
+
+    const MoreInfoProspect = ({ selectedLeads }: { selectedLeads: any[] }) => {
+
+        return (
+            <div className="flex gap-2 ml-auto">
+                <Button
+                    // @ts-ignore
+                    onClick={() => onOpen("assignLead", { leads: selectedLeads, apiUrl: leadMutation.PROSPECT_ASSIGN_TO, query: "Prospect" })}
+                    variant={'default'}
+                    size={"sm"}
+                    className="items-center gap-1"
+                    disabled={!selectedLeads.length}
+                >
+                    Assign Lead
+                </Button>
+                <div>
+                    <label htmlFor="csv-upload">
+                        <Button
+                            variant="default"
+                            color="primary"
+                            size={"sm"}
+                            className="items-center gap-1"
+                            onClick={() => onOpen("uploadPrspectModal", { fields: addProspectForm })}
+                        >
+                            <UploadIcon size={15} /> <span>Upload Prospects</span>
+                        </Button>
+                    </label>
+                </div>
+                <Button
+                    onClick={() => onOpen("addProspect", { fields: addProspectForm })}
+                    variant={'default'}
+                    size={"sm"}
+                    className="items-center gap-1">
+                    <PlusCircle size={15} /> <span>Add New Prospect</span>
+                </Button>
+            </div>
+        )
+    }
+
     return (
         <div className="space-y-4">
             <div className="flex justify-between">
                 <div className="grid gap-4">
-                <Popover>
-                    <PopoverTrigger asChild>
+                    <Popover>
+                        <PopoverTrigger asChild>
                             <Button
                                 variant={"outline"}
                                 className={cn(
@@ -137,26 +231,26 @@ export function UserLeadTable<TData, TValue>({
                                 )}
                             >
                                 {selectedMonth ? (
-                                    format(selectedMonth, "MMM yyyy") 
+                                    format(selectedMonth, "MMM yyyy")
                                 ) : (
                                     <span>Pick a month</span>
                                 )}
                                 <CalendarDaysIcon className="ml-2 h-4 w-4 opacity-50" />
                             </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                            mode="single"
-                            selected={selectedMonth}
-                            onDayClick={handleDayClick}
-                            disabled={(date) =>
-                                date < new Date("1900-01-01")
-                            }
-                            initialFocus
-                        />
-                    </PopoverContent>
-                </Popover>
-                <DataTableToolbar table={table} setFilter={setFilter} />
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                                mode="single"
+                                selected={selectedMonth}
+                                onDayClick={handleDayClick}
+                                disabled={(date) =>
+                                    date < new Date("1900-01-01")
+                                }
+                                initialFocus
+                            />
+                        </PopoverContent>
+                    </Popover>
+                    <DataTableToolbar table={table} setFilter={setFilter} />
                 </div>
                 <Select onValueChange={(value) => handleSort(value || 'Reset')}>
                     <SelectTrigger className="w-64">
@@ -170,6 +264,12 @@ export function UserLeadTable<TData, TValue>({
                         </SelectGroup>
                     </SelectContent>
                 </Select>
+                
+                {
+                    label === "LEAD" ? <MoreInfoLead selectedLeads={selectedRows} /> : <MoreInfoProspect selectedLeads={selectedRows} />
+                }
+
+
             </div>
             <div className="rounded-md border">
                 <Table>

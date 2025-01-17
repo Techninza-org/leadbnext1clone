@@ -207,7 +207,7 @@ export const LeadForm = ({ fields, onClose }: {
                     variant: "default",
                     title: "Lead Submitted Successfully!",
                 });
-                handleClose();
+                // handleClose();
             } else {
                 // No files to upload, directly proceed with GraphQL mutation
                 const { data: resData, error } = await createLead({
@@ -216,7 +216,7 @@ export const LeadForm = ({ fields, onClose }: {
                         name: data.name,
                         email: data.email,
                         phone: data.phone,
-                        alternatePhone: data.alternatePhone,
+                        alternatePhone: data.alternatePhone || "",
                         remark: data.remark,
                         department: data.department,
                         dynamicFieldValues: formatFormData(fields?.fields ?? [], data),
@@ -320,7 +320,7 @@ export const LeadForm = ({ fields, onClose }: {
                             </FormItem>
                         )}
                     />
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="alternatePhone"
                         render={({ field }) => (
@@ -336,7 +336,7 @@ export const LeadForm = ({ fields, onClose }: {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
                   
 
                     <FormField

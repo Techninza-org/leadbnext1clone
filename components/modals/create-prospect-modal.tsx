@@ -59,6 +59,7 @@ import { useToast } from '../ui/use-toast';
 import { PhoneInput } from '../ui/phone-input';
 import { RsInput } from '../ui/currency-input';
 import { DateTimePicker } from '../date-time-picker';
+import { leadQueries } from '@/lib/graphql/lead/queries';
 
 export const CreateProspectModal = () => {
     const { isOpen, onClose, type, data } = useModal();
@@ -183,7 +184,7 @@ export const ProspectForm = ({ fields, onClose }: {
                         name: data.name,
                         email: data.email,
                         phone: data.phone,
-                        alternatePhone: data.alternatePhone,
+                        alternatePhone: data.alternatePhone || "",
                         department: data.department,
                         remark: data.remark,
                         dynamicFieldValues: formatFormData((formDataWithUrls as CallData[]), data),
@@ -316,7 +317,7 @@ export const ProspectForm = ({ fields, onClose }: {
                             </FormItem>
                         )}
                     />
-                    <FormField
+                    {/* <FormField
                         control={form.control}
                         name="alternatePhone"
                         render={({ field }) => (
@@ -332,7 +333,7 @@ export const ProspectForm = ({ fields, onClose }: {
                                 <FormMessage />
                             </FormItem>
                         )}
-                    />
+                    /> */}
                     <FormField
                         control={form.control}
                         name="remark"
@@ -350,7 +351,7 @@ export const ProspectForm = ({ fields, onClose }: {
                             </FormItem>
                         )}
                     />
-                   
+
 
                     <FormField
                         control={form.control}
@@ -385,7 +386,7 @@ export const ProspectForm = ({ fields, onClose }: {
                             </FormItem>
                         )}
                     />
-                     {sortedFields?.map((cfield: any) => {
+                    {sortedFields?.map((cfield: any) => {
                         //  const isRequired = cfield.isRequired;
                         const isDisabled = cfield.isDisabled;
                         const validationRules = validationSchema?.[cfield.name] || {};

@@ -49,7 +49,8 @@ export const EnquiryDetailsModal = () => {
     const user = useAtomValue(userAtom)
     const { isOpen, onClose, type, data: modalData } = useModal();
 
-    const { lead } = modalData;
+    const { lead, query} = modalData;
+    const forLead = query === "Lead"
     const { companyDeptMembers } = useCompany()
     const [submitFeedback, { loading: feedBackLoading }] = useMutation(leadMutation.SUBMIT_LEAD);
     const [transferLead, { loading }] = useMutation(leadMutation.TRANSFER_LEAD);
@@ -298,7 +299,7 @@ export const EnquiryDetailsModal = () => {
                                 </div>
                             </>
                         ))}
-                        { lead?.bids && lead?.bids?.length > 0 &&
+                        {lead?.bids && lead?.bids?.length > 0 &&
                             <ScrollArea className="h-44 w-full rounded-md border">
                                 <div className="p-4">
                                     <h4 className="mb-4 text-sm font-medium leading-none">All Bids</h4>
@@ -315,6 +316,7 @@ export const EnquiryDetailsModal = () => {
                             </ScrollArea>
                         }
                         <div>
+                            <h3 className="font-medium text-xl pl-2 pt-2">Follow Up</h3>
                             <FollowUpsData lead={lead} />
                             <div className="my-4 grid place-items-end grid-flow-col">
                                 <Button
@@ -324,7 +326,7 @@ export const EnquiryDetailsModal = () => {
                                     onClick={() => setIsFollowUpActive(!isFollowUpActive)}
                                 >Add Follow Up</Button>
                             </div>
-                            {isFollowUpActive && <FollowUpForm forLead={false} lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
+                            {isFollowUpActive && <FollowUpForm forLead={forLead} lead={lead} isFollowUpActive={isFollowUpActive} setIsFollowUpActive={setIsFollowUpActive} />}
                         </div>
                     </div>
                 </ScrollArea>
