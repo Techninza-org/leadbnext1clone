@@ -145,7 +145,7 @@ export const ViewProspectInfoModal = () => {
                                 <Badge variant="outline" className="text-xs text-gray-600  font-medium">
                                     ID: {lead?.id}
                                 </Badge>
-                                <h2 className="pl-2">Prospect Details</h2>
+                                <h2 className="pl-2">Lead Details</h2>
                             </div>
                             {/* <div className="flex items-center space-x-4">
                                 {

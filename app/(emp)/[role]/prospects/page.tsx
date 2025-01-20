@@ -11,7 +11,7 @@ export default function ProspectsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="font-bold">Prospects</CardTitle>
+        <CardTitle className="font-bold">Leads</CardTitle>
       </CardHeader>
       <CardContent>
         <AssignedProspectTable />

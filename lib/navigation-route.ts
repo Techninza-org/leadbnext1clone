@@ -7,12 +7,12 @@ export const ROOT_NAV_LINKS = [
         href: "/dashboard",
     },
     {
-        title: "Prospects",
+        title: "Leads",
         icon: FileTextIcon,
         href: "/prospect",
     },
     {
-        title: "Leads",
+        title: "Prospects",
         icon: FileTextIcon,
         href: "/leads",
     },
@@ -83,7 +83,7 @@ export const MANAGER_NAV_LINKS = [
         href: "/dashboard",
     },
     {
-        title: "Leads",
+        title: "Prospects",
         icon: FileTextIcon,
         href: "/leads",
     },
@@ -93,7 +93,7 @@ export const MANAGER_NAV_LINKS = [
         href: "/clients",
     },
     {
-        title: "Prospect",
+        title: "Leads",
         icon: FileTextIcon,
         href: "/prospect",
     },

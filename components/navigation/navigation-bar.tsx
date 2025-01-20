@@ -36,12 +36,12 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
 
     const EMP_NAV_LINKS = [
         {
-            title: "Lead",
+            title: "Prospect",
             icon: Truck,
             href: `/${role}/leads`,
         },
         {
-            title: "Prospect",
+            title: "Lead",
             icon: Truck,
             href: `/${role}/prospects`,
         },

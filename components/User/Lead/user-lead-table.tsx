@@ -150,7 +150,7 @@ export function UserLeadTable<TData, TValue>({
                     className="items-center gap-1"
                     disabled={!selectedLeads.length}
                 >
-                    Assign Lead
+                    Assign Prospect
                 </Button>
                 <div>
                     <label htmlFor="csv-upload">
@@ -161,7 +161,7 @@ export function UserLeadTable<TData, TValue>({
                             className="items-center gap-1"
                             onClick={() => onOpen("uploadLeadModal", { fields: addLeadForm })}
                         >
-                            <UploadIcon size={15} /> <span>Upload Lead</span>
+                            <UploadIcon size={15} /> <span>Upload Prospect</span>
 
                         </Button>
                     </label>
@@ -171,7 +171,7 @@ export function UserLeadTable<TData, TValue>({
                     variant={'default'}
                     size={"sm"}
                     className="items-center gap-1">
-                    <PlusCircleIcon size={15} /> <span>Add New Lead</span>
+                    <PlusCircleIcon size={15} /> <span>Add New Prospect</span>
                 </Button>
             </div>
         )
@@ -202,7 +202,7 @@ export function UserLeadTable<TData, TValue>({
                             className="items-center gap-1"
                             onClick={() => onOpen("uploadPrspectModal", { fields: addProspectForm })}
                         >
-                            <UploadIcon size={15} /> <span>Upload Prospects</span>
+                            <UploadIcon size={15} /> <span>Upload Leads</span>
                         </Button>
                     </label>
                 </div>
@@ -211,7 +211,7 @@ export function UserLeadTable<TData, TValue>({
                     variant={'default'}
                     size={"sm"}
                     className="items-center gap-1">
-                    <PlusCircle size={15} /> <span>Add New Prospect</span>
+                    <PlusCircle size={15} /> <span>Add New Lead</span>
                 </Button>
             </div>
         )

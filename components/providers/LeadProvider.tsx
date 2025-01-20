@@ -113,7 +113,7 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
 
         toast({
             title: 'Success',
-            description: 'Lead created successfully',
+            description: 'Prospect created successfully',
             variant: "default",
         });
     };
@@ -134,7 +134,7 @@ export const LeadProvider = ({ children }: { children: ReactNode }) => {
 
         toast({
             title: 'Success',
-            description: 'Leads created successfully',
+            description: 'Prospects created successfully',
             variant: "default",
         });
     };

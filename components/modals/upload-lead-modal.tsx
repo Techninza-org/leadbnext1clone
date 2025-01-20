@@ -171,7 +171,7 @@ export const UploadLeadModal = () => {
             <DialogContent className="text-black max-w-screen-md">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="flex justify-between text-2xl text-center font-bold">
-                        <div>Upload Lead</div>
+                        <div>Upload Prospect</div>
 
 
                     </DialogTitle>
@@ -387,7 +387,7 @@ export const UploadLeadModal = () => {
                                     // @ts-ignore
                                     onClick={() => generateCSV([{ name: "Name" }, { name: "Phone" }, { name: "Email" }, { name: "Address" }, ...sortedFields], "lead")}
                                 >
-                                    <UploadIcon size={15} /> <span>Sample Lead</span>
+                                    <UploadIcon size={15} /> <span>Sample Prospect</span>
                                 </Button>
 
                                 {/* ADDING VALIDATION AND STYING IS PENDINF */}
@@ -420,7 +420,7 @@ export const UploadLeadModal = () => {
                                 type='submit'
                                 className="items-center gap-1 ml-auto mt-6"
                             >
-                                Submit Lead
+                                Submit Prospect
                             </Button>
                         </div>
                     </form>

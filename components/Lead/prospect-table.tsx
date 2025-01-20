@@ -48,7 +48,7 @@ export const ProspectTable = () => {
                             className="items-center gap-1"
                             onClick={() => onOpen("uploadPrspectModal", { fields: addProspectForm })}
                         >
-                            <UploadIcon size={15} /> <span>Upload Prospects</span>
+                            <UploadIcon size={15} /> <span>Upload Leads</span>
                         </Button>
                     </label>
                 </div>
@@ -57,7 +57,7 @@ export const ProspectTable = () => {
                     variant={'default'}
                     size={"sm"}
                     className="items-center gap-1">
-                    <PlusCircle size={15} /> <span>Add New Prospect</span>
+                    <PlusCircle size={15} /> <span>Add New Lead</span>
                 </Button>
             </div>
         )
@@ -67,7 +67,7 @@ export const ProspectTable = () => {
         <Card>
             <CardHeader>
                 <CardTitle className="flex justify-between font-bold">
-                    Prospects
+                    Leads
                 </CardTitle>
             </CardHeader>
             <CardContent>

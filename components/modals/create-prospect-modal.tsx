@@ -66,13 +66,13 @@ export const CreateProspectModal = () => {
     const { lead, fields } = data;
     const isModalOpen = isOpen && type === "addProspect";
 
-
+    const displayName = fields?.name === "Lead" ? "Prospect" : "Lead";
     return (
         <Dialog open={isModalOpen} onOpenChange={onClose}>
             <DialogContent className="text-black max-w-screen-sm">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Create {fields?.name}
+                        Create {displayName}
                     </DialogTitle>
                 </DialogHeader>
 
@@ -203,7 +203,7 @@ export const ProspectForm = ({ fields, onClose }: {
 
                 toast({
                     variant: "default",
-                    title: "Prospect Created Successfully!",
+                    title: "Lead Created Successfully!",
                 });
                 handleClose();
             } else {
@@ -212,7 +212,7 @@ export const ProspectForm = ({ fields, onClose }: {
                     variables: {
                         companyId: userInfo?.companyId || "",
                         name: data.name,
-                        email: data.email,
+                        email: data.email || "",
                         phone: data.phone,
                         alternatePhone: data.alternatePhone,
                         department: data.department,
@@ -233,7 +233,7 @@ export const ProspectForm = ({ fields, onClose }: {
 
                 toast({
                     variant: "default",
-                    title: "Prospect Created Successfully!",
+                    title: "Lead Created Successfully!",
                 });
                 handleClose();
             }

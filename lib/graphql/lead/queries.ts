@@ -191,6 +191,11 @@ query getAssignedLeads($userId: String!) {
             name
         }
       }
+
+      company {
+        name
+      }
+
       nextFollowUpDate
       createdAt
     }
@@ -207,6 +212,7 @@ query getAssignedProspect($userId: String!) {
       alternatePhone
       callStatus
       paymentStatus
+      dynamicFieldValues
       bids{
         id
         bidAmount

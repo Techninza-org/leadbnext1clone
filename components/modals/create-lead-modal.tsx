@@ -65,13 +65,15 @@ export const CreateLeadModal = () => {
     const { lead, fields } = data;
     const isModalOpen = isOpen && type === "addLead";
 
+    const displayName = fields?.name === "Lead" ? "Prospect" : "Lead";
+
 
     return (
         <Dialog open={isModalOpen} onOpenChange={onClose}>
             <DialogContent className="text-black max-w-screen-sm">
                 <DialogHeader className="pt-8 px-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Create {fields?.name}
+                        Create {displayName}
                     </DialogTitle>
                 </DialogHeader>
 

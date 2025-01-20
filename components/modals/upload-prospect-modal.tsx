@@ -192,7 +192,7 @@ export const UploadProspectModal = () => {
             <DialogContent className="text-black max-w-screen-md">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="flex justify-between text-2xl text-center font-bold">
-                        <div>Upload Prospects</div>
+                        <div>Upload Leads</div>
 
 
                     </DialogTitle>

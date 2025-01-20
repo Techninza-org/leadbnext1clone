@@ -34,7 +34,7 @@ export const LeadTable = () => {
                     className="items-center gap-1"
                     disabled={!selectedLeads.length}
                 >
-                    Assign Lead
+                    Assign Prospect
                 </Button>
                 <div>
                     <label htmlFor="csv-upload">
@@ -45,7 +45,7 @@ export const LeadTable = () => {
                             className="items-center gap-1"
                             onClick={() => onOpen("uploadLeadModal", { fields: addLeadForm })}
                         >
-                            <UploadIcon size={15} /> <span>Upload Lead</span>
+                            <UploadIcon size={15} /> <span>Upload Prospect</span>
 
                         </Button>
                     </label>
@@ -55,7 +55,7 @@ export const LeadTable = () => {
                     variant={'default'}
                     size={"sm"}
                     className="items-center gap-1">
-                    <PlusCircle size={15} /> <span>Add New Lead</span>
+                    <PlusCircle size={15} /> <span>Add New Prospect</span>
                 </Button>
             </div>
         )
@@ -64,7 +64,7 @@ export const LeadTable = () => {
         <Card>
             <CardHeader>
                 <CardTitle className="flex justify-between font-bold">
-                    Leads
+                    Prospects
                 </CardTitle>
             </CardHeader>
             <CardContent>

@@ -2,7 +2,7 @@ const CREATE_LEAD = `
 mutation createLead(
   $companyId: String!, 
   $name: String!, 
-  $email: String!, 
+  $email: String, 
   $alternatePhone: String, 
   $phone: String!, 
   $remark: String!, 
@@ -33,7 +33,7 @@ const CREATE_PROSPECT = `
 mutation createProspect(
   $companyId: String!, 
   $name: String!, 
-  $email: String!, 
+  $email: String, 
   $alternatePhone: String, 
   $phone: String!, 
   $remark: String!, 
