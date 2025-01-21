@@ -8,7 +8,7 @@ import { BidFormModal } from "../modals/bid-form-modal";
 import { FinancerBidApprovalModal } from "../modals/financer-bid-approval-modal";
 import { ViewLeadInfoModal } from "../modals/view-lead-info-modal";
 import { AssignMemberModal } from "../modals/assign-member-modal";
-import { EnquiryDetailsModal } from "../modals/enquiry-details-modal";
+import { EnquiryDetailsLeadModal } from "../modals/enquiry-details-modal";
 import CreateBroadcastModal from "../modals/create-broadcast-modal";
 import BroadcastDetailsModal from "../modals/broadcast-details-modal";
 import UpdateGlobalDepartmentFieldsModal from "../dynamic/update-global-department-modal";
@@ -20,6 +20,7 @@ import { CreateDeptFormModal } from "../modals/create-dept-form-modal";
 import { EditLeadFormValueModal } from "../modals/edit-lead-form-value-modal";
 import { ViewProspectInfoModal } from "../modals/view-prospect-info-modal";
 import { AssignFormModal } from "../modals/assign-form-modal";
+import { EnquiryDetailsProspectModal } from "../modals/enquiry-details-prospect-modal";
 
 
 export const ModalProvider = () => {
@@ -45,7 +46,8 @@ export const ModalProvider = () => {
       <BidFormModal />
       <FinancerBidApprovalModal />
       <ViewLeadInfoModal />
-      <EnquiryDetailsModal />
+      <EnquiryDetailsLeadModal />
+      <EnquiryDetailsProspectModal />
       <CreateBroadcastModal />
       <BroadcastDetailsModal />
       <UpdateGlobalBroadcastModal />

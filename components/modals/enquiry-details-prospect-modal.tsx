@@ -41,10 +41,10 @@ import {
 import { useState } from "react";
 import FollowUpForm from "../Lead/follow-up-form";
 import FollowUpsData from "../Lead/follow-ups-data";
-import { ClientApprovedAction, LeadApprovedAction } from "../Lead/lead-table-col";
+import { LeadApprovedAction } from "../Lead/lead-table-col";
 
 
-export const EnquiryDetailsLeadModal = () => {
+export const EnquiryDetailsProspectModal = () => {
     const [selectedMember, setSelectedMember] = useState("");
     const [isFollowUpActive, setIsFollowUpActive] = useState(false);
     const user = useAtomValue(userAtom)
@@ -58,7 +58,7 @@ export const EnquiryDetailsLeadModal = () => {
     const { toast } = useToast();
     let members;
 
-    const isModalOpen = isOpen && type === "enquiryDetailsLead";
+    const isModalOpen = isOpen && type === "enquiryDetailsProspect";
 
     const FollowUpSchema = z.object({
         followUpDate: z.date().optional()
@@ -149,7 +149,7 @@ export const EnquiryDetailsLeadModal = () => {
             <DialogContent className="text-black max-w-screen-lg max-h-[80%]">
                 <DialogHeader className="pt-6">
                     <DialogTitle className="text-2xl text-center font-bold">
-                        Prospect Details
+                        Lead Details
                     </DialogTitle>
                 </DialogHeader>
                 <ScrollArea className="max-h-full w-full rounded-md border">
@@ -229,7 +229,7 @@ export const EnquiryDetailsLeadModal = () => {
                             </div>
                         </div>
                         <div className="flex justify-end space-x-4">
-                            <ClientApprovedAction lead={lead as any} />
+                            <LeadApprovedAction lead={lead as any} />
                         </div>
                     </div>
                     <div className="p-4">
