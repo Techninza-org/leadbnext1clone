@@ -532,11 +532,12 @@ export const ProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
 
 const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
     const { onOpen } = useModal()
+    const isConverted = lead?.approvedToClient
 
     return (
         <div className="flex items-center">
             <span
-                className="text-blue-900 cursor-pointer hover:underline"
+                className={!isConverted ? 'text-blue-900 cursor-pointer hover:underline' : 'text-red-500 hover:underline'}
                 onClick={() => onOpen("viewLeadInfo", { lead })}>{lead.name}</span>
         </div>
     )
@@ -544,11 +545,12 @@ const ViewLeadInfo = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
 
 const ViewProspectInfo = ({ prospect }: { prospect: z.infer<typeof leadSchema> }) => {
     const { onOpen } = useModal()
+    const isApproved = prospect?.isLeadConverted
 
     return (
         <div className="flex items-center">
             <span
-                className="text-blue-900 cursor-pointer hover:underline"
+                className={!isApproved ? 'text-blue-900 cursor-pointer hover:underline' : 'text-red-500'}
                 onClick={() => onOpen("viewProspectInfo", { lead: prospect })}>{prospect.name}</span>
         </div>
     )

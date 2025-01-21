@@ -282,21 +282,23 @@ export const AssignedProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = 
 
 const EnquiryDetailsLead = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
     const { onOpen } = useModal()
+    const isConverted = lead?.approvedToClient
     return (
         <div className="flex items-center">
             <span
-                className="text-blue-900 cursor-pointer hover:underline"
-                onClick={() => onOpen("enquiryDetails", { lead, query: "Lead" })}>{lead.id}</span>
+                className={!isConverted ? 'text-blue-900 cursor-pointer hover:underline' : 'text-red-500 hover:underline'}
+                onClick={() => onOpen("enquiryDetailsLead", { lead, query: "Lead" })}>{lead.id}</span>
         </div>
     )
 }
 const EnquiryDetailProspect = ({ lead }: { lead: z.infer<typeof leadSchema> }) => {
     const { onOpen } = useModal()
+    const isTransfered = lead?.isLeadConverted 
     return (
         <div className="flex items-center">
             <span
-                className="text-blue-900 cursor-pointer hover:underline"
-                onClick={() => onOpen("enquiryDetails", { lead, query: "Prospect" })}>{lead.id}</span>
+                className={!isTransfered ? 'text-blue-900 cursor-pointer hover:underline' : 'text-red-500 hover:underline'}
+                onClick={() => onOpen("enquiryDetailsProspect", { lead, query: "Prospect" })}>{lead.id}</span>
         </div>
     )
 }

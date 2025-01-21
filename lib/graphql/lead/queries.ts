@@ -7,6 +7,7 @@ const GET_COMPANY_LEADS = `
         email
         phone
         alternatePhone
+        approvedToClient
         callStatus
         paymentStatus
         department
@@ -151,6 +152,7 @@ query getAssignedLeads($userId: String!) {
       alternatePhone
       callStatus
       paymentStatus
+      approvedToClient
       bids{
         id
         bidAmount
@@ -213,6 +215,7 @@ query getAssignedProspect($userId: String!) {
       callStatus
       paymentStatus
       dynamicFieldValues
+      isLeadConverted
       bids{
         id
         bidAmount
