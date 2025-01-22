@@ -55,6 +55,11 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
             icon: FileTextIcon,
             href: `/${role}/leads/broadcast`,
         },
+        {
+            title: "Clients",
+            icon: FileTextIcon,
+            href: `/${role}/client`,
+        },
     ];
 
     const navLinks = [ROOT].includes(role) ? extendRootLinks : [ADMIN].includes(role) ? ADMIN_NAV_LINKS : [MANAGER].includes(role) ? MANAGER_NAV_LINKS : EMP_NAV_LINKS;

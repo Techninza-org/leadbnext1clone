@@ -153,6 +153,7 @@ query getAssignedLeads($userId: String!) {
       callStatus
       paymentStatus
       approvedToClient
+      isLeadConverted
       bids{
         id
         bidAmount
@@ -216,6 +217,7 @@ query getAssignedProspect($userId: String!) {
       paymentStatus
       dynamicFieldValues
       isLeadConverted
+      approvedToClient
       bids{
         id
         bidAmount
