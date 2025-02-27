@@ -298,9 +298,9 @@ export default function AdvancedDataTable({ leadProspectCols = [],
                     Select columns to filter the table
                   </p>
                 </div>
-                <ScrollArea className="h-[300px]">
+                <ScrollArea className="">
                   <div className="grid gap-2">
-                    {table.getAllColumns().filter((column) => column.getCanFilter() || column.id === "skuCode").map((column) => {
+                    {table.getAllColumns().filter((column) => column.id === "via" || column.id === 'createdAt' || column.id === "category").map((column) => {
                       return (
                         <Popover key={column.id}>
                           <PopoverTrigger asChild>

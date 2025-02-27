@@ -17,6 +17,7 @@ export const createLeadSchema = z.object({
     state: z.string().min(3, "State must be at least 3 characters long."),
     zip: z.string().min(6, "Zip code must be at least 6 characters long."),
     rating: z.number().int().optional(),
+    category: z.string().optional(),
 
     vehicleDate: z.date(),
     vehicleName: z.string(),
@@ -33,6 +34,7 @@ export const leadSchema = createLeadSchema.extend({
     nextFollowUpDate: z.date(),
     paymentStatus: z.string(),
     createdAt: z.any(),
+   
     isLeadApproved: z.boolean(),
     approvedToClient: z.boolean(),
     isLeadConverted: z.boolean(), // prospect only

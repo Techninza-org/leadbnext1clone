@@ -11,6 +11,7 @@ const GET_COMPANY_LEADS = `
         callStatus
         paymentStatus
         department
+        category
         via
         createdAt
         updatedAt
@@ -115,6 +116,7 @@ const GET_PROSPECT_LEADS = `
         callStatus
         paymentStatus
         phone
+        category
         isLeadConverted
         via
           leadMember {
@@ -153,7 +155,7 @@ query getAssignedLeads($userId: String!) {
       callStatus
       paymentStatus
       approvedToClient
-      isLeadConverted
+      category
       bids{
         id
         bidAmount
@@ -218,6 +220,7 @@ query getAssignedProspect($userId: String!) {
       dynamicFieldValues
       isLeadConverted
       approvedToClient
+      category
       bids{
         id
         bidAmount

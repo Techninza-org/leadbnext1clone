@@ -220,6 +220,7 @@ export const LeadForm = ({ fields, onClose }: {
                         phone: data.phone,
                         alternatePhone: data.alternatePhone || "",
                         remark: data.remark,
+                        category: data.category,
                         department: data.department,
                         dynamicFieldValues: formatFormData(fields?.fields ?? [], data),
                     },
@@ -387,6 +388,39 @@ export const LeadForm = ({ fields, onClose }: {
                                         disabled={isLoading}
                                         {...field} />
                                 </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                      <FormField
+                        control={form.control}
+                        name="category"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel
+                                    className="capitalize text-xs font-bold text-zinc-500 dark:text-secondary/70">Category</FormLabel>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                >
+                                    <FormControl>
+                                        <SelectTrigger
+                                            className="bg-zinc-100 placeholder:capitalize  border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                        >
+                                            <SelectValue placeholder="Select Category" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent
+                                        className="bg-zinc-100 border-0 dark:bg-zinc-700 dark:text-white focus-visible:ring-slate-500 focus-visible:ring-1 text-black focus-visible:ring-offset-0"
+                                    >
+                                        <SelectItem value='Website Development' className="capitalize">Website Development</SelectItem>
+                                        <SelectItem value='App Development' className="capitalize">App Development</SelectItem>
+                                        <SelectItem value='IT' className="capitalize">IT</SelectItem>
+                                        <SelectItem value='Digital Marketing' className="capitalize">Digital Marketing</SelectItem>
+                                        <SelectItem value='Packers & Movers' className="capitalize">Packers & Movers</SelectItem>
+                                        <SelectItem value='Tour & Travel' className="capitalize">Tour & Travel</SelectItem>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}

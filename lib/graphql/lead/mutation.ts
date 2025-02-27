@@ -6,6 +6,7 @@ mutation createLead(
   $alternatePhone: String, 
   $phone: String!, 
   $remark: String!, 
+  $category: String,
   $department: String!
   $dynamicFieldValues: JSON
 ) {
@@ -17,6 +18,7 @@ mutation createLead(
       alternatePhone: $alternatePhone,
       phone: $phone,
       remark: $remark,
+      category: $category,
       department: $department
       dynamicFieldValues: $dynamicFieldValues
     }
@@ -37,6 +39,7 @@ mutation createProspect(
   $alternatePhone: String, 
   $phone: String!, 
   $remark: String!, 
+  $category: String,
   $department: String!
   $dynamicFieldValues: JSON
 ) {
@@ -48,6 +51,7 @@ mutation createProspect(
       alternatePhone: $alternatePhone,
       phone: $phone,
       remark: $remark,
+      category: $category,
       dynamicFieldValues: $dynamicFieldValues
       department: $department
     }
