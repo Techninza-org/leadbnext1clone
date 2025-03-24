@@ -84,6 +84,7 @@ const GET_COMPANY_CLIENTS = `
         callStatus
         paymentStatus
         department
+        category
         via
         createdAt
         updatedAt

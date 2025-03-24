@@ -267,6 +267,19 @@ export const ClientColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         }
     },
     {
+        header: 'Category',
+        accessorKey: 'category',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("category")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
         header: 'Created By',
         accessorKey: 'via',
         cell: ({ row }) => {
