@@ -119,6 +119,7 @@ const GET_PROSPECT_LEADS = `
         phone
         category
         isLeadConverted
+        department
         via
           leadMember {
           id

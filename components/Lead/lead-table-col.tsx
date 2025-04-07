@@ -138,6 +138,19 @@ export const LeadColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
         filterFn: multiSelectFilter,
     },
     {
+        header: 'Department',
+        accessorKey: 'department',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("department")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
         header: 'Created At',
         accessorKey: 'createdAt',
         cell: ({ row }) => {
@@ -440,6 +453,19 @@ export const RootProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = [
             return (
                 <div className="flex items-center">
                     <span>{row.getValue("via")}</span>
+                </div>
+            )
+
+        },
+        filterFn: multiSelectFilter,
+    },
+    {
+        header: 'Department',
+        accessorKey: 'department',
+        cell: ({ row }) => {
+            return (
+                <div className="flex items-center">
+                    <span>{row.getValue("department")}</span>
                 </div>
             )
 

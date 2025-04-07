@@ -300,7 +300,7 @@ export default function AdvancedDataTable({ leadProspectCols = [],
                 </div>
                 <ScrollArea className="">
                   <div className="grid gap-2">
-                    {table.getAllColumns().filter((column) => column.id === "via" || column.id === 'createdAt' || column.id === "category").map((column) => {
+                    {table.getAllColumns().filter((column) => column.id === "via" || column.id === "department" || column.id === 'createdAt' || column.id === "category").map((column) => {
                       return (
                         <Popover key={column.id}>
                           <PopoverTrigger asChild>
