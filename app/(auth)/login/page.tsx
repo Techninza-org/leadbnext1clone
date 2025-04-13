@@ -4,17 +4,15 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import Image from "next/image";
 
 export default function LoginPage() {
   return (
     <div className="max-w-lg mx-auto">
       <Button variant={'ghost'} size='sm' className="w-full mx-auto">
-        <Image src={'https://sooprs.com/images/sooprs_logo.png'} alt="logo" width={100} height={100} />
+        <img src={'https://sooprs.com/images/sooprs_logo.png'} alt="logo" width={100} height={100} />
       </Button>
       <Card className="bg-inherit ">
         <CardHeader>

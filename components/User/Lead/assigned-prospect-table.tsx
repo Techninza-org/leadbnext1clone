@@ -18,11 +18,11 @@ export const AssignedProspectTable = () => {
     const [leadInfo, setAssigneLeads] = useState([])
     const { hasPermission } = usePermission()
     
-    const { loading } = useQuery(leadQueries.GET_ASSIGNED_PROSPECT, {
+    const { loading } = useQuery(leadQueries.GET_ASSIGNED_LEADS, {
         variables: { userId: userInfo?.id },
         skip: !userInfo?.id,
         onSuccess: ({ data }) => {
-            setAssigneLeads(data.getAssignedProspect)
+            setAssigneLeads(data.getAssignedLeads)
         },
         refetchAfterMutations: [
             {
@@ -54,6 +54,6 @@ export const AssignedProspectTable = () => {
     }
 
     return (
-        <UserLeadTable columns={AssignedProspectColDefs} data={leadInfo || []} label="PROSPECT" />
+        <UserLeadTable columns={AssignedProspectColDefs} data={leadInfo || []} label="LEAD" />
     )
 }
