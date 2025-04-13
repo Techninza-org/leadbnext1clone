@@ -50,8 +50,15 @@ const GET_COMPANY_DEPT_FIELDS = `
     }
 `;
 
+const CREATE_DEPT_COMPANY = `
+  mutation CreateDeptCompany($deptName: String!, $deptManagerId: String!) {
+    createDeptCompany(deptName: $deptName, deptManagerId: $deptManagerId)
+  }
+`;
+
 export const deptQueries = {
   GET_DEPT_FIELDS,
   GET_COMPANY_DEPTS,
   GET_COMPANY_DEPT_FIELDS,
+  CREATE_DEPT_COMPANY,
 };

@@ -14,7 +14,7 @@ import { useCompany } from "../providers/CompanyProvider";
 
 
 export function NavigationBar({ children }: { children: React.ReactNode }) {
-    const { companyForm } = useCompany()
+    const { companyForm, departments } = useCompany()
     const [isNavCollapsed, setIsNavCollapsed] = useState<boolean>(false)
     const handleNavToggle = () => {
         setIsNavCollapsed(!isNavCollapsed);
@@ -26,11 +26,17 @@ export function NavigationBar({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const isAdmin = pathname.startsWith("/admin");
 
-    const rootLinks  = companyForm?.map((form: any) => ({
+    const rootLinks = companyForm?.map((form: any) => ({
         title: form.name,
         icon: FileTextIcon,
         href: `/values/${form.name}`,
-    })).filter((form: any) =>  !["LEAD", "PROSPECT", "LEAD FOLLOW UP", "PROSPECT FOLLOW UP"].includes(String(form.title).toUpperCase()));
+    })).filter((form: any) => !["LEAD", "PROSPECT", "LEAD FOLLOW UP", "PROSPECT FOLLOW UP"].includes(String(form.title).toUpperCase()));
+
+    const rootDepartments = departments?.map((dept: any) => ({
+        title: dept.name,
+        icon: FileTextIcon,
+        href: `/department/${dept.id}`,
+    })) || [];
 
     const extendRootLinks = [...ROOT_NAV_LINKS, ...rootLinks];
 

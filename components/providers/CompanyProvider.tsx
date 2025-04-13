@@ -37,7 +37,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
     const [rootInfo, setRootInto] = useState<z.infer<typeof createCompanyMemberSchema>[] | null>(null)
     const [members, setMembers] = useState<any>([])
     const [leadRangeData, setLeadRangeData] = React.useState<any>([])
-    const [departments, setDepartmentsForms] = useState([])
+    const [departments, setDepartments] = useState([])
     const [optForms, setOptForms] = useState([])
     const [companyForm, setCompanyForms] = useState([])
     const [companyMemberRoles, setCompanyMemberRoles] = useState<any>([])
@@ -95,6 +95,7 @@ export const CompanyProvider = ({ children }: { children: React.ReactNode }) => 
         ],
         onSuccess: ({ data }) => {
             if (data?.getCompanyDepts?.[0]?.companyForms?.length > 0) {
+                setDepartments(data?.getCompanyDepts);
                 setCompanyForms(data?.getCompanyDepts?.[0].companyForms);
             }
         }

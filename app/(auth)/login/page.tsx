@@ -8,13 +8,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Mail } from "lucide-react";
-import Link from "next/link";
-
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <div className="max-w-lg mx-auto space-y-6">
+    <div className="max-w-lg mx-auto">
+      <Button variant={'ghost'} size='sm' className="w-full mx-auto">
+        <Image src={'https://sooprs.com/images/sooprs_logo.png'} alt="logo" width={100} height={100} />
+      </Button>
       <Card className="bg-inherit ">
         <CardHeader>
           <CardTitle className="font-bold">Login</CardTitle>
@@ -23,14 +24,14 @@ export default function LoginPage() {
         <CardContent>
           <LoginForm />
         </CardContent>
-        <CardFooter className="flex flex-col">
+        {/* <CardFooter className="flex flex-col">
           <p className="text-xs text-center text-gray-700">
             Dont have an account?
             <Link href="/signup">
               <span className="text-blue-600"> Sign up</span>
             </Link>
           </p>
-        </CardFooter>
+        </CardFooter> */}
       </Card>
       {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">

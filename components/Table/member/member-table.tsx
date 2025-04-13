@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
 import Link from "next/link"
 import { useModal } from "@/hooks/use-modal-store"
+import { DateRange } from "react-day-picker"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -78,19 +79,19 @@ export function MemberDataTable<TData, TValue>({
         getFacetedUniqueValues: getFacetedUniqueValues(),
     })
 
-
     return (
         <div className="space-y-4">
             <div className="flex justify-between">
-                <DataTableToolbar table={table} setFilter={setFilter} />
+
+                <DataTableToolbar table={table} setFilter={setFilter} filter={filter} date={undefined} setDate={() => {}} />
                 <div className="flex gap-2 items-center">
-                        <Button
-                            onClick={() => onOpen("addMember")}
-                            variant={'default'}
-                            size={"sm"}
-                            className="items-center gap-1">
-                            <PlusCircle size={15} /> <span>Add New Member</span>
-                        </Button>
+                    <Button
+                        onClick={() => onOpen("addMember")}
+                        variant={'default'}
+                        size={"sm"}
+                        className="items-center gap-1">
+                        <PlusCircle size={15} /> <span>Add New Member</span>
+                    </Button>
                 </div>
             </div>
             <div className="rounded-md border">

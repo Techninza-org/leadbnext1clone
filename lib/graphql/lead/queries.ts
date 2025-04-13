@@ -367,9 +367,24 @@ const GET_FOLLOWUP = `
   }
 `;
 
+const GET_DEPARTMENT_LEADS = `
+  query GetDepartmentLeads($deptId: String!, $page: Int, $limit: Int, $fromDate: String, $toDate: String, $searchQuery: String) {
+    getLeadsByDeptId(deptId: $deptId, page: $page, limit: $limit, fromDate: $fromDate, toDate: $toDate, searchQuery: $searchQuery)
+  }
+`;
+
+const DELETE_LEAD = `
+  mutation DeleteLead($id: String!) {
+    deleteLead(leadId: $id){
+      name
+    }
+  }
+`;
+
 export const leadQueries = {
   GET_COMPANY_LEADS,
   GET_PROSPECT_LEADS,
+  GET_DEPARTMENT_LEADS,
   GET_ASSIGNED_LEADS,
   GET_LEAD_BIDS_QUERY,
   GET_LAST_MONTH_ALL_LEADS,
@@ -379,4 +394,5 @@ export const leadQueries = {
   GET_TRANSFERED_LEADS,
   GET_FOLLOWUP,
   GET_COMPANY_CLIENTS,
+  DELETE_LEAD,
 };

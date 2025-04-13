@@ -83,7 +83,7 @@ export function FollowUpBidDataTable<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
   })
-  
+
   React.useEffect(() => {
     if (!date?.from || !date?.to || date.from.getTime() === date.to.getTime()) return;
     const fromTimestamp = date.from.setHours(0, 0, 0, 0);
@@ -96,13 +96,13 @@ export function FollowUpBidDataTable<TData, TValue>({
     setFilteredData(filteredByDate);
   }, [data, date]);
 
-  
-  
+
+
 
   return (
     <div className="space-y-4">
       <div className="flex justify-between">
-        <DataTableToolbar table={table} data={data} setFilter={setFilter} />
+        <DataTableToolbar table={table} filter={filter} date={date} setFilter={setFilter} setDate={setDate} />
         <DatePickerWithRange date={date} setDate={setDate} disabledDates={{ after: new Date() }} />
       </div>
       <div className="rounded-md border">

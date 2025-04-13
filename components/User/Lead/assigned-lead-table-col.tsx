@@ -273,10 +273,10 @@ export const AssignedProspectColDefs: ColumnDef<z.infer<typeof leadSchema>>[] = 
             )
         },
     },
-    {
-        id: "actions",
-        cell: ({ row }) => <AssignedLeadTableRowActions lead={row.original} />,
-    },
+    // {
+    //     id: "actions",
+    //     cell: ({ row }) => <AssignedLeadTableRowActions lead={row.original} />,
+    // },
 ];
 
 

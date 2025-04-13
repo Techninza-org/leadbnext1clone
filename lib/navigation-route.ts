@@ -1,10 +1,16 @@
-import { FileTextIcon, HandCoins, Home, Pencil, Pin, Settings, UsersRoundIcon } from "lucide-react";
+import { FileTextIcon, HandCoins, Home, Pencil, Pin, Settings, UsersRoundIcon, FolderIcon } from "lucide-react";
 
 export const ROOT_NAV_LINKS = [
     {
         title: "Home",
         icon: Home,
         href: "/dashboard",
+    },
+    {
+        title: "Departments",
+        icon: FolderIcon,
+        href: "/departments",
+        isDropdown: true
     },
     {
         title: "Leads",

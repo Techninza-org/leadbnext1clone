@@ -1,55 +1,37 @@
 "use client"
 
-import { CrossIcon } from "lucide-react"
 import { Table } from "@tanstack/react-table"
-
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-
-import { statuses } from "@/lib/table/table-utils"
-import { DataTableFacetedFilter } from "@/lib/table/data-table-filter"
+import { DatePickerWithRange } from "../DatePickerWithRange"
+import { DateRange } from "react-day-picker"
+import { Dispatch, SetStateAction } from "react"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
-  data?: any[]
-  setFilter: (value: string) => void
+  filter: string
+  setFilter: Dispatch<SetStateAction<string>>
+  date: DateRange | undefined
+  setDate: Dispatch<SetStateAction<DateRange | undefined>>
 }
 
 export function DataTableToolbar<TData>({
   table,
-  data,
+  filter,
   setFilter,
+  date,
+  setDate,
 }: DataTableToolbarProps<TData>) {
-  // const isFiltered = table.getState().columnFilters.length > 0
-
   return (
-    <div className="flex items-center justify-between">
-      <div className="flex flex-1 items-center space-x-2">
+    <div className="flex justify-between">
+      <div className="flex items-center py-4">
         <Input
-          placeholder="Search..."
-          onChange={(event) =>
-            setFilter(event.target.value)
-          }
-          className="h-8 w-[150px] lg:w-[250px]"
+          placeholder="Filter records..."
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+          className="max-w-sm"
         />
-        {/* <DataTableFacetedFilter
-          table={table}
-          data={data}
-          // column={table.getColumn("callStatus")}
-          title="Filter"
-        /> */}
-        {/* {isFiltered && (
-          <Button
-            variant="ghost"
-            onClick={() => table.resetColumnFilters()}
-            className="h-8 px-2 lg:px-3"
-          >
-            Reset
-            <CrossIcon className="ml-2 h-4 w-4" />
-          </Button>
-        )} */}
       </div>
-      {/* <DataTableViewOptions table={table} /> */}
+      <DatePickerWithRange date={date} setDate={setDate} />
     </div>
   )
 }

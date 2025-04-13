@@ -250,7 +250,7 @@ export function UserLeadTable<TData, TValue>({
                             />
                         </PopoverContent>
                     </Popover>
-                    <DataTableToolbar table={table} setFilter={setFilter} />
+                    <DataTableToolbar table={table} filter={filter} setFilter={setFilter} date={undefined} setDate={() => {}} />
                 </div>
                 <Select onValueChange={(value) => handleSort(value || 'Reset')}>
                     <SelectTrigger className="w-64">

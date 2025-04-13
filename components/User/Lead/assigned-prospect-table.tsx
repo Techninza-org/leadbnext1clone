@@ -1,6 +1,6 @@
 "use client";
 import { useAtom } from "jotai";
-import { useQuery } from "graphql-hooks";
+import { useQuery, useMutation } from "graphql-hooks";
 
 import { userAtom } from "@/lib/atom/userAtom";
 import { leadQueries } from "@/lib/graphql/lead/queries";
@@ -9,10 +9,15 @@ import { AssignedProspectColDefs } from "./assigned-lead-table-col";
 import { leadMutation } from "@/lib/graphql/lead/mutation";
 import { UserLeadTable } from "./user-lead-table";
 import { useState } from "react";
+import { usePermission } from "@/components/providers/PermissionProvider";
+import { PurposalBuilder } from "./purposal-builder";
+
 
 export const AssignedProspectTable = () => {
     const [userInfo] = useAtom(userAtom);
     const [leadInfo, setAssigneLeads] = useState([])
+    const { hasPermission } = usePermission()
+    
     const { loading } = useQuery(leadQueries.GET_ASSIGNED_PROSPECT, {
         variables: { userId: userInfo?.id },
         skip: !userInfo?.id,
@@ -28,10 +33,25 @@ export const AssignedProspectTable = () => {
             },
         ]
     });
-
+    
+   
     if (loading) return (
         <div>Loading...</div>
     )
+
+    let updatedCols = [...AssignedProspectColDefs]
+
+    if (hasPermission("Lead", "CRITICAL")) {
+        updatedCols.push({
+            id: "actions",
+            cell: ({ row }) => (
+                <PurposalBuilder row={row} />
+            )
+        })
+        return (
+            <UserLeadTable columns={updatedCols} data={leadInfo || []} label="LEAD" />
+        )
+    }
 
     return (
         <UserLeadTable columns={AssignedProspectColDefs} data={leadInfo || []} label="PROSPECT" />

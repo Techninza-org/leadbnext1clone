@@ -51,6 +51,7 @@ export async function middleware(request: NextRequest) {
     '/leads/transfered',
     '/track',
     '/departments',
+    '/department',
     '/lead.csv'
     // Add more paths for root and manager
   ];

@@ -12,6 +12,10 @@ const nextConfig = {
                 protocol: 'http',
                 hostname: '103.189.173.0',
             },
+            {
+                protocol: 'https',
+                hostname: 'sooprs.com',
+            },
         ],
     },
 };
